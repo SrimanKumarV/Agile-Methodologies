@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Requirement Engineering — The Karthik Supermarket Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F2A28;
+    --green:#1F6F5C;
+    --green-deep:#123F35;
+    --green-pale:#E7F1EC;
+    --saffron:#F2A93B;
+    --saffron-deep:#D6862A;
+    --paper:#FBF6E9;
+    --paper-line:#E4D9BC;
+    --red:#C1443C;
+    --sky:#3D7DBF;
+    --bg:#F5F7F4;
+    --white:#FFFFFF;
+    --shadow: 0 10px 30px rgba(15,42,40,0.10);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',serif;
+    color:var(--green-deep);
+    margin:0;
+  }
+  .mono{font-family:'Space Mono',monospace;}
+  a{color:inherit;}
+  img{max-width:100%;}
+
+  /* ================= NAV ================= */
+  nav.stage-nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(251,246,233,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--paper-line);
+    overflow-x:auto;
+    white-space:nowrap;
+    padding:10px 18px;
+    display:flex; gap:6px;
+    scrollbar-width:thin;
+  }
+  nav.stage-nav a{
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    text-decoration:none;
+    color:var(--green-deep);
+    padding:7px 12px;
+    border-radius:20px;
+    border:1px solid transparent;
+    opacity:0.7;
+    transition:all .2s;
+  }
+  nav.stage-nav a:hover{opacity:1; border-color:var(--green); background:var(--green-pale);}
+
+  /* ================= HERO ================= */
+  header.hero{
+    position:relative;
+    padding:90px 24px 110px;
+    background:
+      radial-gradient(circle at 85% 15%, rgba(242,169,59,0.25), transparent 45%),
+      linear-gradient(160deg, var(--green-deep) 0%, var(--green) 65%, #2C8E76 100%);
+    color:var(--paper);
+    overflow:hidden;
+    text-align:center;
+  }
+  header.hero .tag{
+    font-family:'Space Mono',monospace;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    font-size:12px;
+    color:var(--saffron);
+    margin-bottom:18px;
+  }
+  header.hero h1{
+    color:var(--paper);
+    font-size:clamp(34px,6vw,64px);
+    font-weight:700;
+    max-width:900px;
+    margin:0 auto 18px;
+    line-height:1.08;
+  }
+  header.hero h1 em{ color:var(--saffron); font-style:italic; }
+  header.hero p.sub{
+    max-width:640px; margin:0 auto; font-size:17px; color:#DCEDE6;
+  }
+  .cart-row{
+    margin-top:46px; display:flex; justify-content:center; gap:14px; flex-wrap:wrap;
+  }
+  .cart-row span{
+    font-family:'Space Mono',monospace; font-size:12.5px;
+    background:rgba(255,255,255,0.10); border:1px solid rgba(255,255,255,0.25);
+    padding:8px 14px; border-radius:30px; color:var(--paper);
+  }
+  .receipt-curl{
+    position:absolute; bottom:-1px; left:0; width:100%; line-height:0;
+  }
+
+  /* ================= SECTIONS ================= */
+  section{
+    max-width:980px; margin:0 auto; padding:70px 24px;
+  }
+  section.wide{max-width:1120px;}
+  .eyebrow{
+    font-family:'Space Mono',monospace; font-size:12px; letter-spacing:2px;
+    text-transform:uppercase; color:var(--saffron-deep); margin-bottom:10px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow .num{
+    background:var(--green-deep); color:var(--paper); border-radius:50%;
+    width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center;
+    font-size:11px;
+  }
+  h2.title{font-size:clamp(26px,4vw,38px); margin-bottom:6px;}
+  p.lede{font-size:16.5px; max-width:680px; color:#33473F;}
+
+  /* Story vs Formal two-column */
+  .duo{
+    display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-top:34px;
+  }
+  @media (max-width:800px){ .duo{grid-template-columns:1fr;} }
+
+  .story-card{
+    background:var(--white);
+    border-radius:18px;
+    padding:26px 26px 22px;
+    box-shadow:var(--shadow);
+    position:relative;
+    border-left:5px solid var(--saffron);
+  }
+  .story-card .label{
+    font-family:'Space Mono',monospace; font-size:11px; letter-spacing:1.5px;
+    text-transform:uppercase; color:var(--saffron-deep); margin-bottom:10px; display:block;
+  }
+  .story-card p, .story-card li{font-size:15px; color:#26362F;}
+  .story-card .say{
+    background:var(--green-pale); border-radius:12px 12px 12px 2px;
+    padding:10px 14px; margin:10px 0; font-size:14.5px; display:inline-block;
+  }
+
+  /* Receipt = formal definition card, the signature element */
+  .receipt{
+    background:var(--paper);
+    padding:26px 24px 30px;
+    font-family:'Space Mono',monospace;
+    font-size:13.5px;
+    color:#2A2013;
+    position:relative;
+    box-shadow:var(--shadow);
+    -webkit-mask-image: linear-gradient(#000 0 0);
+  }
+  .receipt::before, .receipt::after{
+    content:"";
+    position:absolute; left:0; right:0; height:10px;
+    background:
+      linear-gradient(135deg, var(--bg) 50%, transparent 50%) 0 0/12px 12px repeat-x,
+      linear-gradient(-135deg, var(--bg) 50%, transparent 50%) 0 0/12px 12px repeat-x;
+    background-color:var(--paper);
+  }
+  .receipt::before{ top:-1px; }
+  .receipt::after{ bottom:-1px; transform:rotate(180deg); }
+  .receipt .r-head{
+    text-align:center; border-bottom:1px dashed var(--paper-line); padding-bottom:12px; margin-bottom:12px;
+  }
+  .receipt .r-head b{ font-size:14px; letter-spacing:1px; }
+  .receipt .r-head span{ display:block; font-size:10.5px; color:#7A6E4F; margin-top:4px;}
+  .receipt dl{margin:0;}
+  .receipt dt{ font-weight:700; margin-top:10px; color:var(--green-deep); }
+  .receipt dd{ margin:2px 0 0; color:#3A3220; }
+  .receipt .r-total{
+    border-top:1px dashed var(--paper-line); margin-top:14px; padding-top:10px;
+    display:flex; justify-content:space-between; font-weight:700; color:var(--green-deep);
+  }
+  .receipt .barcode{
+    margin-top:16px; height:26px;
+    background:repeating-linear-gradient(90deg,#2A2013 0 2px, transparent 2px 5px);
+    opacity:0.75;
+  }
+
+  /* process flow timeline */
+  .flow{
+    display:flex; flex-wrap:wrap; gap:0; margin-top:40px; counter-reset:step;
+  }
+  .flow .step{
+    flex:1 1 150px; position:relative; text-align:center; padding:20px 10px;
+  }
+  .flow .step .dot{
+    width:46px; height:46px; border-radius:50%; margin:0 auto 12px;
+    background:var(--green); color:var(--paper); display:flex; align-items:center; justify-content:center;
+    font-family:'Space Mono',monospace; font-weight:700; font-size:16px;
+    box-shadow:0 6px 16px rgba(31,111,92,0.35);
+  }
+  .flow .step:nth-child(even) .dot{ background:var(--saffron); color:var(--green-deep); box-shadow:0 6px 16px rgba(242,169,59,0.4);}
+  .flow .step h4{ font-family:'Inter',sans-serif; font-weight:700; font-size:13.5px; margin:0 0 4px; color:var(--green-deep);}
+  .flow .step p{font-size:12px; color:#5A6B62; margin:0;}
+  .flow .step::after{
+    content:"→"; position:absolute; right:-6px; top:34px; color:var(--paper-line); font-size:20px; color:#B9C7BE;
+  }
+  .flow .step:last-child::after{content:none;}
+  @media (max-width:700px){ .flow .step::after{content:none;} }
+
+  /* Feasibility cards */
+  .grid3{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:34px; }
+  @media (max-width:860px){ .grid3{grid-template-columns:1fr;} }
+  .fcard{
+    background:var(--white); border-radius:16px; padding:24px; box-shadow:var(--shadow);
+    border-top:4px solid var(--green);
+  }
+  .fcard.economic{border-top-color:var(--saffron);}
+  .fcard.operational{border-top-color:var(--sky);}
+  .fcard h3{font-size:19px; margin-bottom:4px;}
+  .fcard .q{
+    font-family:'Space Mono',monospace; font-size:12.5px; color:var(--green-deep);
+    background:var(--green-pale); display:inline-block; padding:4px 10px; border-radius:20px; margin:8px 0 12px;
+  }
+  .fcard ul{ padding-left:18px; margin:8px 0; font-size:14px;}
+  .fcard .verdict{ margin-top:14px; font-weight:700; font-size:14px;}
+  .verdict.yes{color:var(--green);} .verdict.no{color:var(--red);}
+
+  /* Technique cards / accordion */
+  .tech-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:18px; margin-top:34px; }
+  @media (max-width:800px){ .tech-grid{grid-template-columns:1fr;} }
+  .tech{
+    background:var(--white); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow);
+    cursor:pointer; transition:box-shadow .2s;
+  }
+  .tech summary{
+    list-style:none; display:flex; align-items:center; gap:12px; font-weight:700; font-size:15.5px; color:var(--green-deep);
+  }
+  .tech summary::-webkit-details-marker{display:none;}
+  .tech summary .ic{
+    width:34px; height:34px; border-radius:50%; background:var(--green-pale); color:var(--green);
+    display:flex; align-items:center; justify-content:center; font-size:16px; flex:none;
+  }
+  .tech summary::after{ content:"+"; margin-left:auto; font-size:20px; color:var(--saffron-deep); font-weight:400;}
+  .tech[open] summary::after{content:"–";}
+  .tech .body{ margin-top:12px; padding-left:46px; font-size:14px; color:#33473F;}
+  .tech .body .pro{color:var(--green);} .tech .body .con{color:var(--red);}
+
+  /* conflict examples */
+  .clash{
+    display:grid; gap:16px; margin-top:30px;
+  }
+  .clash .row{
+    background:var(--white); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow);
+    display:grid; grid-template-columns:110px 1fr; gap:16px; align-items:start;
+  }
+  @media (max-width:640px){ .clash .row{grid-template-columns:1fr;} }
+  .clash .tagbox{
+    font-family:'Space Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:1px;
+    background:var(--red); color:#fff; padding:6px 10px; border-radius:8px; text-align:center; height:fit-content;
+  }
+  .clash .row.amb .tagbox{background:var(--saffron-deep);}
+  .clash .row.inc .tagbox{background:var(--sky);}
+  .clash .bubble{
+    background:var(--green-pale); border-radius:10px 10px 10px 2px; padding:8px 12px; display:inline-block; font-size:14px; margin:4px 6px 4px 0;
+  }
+
+  /* functional / non-functional */
+  .split{ display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:34px; }
+  @media (max-width:760px){ .split{grid-template-columns:1fr;} }
+  .split .box{ border-radius:16px; padding:26px; color:#fff; box-shadow:var(--shadow); }
+  .split .func{ background:linear-gradient(160deg,var(--green-deep),var(--green)); }
+  .split .nonfunc{ background:linear-gradient(160deg,#8A5A18,var(--saffron-deep)); }
+  .split .box h3{ color:#fff; font-size:20px; margin-bottom:8px;}
+  .split .box .q{ font-family:'Space Mono',monospace; font-size:13px; opacity:.85; margin-bottom:14px;}
+  .split .box ul{ padding-left:18px; margin:0; font-size:14.5px;}
+  .split .box li{ margin-bottom:6px; }
+
+  /* priority ladder */
+  .ladder{ margin-top:34px; display:grid; gap:12px; }
+  .ladder .lv{
+    display:flex; align-items:center; gap:16px; background:var(--white); border-radius:12px;
+    padding:14px 20px; box-shadow:var(--shadow);
+  }
+  .ladder .bar{ height:14px; border-radius:8px; }
+  .ladder .high .bar{ width:90%; background:var(--red); }
+  .ladder .med .bar{ width:60%; background:var(--saffron); }
+  .ladder .low .bar{ width:30%; background:var(--sky); }
+  .ladder .lv b{ min-width:90px; font-size:13px; font-family:'Space Mono',monospace; }
+  .ladder .lv span.items{ font-size:13.5px; color:#4A5A52; margin-left:auto; text-align:right;}
+
+  /* keyword table (receipt style) */
+  .glossary{
+    margin-top:34px; background:var(--paper); border-radius:4px; box-shadow:var(--shadow);
+    padding:6px 0; overflow:hidden;
+  }
+  .glossary::before{
+    content:""; display:block; height:10px;
+    background:linear-gradient(135deg, var(--bg) 50%, transparent 50%) 0 0/14px 14px repeat-x,
+               linear-gradient(-135deg, var(--bg) 50%, transparent 50%) 0 0/14px 14px repeat-x;
+    background-color:var(--paper);
+  }
+  .glossary table{ width:100%; border-collapse:collapse; font-family:'Space Mono',monospace; font-size:13px;}
+  .glossary th{ text-align:left; padding:14px 24px 10px; color:var(--green-deep); border-bottom:1px dashed var(--paper-line); font-size:12px; text-transform:uppercase; letter-spacing:1px;}
+  .glossary td{ padding:10px 24px; border-bottom:1px dashed var(--paper-line); color:#3A3220;}
+  .glossary tr:last-child td{border-bottom:none;}
+
+  /* final recap */
+  .recap{
+    background:linear-gradient(160deg, var(--green-deep), #1a4a3f); color:var(--paper);
+    border-radius:24px; padding:50px 34px; margin:70px auto; max-width:980px; text-align:center;
+  }
+  .recap h2{ color:#fff; }
+  .recap .chain{
+    display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:26px;
+  }
+  .recap .chain span{
+    font-family:'Space Mono',monospace; font-size:13px; background:rgba(255,255,255,0.09);
+    border:1px solid rgba(255,255,255,0.2); padding:8px 14px; border-radius:30px;
+  }
+  .recap .chain .arrow{ background:none; border:none; opacity:.5; padding:8px 0;}
+
+  footer{ text-align:center; padding:40px 24px 60px; font-size:13px; color:#7C8B83; }
+
+  /* reveal animation */
+  .reveal{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+  .reveal.show{ opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<nav class="stage-nav">
+  <a href="#intro">Intro</a>
+  <a href="#definition">What is RE?</a>
+  <a href="#flow">Process</a>
+  <a href="#feasibility">Feasibility</a>
+  <a href="#elicitation">Elicitation</a>
+  <a href="#analysis">Analysis</a>
+  <a href="#classification">Functional/Non</a>
+  <a href="#priority">Priority</a>
+  <a href="#srs">SRS</a>
+  <a href="#validation">Validation</a>
+  <a href="#management">Management</a>
+  <a href="#glossary">Glossary</a>
+</nav>
+
+<header class="hero" id="intro">
+  <div class="tag">Prepared by Ms.A.Kiruthika AP/CSE , KEC</div>
+  <h1>Requirement Engineering,<br>told through <em>Karthik Supermarket</em></h1>
+  <p class="sub">Karthik opened a supermarket. It grew fast — and started breaking in all the usual places: slow billing, vanishing stock, guesswork instead of numbers. Every formal idea in Requirement Engineering exists because of problems exactly like his. Follow his supermarket from chaos to a working system, one stage at a time.</p>
+  <div class="cart-row">
+    <span>🧾 Billing takes too long</span>
+    <span>📦 Products go out of stock</span>
+    <span>📓 Inventory in notebooks</span>
+    <span>❓ No clear plan yet</span>
+  </div>
+</header>
+
+<section id="definition">
+  <div class="eyebrow"><span class="num">1</span> The Core Idea</div>
+  <h2 class="title">Before a single line of code</h2>
+  <p class="lede">Karthik walks into a software company and says one sentence. That sentence is not enough to start building anything — and figuring out why is the whole point of this chapter.</p>
+
+  <div class="duo">
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p>Karthik says:</p>
+      <span class="say">"I need a Grocery Management System for my supermarket."</span>
+      <p>Can the developers start coding immediately? <b>No.</b> A single sentence hides dozens of unanswered questions — what should the system actually do, for whom, and how well? Someone has to dig those answers out, write them down, and confirm they're right before any development begins.</p>
+    </div>
+    <div class="receipt">
+      <div class="r-head"><b>DEFINITION SLIP</b><span>REQUIREMENT ENGINEERING (RE)</span></div>
+      <dl>
+        <dt>What it is</dt>
+        <dd>The systematic process of discovering, analyzing, documenting, validating, and managing requirements throughout software development.</dd>
+        <dt>In five verbs</dt>
+        <dd>Find them → Analyze them → Document them → Validate them → Manage changes in them.</dd>
+        <dt>Why it exists</dt>
+        <dd>To understand customer needs, remove ambiguity, avoid misunderstandings, cut wasted cost, and raise satisfaction.</dd>
+      </dl>
+      <div class="r-total"><span>STATUS</span><span>REQUIRED BEFORE CODING</span></div>
+      <div class="barcode"></div>
+    </div>
+  </div>
+</section>
+
+<section class="wide" id="flow">
+  <div class="eyebrow"><span class="num">2</span> The Whole Journey</div>
+  <h2 class="title">One problem, six stages, one working system</h2>
+  <p class="lede">Karthik's one sentence turns into a working supermarket system by passing through the same six gates every software project passes through.</p>
+  <div class="flow">
+    <div class="step"><div class="dot">1</div><h4>Feasibility Study</h4><p>Can we even build this?</p></div>
+    <div class="step"><div class="dot">2</div><h4>Elicitation</h4><p>What do you actually want?</p></div>
+    <div class="step"><div class="dot">3</div><h4>Analysis</h4><p>Let's untangle and organize it.</p></div>
+    <div class="step"><div class="dot">4</div><h4>Specification (SRS)</h4><p>Write it down properly.</p></div>
+    <div class="step"><div class="dot">5</div><h4>Validation</h4><p>Check it's right.</p></div>
+    <div class="step"><div class="dot">6</div><h4>Management</h4><p>Handle what changes later.</p></div>
+  </div>
+</section>
+
+<section id="feasibility">
+  <div class="eyebrow"><span class="num">3</span> Stage One</div>
+  <h2 class="title">Feasibility Study — "Should we even try?"</h2>
+  <p class="lede">Before anyone touches the keyboard, the team asks whether Karthik's Grocery Management System is worth building at all — technically, financially, and in everyday practice.</p>
+
+  <div class="receipt" style="margin-top:30px;">
+    <div class="r-head"><b>DEFINITION SLIP</b><span>FEASIBILITY STUDY</span></div>
+    <dl><dt>What it is</dt><dd>The process of determining whether a proposed software project is practical, acceptable to users, adaptable to change, and conformant to standards — before real investment begins.</dd></dl>
+    <div class="barcode"></div>
+  </div>
+
+  <div class="grid3">
+    <div class="fcard">
+      <h3>Technical Feasibility</h3>
+      <div class="q">Can we build it?</div>
+      <p>Karthik wants a barcode scanner, online payment, and inventory tracking. The team checks:</p>
+      <ul><li>Do we have the required hardware?</li><li>Do we have the right software tools?</li><li>Do we have skilled developers for this?</li></ul>
+      <div class="verdict yes">✅ Technology available → Technically Feasible</div>
+    </div>
+    <div class="fcard economic">
+      <h3>Economic Feasibility</h3>
+      <div class="q">Can we afford it?</div>
+      <p>The numbers are compared directly — cost to build versus benefit gained.</p>
+      <ul><li>Cost to develop: ₹1,00,000</li><li>Expected benefit: ₹5,00,000</li></ul>
+      <div class="verdict yes">✅ Benefit &gt; Cost → Economically Feasible</div>
+    </div>
+    <div class="fcard operational">
+      <h3>Operational Feasibility</h3>
+      <div class="q">Will people actually use it?</div>
+      <p>A perfect system that nobody uses has failed. So the team asks whether Karthik's cashiers are comfortable using computers at all.</p>
+      <ul><li>Will staff accept the new workflow?</li><li>Does it truly solve the day-to-day problem?</li></ul>
+      <div class="verdict no">❌ Staff resist computers → Can be Operationally Infeasible</div>
+    </div>
+  </div>
+</section>
+
+<section id="elicitation">
+  <div class="eyebrow"><span class="num">4</span> Stage Two</div>
+  <h2 class="title">Requirement Elicitation — "What do you actually want?"</h2>
+  <p class="lede">"A Grocery Management System" is a starting sentence, not a specification. The developer now goes and talks to everyone the system will touch.</p>
+
+  <div class="duo">
+    <div class="story-card">
+      <span class="label">The Story — Stakeholders</span>
+      <p>People affected by the new system:</p>
+      <ul><li>Karthik, the Owner — wants billing, sales reports, inventory control</li><li>The Cashier — wants a barcode scanner and product search</li><li>The Inventory Manager — wants low-stock alerts and supplier details</li><li>Customers and Suppliers — affected indirectly</li></ul>
+      <p>Each of them hands over a different piece of the puzzle. Together, this is called <b>Requirements Discovery</b>.</p>
+    </div>
+    <div class="receipt">
+      <div class="r-head"><b>DEFINITION SLIP</b><span>REQUIREMENT ELICITATION</span></div>
+      <dl>
+        <dt>What it is</dt>
+        <dd>The process of gathering requirements from stakeholders — people affected by the software.</dd>
+        <dt>Also known as</dt>
+        <dd>Requirements gathering, using customers and existing system processes as input.</dd>
+      </dl>
+      <div class="barcode"></div>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top:36px;">Six proven ways to pull requirements out of people's heads — tap each one open.</p>
+  <div class="tech-grid">
+    <details class="tech">
+      <summary><span class="ic">🗣️</span>1. Interview</summary>
+      <div class="body">Developer meets a stakeholder directly. <em>"How many products do you stock? How is billing done today? Do you need barcode scanning?"</em><br><span class="pro">+ Detailed, immediate clarification.</span> <span class="con">− Time-consuming; different people may answer differently.</span></div>
+    </details>
+    <details class="tech">
+      <summary><span class="ic">📋</span>2. Questionnaire</summary>
+      <div class="body">A prepared list of questions goes out to many people at once. <em>"Need online payment? Need a sales report? Need supplier management?"</em><br><span class="pro">+ Easy to reach many users.</span> <span class="con">− Answers can be shallow or skipped.</span></div>
+    </details>
+    <details class="tech">
+      <summary><span class="ic">👀</span>3. Observation</summary>
+      <div class="body">Watch the current system in action rather than asking about it. Karthik's billing takes 5 minutes; stock is tracked by hand in a notebook.<br><span class="pro">+ Reveals the real, unspoken requirement.</span> <span class="con">− Time-consuming.</span></div>
+    </details>
+    <details class="tech">
+      <summary><span class="ic">💡</span>4. Brainstorming</summary>
+      <div class="body">Owner, cashier, and inventory manager sit together: "Need reports." "Need faster billing." "Need low-stock alerts."<br><span class="pro">+ Generates many ideas fast.</span> <span class="con">− Hard to manage a large group.</span></div>
+    </details>
+    <details class="tech">
+      <summary><span class="ic">🖥️</span>5. Prototyping</summary>
+      <div class="body">Build sample screens — a login page, a billing page — and let Karthik react. He asks for a barcode scanner and a discount feature once he sees it.<br><span class="pro">+ Very easy for a customer to understand and react to.</span> <span class="con">− Time-consuming to build.</span></div>
+    </details>
+    <details class="tech">
+      <summary><span class="ic">🏬</span>6. Domain Analysis</summary>
+      <div class="body">Study similar, already-working systems — like D-Mart or Reliance Smart's software — to learn common, expected features before asking Karthik anything.<br><span class="pro">+ Borrows proven ideas.</span> <span class="con">− Only works if similar systems exist to study.</span></div>
+    </details>
+  </div>
+</section>
+
+<section id="analysis">
+  <div class="eyebrow"><span class="num">5</span> Stage Three</div>
+  <h2 class="title">Requirement Analysis — "Let's untangle this"</h2>
+  <p class="lede">Once requirements are collected from many people, they rarely agree with each other. Analysis is the clean-up stage: find the errors, conflicts, gaps, and duplicates before writing anything formal.</p>
+
+  <div class="receipt" style="margin-top:26px;">
+    <div class="r-head"><b>DEFINITION SLIP</b><span>REQUIREMENT ANALYSIS</span></div>
+    <dl><dt>What it is</dt><dd>The process of examining, organizing, refining, and resolving conflicts among collected requirements.</dd></dl>
+    <div class="barcode"></div>
+  </div>
+
+  <div class="clash">
+    <div class="row">
+      <div class="tagbox">Conflict</div>
+      <div>
+        <div class="bubble">Owner: "Only Admin should delete products."</div>
+        <div class="bubble">Cashier: "I also want to delete products."</div>
+        <p style="margin:8px 0 0;">Two stakeholders want contradictory rules for the same feature — analysis has to resolve who's right.</p>
+      </div>
+    </div>
+    <div class="row amb">
+      <div class="tagbox">Ambiguity</div>
+      <div>
+        <div class="bubble">Owner: "The system should be fast."</div>
+        <p style="margin:8px 0 0;">Fast how? 1 second? 5 seconds? 10 seconds? Vague words like "fast" have to be turned into a measurable number.</p>
+      </div>
+    </div>
+    <div class="row inc">
+      <div class="tagbox">Incomplete</div>
+      <div>
+        <div class="bubble">Owner: "I need billing."</div>
+        <p style="margin:8px 0 0;">Cash only? UPI? Credit card? Discounts? The requirement is missing the details that actually decide what gets built.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="classification">
+  <div class="eyebrow"><span class="num">6</span> Sorting the Requirements</div>
+  <h2 class="title">Functional vs. Non-Functional</h2>
+  <p class="lede">Once the confusion is cleared up, every surviving requirement gets sorted into one of two families.</p>
+  <div class="split">
+    <div class="box func">
+      <h3>Functional Requirements</h3>
+      <div class="q">Describe WHAT the system should do</div>
+      <ul>
+        <li>Add a product</li>
+        <li>Search a product</li>
+        <li>Generate a bill</li>
+        <li>Generate sales reports</li>
+        <li>Give groups of users separate rights</li>
+      </ul>
+    </div>
+    <div class="box nonfunc">
+      <h3>Non-Functional Requirements</h3>
+      <div class="q">Describe HOW the system should behave</div>
+      <ul>
+        <li>Response time under 2 seconds</li>
+        <li>Secure login</li>
+        <li>Support for 20 concurrent users</li>
+        <li>Security, storage, performance, cost</li>
+        <li>Flexibility &amp; disaster recovery</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="priority">
+  <div class="eyebrow"><span class="num">7</span> Choosing What Matters</div>
+  <h2 class="title">Prioritization &amp; Negotiation</h2>
+  <p class="lede">Karthik's wish list is bigger than his budget: billing, a delivery app, AI-based prediction, a mobile app. Not everything can be built first — so requirements get ranked, and the rest gets negotiated.</p>
+  <div class="ladder">
+    <div class="lv high"><b>HIGH</b><div class="bar"></div><span class="items">Billing · Product Search</span></div>
+    <div class="lv med"><b>MEDIUM</b><div class="bar"></div><span class="items">Sales Reports</span></div>
+    <div class="lv low"><b>LOW</b><div class="bar"></div><span class="items">Dark Theme · Animated Buttons</span></div>
+  </div>
+  <div class="story-card" style="margin-top:22px; border-left-color:var(--sky);">
+    <span class="label">Negotiation, in one line</span>
+    <p>The budget only supports the basics for now. The developer and Karthik sit down and agree on what actually gets built in this round — that agreement itself is called <b>Requirement Negotiation</b>.</p>
+  </div>
+</section>
+
+<section id="srs">
+  <div class="eyebrow"><span class="num">8</span> Stage Four</div>
+  <h2 class="title">Software Requirement Specification (SRS)</h2>
+  <p class="lede">Everything discovered, cleaned, sorted, and agreed upon now gets written into one formal document — in technical language the development team can build from.</p>
+  <div class="duo">
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p>Karthik spoke in plain language: "I need billing, and I want it fast, and it should be secure." The analyst rewrites this into precise, technical, testable statements the whole dev team can act on.</p>
+      <p><b>Models used to describe it:</b></p>
+      <ul>
+        <li><b>Data Flow Diagrams (DFD):</b> show how data moves through the system</li>
+        <li><b>Data Dictionaries:</b> repositories describing every data item used in the DFDs</li>
+        <li><b>Entity-Relationship Diagrams (ER):</b> the data, its relationships, and attributes</li>
+      </ul>
+    </div>
+    <div class="receipt">
+      <div class="r-head"><b>DEFINITION SLIP</b><span>SOFTWARE REQUIREMENT SPECIFICATION</span></div>
+      <dl>
+        <dt>What it is</dt>
+        <dd>A formal document, written by a software analyst, containing all software requirements in technical language.</dd>
+        <dt>Sample: Functional</dt>
+        <dd>Product Search · Billing · Inventory Management</dd>
+        <dt>Sample: Non-Functional</dt>
+        <dd>Response time &lt; 2 seconds · Secure login</dd>
+      </dl>
+      <div class="r-total"><span>DOCUMENT</span><span>READY FOR REVIEW</span></div>
+      <div class="barcode"></div>
+    </div>
+  </div>
+</section>
+
+<section id="validation">
+  <div class="eyebrow"><span class="num">9</span> Stage Five</div>
+  <h2 class="title">Requirement Validation — "Is this actually right?"</h2>
+  <p class="lede">A written SRS can still be wrong. Validation is the final quality check before development truly begins.</p>
+  <div class="duo">
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p>The SRS claims the system should support <b>10,000 users</b>. Karthik reads it and says:</p>
+      <span class="say">"I have only 5 employees."</span>
+      <p>The requirement is technically written down — but it's incorrect for this business. Validation catches exactly this kind of mismatch before it becomes wasted code.</p>
+    </div>
+    <div class="receipt">
+      <div class="r-head"><b>DEFINITION SLIP</b><span>REQUIREMENT VALIDATION</span></div>
+      <dl>
+        <dt>Checked against</dt>
+        <dd>Can it be practically implemented? Is it correct? Is it complete? Is it unambiguous? Is it consistent?</dd>
+        <dt>Techniques</dt>
+        <dd>Requirements reviews/inspections · Prototyping · Test-case generation · Automated consistency analysis</dd>
+      </dl>
+      <div class="barcode"></div>
+    </div>
+  </div>
+</section>
+
+<section id="management">
+  <div class="eyebrow"><span class="num">10</span> Stage Six</div>
+  <h2 class="title">Requirement Management — "Things keep changing"</h2>
+  <p class="lede">Software ships, but the story doesn't end there. Karthik keeps calling, month after month.</p>
+  <div class="flow" style="margin-top:20px;">
+    <div class="step"><div class="dot">📞</div><h4>Month 1</h4><p>"Add UPI Payment"</p></div>
+    <div class="step"><div class="dot">📞</div><h4>Month 2</h4><p>"Add Home Delivery"</p></div>
+    <div class="step"><div class="dot">📞</div><h4>Month 3</h4><p>"Add WhatsApp Invoice"</p></div>
+  </div>
+  <div class="receipt" style="margin-top:30px;">
+    <div class="r-head"><b>DEFINITION SLIP</b><span>REQUIREMENT MANAGEMENT</span></div>
+    <dl><dt>What it is</dt><dd>The process of managing changing requirements during requirements engineering and throughout system development, so growth stays controlled instead of chaotic.</dd></dl>
+    <div class="barcode"></div>
+  </div>
+</section>
+
+<div class="recap">
+  <div class="eyebrow" style="justify-content:center; color:var(--saffron);"><span class="num" style="background:var(--saffron); color:var(--green-deep);">✓</span> The One-Line Memory Story</div>
+  <h2>If you remember Karthik, you remember the whole chapter</h2>
+  <div class="chain">
+    <span>Can we build it?</span><span class="arrow">→</span>
+    <span>What do you want?</span><span class="arrow">→</span>
+    <span>Let's organize it</span><span class="arrow">→</span>
+    <span>What matters most?</span><span class="arrow">→</span>
+    <span>Let's agree</span><span class="arrow">→</span>
+    <span>Write it down</span><span class="arrow">→</span>
+    <span>Check it</span><span class="arrow">→</span>
+    <span>Manage changes</span>
+  </div>
+</div>
+
+<section id="glossary">
+  <div class="eyebrow"><span class="num">✓</span> Keep for Quick Revision</div>
+  <h2 class="title">Glossary Receipt</h2>
+  <div class="glossary">
+    <table>
+      <tr><th>Term</th><th>Meaning</th></tr>
+      <tr><td>Stakeholder</td><td>Anyone affected by the software</td></tr>
+      <tr><td>Feasibility Study</td><td>Checking whether the project is practical</td></tr>
+      <tr><td>Requirement Elicitation</td><td>Gathering requirements from people</td></tr>
+      <tr><td>Requirements Discovery</td><td>Identifying stakeholder needs</td></tr>
+      <tr><td>Requirement Analysis</td><td>Refining and resolving requirements</td></tr>
+      <tr><td>Functional Requirement</td><td>WHAT the system should do</td></tr>
+      <tr><td>Non-Functional Requirement</td><td>HOW the system should behave</td></tr>
+      <tr><td>Prioritization</td><td>Deciding what matters most</td></tr>
+      <tr><td>Negotiation</td><td>Reaching agreement within budget</td></tr>
+      <tr><td>SRS</td><td>Formal document of all requirements</td></tr>
+      <tr><td>Validation</td><td>Checking correctness before build</td></tr>
+      <tr><td>Requirement Management</td><td>Handling changes over time</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>Requirement Engineering : Prepared by MS .A. KIRUTHIKA , AP/CSE , KEC</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('section, .recap');
+    els.forEach(el => el.classList.add('reveal'));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } });
+    }, {threshold:0.1});
+    els.forEach(el => io.observe(el));
+  });
+</script>
+
+</body>
+</html>

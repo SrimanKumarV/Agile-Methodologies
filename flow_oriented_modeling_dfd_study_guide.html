@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flow-Oriented Modeling &amp; Data Flow Diagrams — Study Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#152238; --navy:#1B2A4A; --navy-deep:#0F1A30;
+    --blue:#2F6FED; --blue-deep:#1D4ED8; --blue-pale:#E8F0FE;
+    --teal:#0EA5A5; --teal-deep:#0A7A7A; --teal-pale:#E3F7F5;
+    --amber:#E08A1E; --amber-deep:#B36A0F; --amber-pale:#FCF0DD;
+    --violet:#7C5CFC; --violet-deep:#5B3FD6; --violet-pale:#EFEBFF;
+    --coral:#E14B3A; --coral-deep:#B5372A; --coral-pale:#FBE9E7;
+    --green:#1F9D62; --green-deep:#167A4C; --green-pale:#E4F7ED;
+    --bg:#F4F6FB; --white:#FFFFFF; --line:#DEE4F0;
+    --shadow:0 10px 28px rgba(15,26,48,0.10);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.65; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4,.display{font-family:'Space Grotesk',sans-serif; color:var(--navy); margin:0;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  svg{display:block; max-width:100%; height:auto;}
+  a{color:inherit;}
+
+  nav.top{
+    position:sticky; top:0; z-index:60; background:rgba(244,246,251,0.94); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line); overflow-x:auto; white-space:nowrap; padding:10px 16px; display:flex; gap:6px;
+  }
+  nav.top a{
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; text-decoration:none; color:var(--navy);
+    padding:7px 13px; border-radius:20px; border:1px solid var(--line); opacity:.8; transition:all .2s; flex:0 0 auto;
+  }
+  nav.top a:hover{opacity:1; border-color:var(--blue); background:var(--blue-pale); color:var(--blue-deep);}
+
+  header.hero{
+    position:relative; padding:80px 24px 96px; text-align:center; overflow:hidden; color:#EAF0FF;
+    background:
+      radial-gradient(circle at 85% 10%, rgba(124,92,252,0.35), transparent 45%),
+      linear-gradient(155deg, var(--navy-deep) 0%, var(--navy) 55%, #223764 100%);
+  }
+  header.hero::before{
+    content:""; position:absolute; inset:0; opacity:.07; pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
+    background-size:32px 32px;
+  }
+  header.hero .tag{font-family:'JetBrains Mono',monospace; letter-spacing:3px; text-transform:uppercase; font-size:12px; color:var(--teal); margin-bottom:16px; position:relative;}
+  header.hero h1{font-size:clamp(30px,5.2vw,50px); font-weight:700; max-width:880px; margin:0 auto 16px; line-height:1.15; position:relative; color:#F7F9FF;}
+  header.hero h1 em{color:var(--amber); font-style:italic;}
+  header.hero p.sub{max-width:660px; margin:0 auto; font-size:16.5px; color:#C9D4EE; position:relative;}
+  .chip-row{margin-top:38px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; position:relative;}
+  .chip-row span{font-family:'JetBrains Mono',monospace; font-size:12px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.25); padding:7px 14px; border-radius:30px;}
+
+  section{max-width:1080px; margin:0 auto; padding:64px 24px;}
+  section.wide{max-width:1220px;}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:2px; text-transform:uppercase; color:var(--teal-deep); margin-bottom:10px; display:flex; align-items:center; gap:10px;}
+  .eyebrow .num{background:var(--navy); color:#fff; border-radius:50%; width:23px; height:23px; display:inline-flex; align-items:center; justify-content:center; font-size:10.5px;}
+  h2.title{font-size:clamp(24px,3.6vw,34px); margin-bottom:6px;}
+  p.lede{font-size:16px; max-width:720px; color:#3B4864;}
+
+  /* ---- 7-step concept scaffold ---- */
+  .concept{margin-top:38px; background:var(--white); border-radius:18px; box-shadow:var(--shadow); border:1px solid var(--line); overflow:hidden;}
+  .concept-head{padding:20px 26px; background:var(--navy); color:#fff; display:flex; align-items:center; gap:12px;}
+  .concept-head .idx{font-family:'JetBrains Mono',monospace; background:rgba(255,255,255,.14); border-radius:8px; padding:4px 10px; font-size:12px;}
+  .concept-head h3{font-size:19px; color:#fff;}
+  .concept-body{padding:8px 26px 26px;}
+  .step{padding:18px 0; border-bottom:1px dashed var(--line);}
+  .step:last-child{border-bottom:none;}
+  .step .step-label{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; display:inline-flex; align-items:center; gap:8px; padding:4px 11px; border-radius:20px; margin-bottom:10px; font-weight:700;}
+  .step p, .step li{font-size:14.8px; color:#33405C; margin:6px 0;}
+  .step.story .step-label{background:var(--amber-pale); color:var(--amber-deep);}
+  .step.intuition .step-label{background:var(--teal-pale); color:var(--teal-deep);}
+  .step.definition .step-label{background:var(--violet-pale); color:var(--violet-deep);}
+  .step.example .step-label{background:var(--blue-pale); color:var(--blue-deep);}
+  .step.diagram .step-label{background:#EEF1F8; color:var(--navy);}
+  .step.errors .step-label{background:var(--coral-pale); color:var(--coral-deep);}
+  .step.summary .step-label{background:var(--green-pale); color:var(--green-deep);}
+  .def-box{background:var(--violet-pale); border-left:4px solid var(--violet); border-radius:10px; padding:12px 16px; font-size:14.8px; color:var(--navy); margin:8px 0;}
+  .say{background:var(--teal-pale); border-radius:12px 12px 12px 2px; padding:9px 14px; margin:5px 0; font-size:14px; display:inline-block;}
+  .ask{background:#EEF1F8; border-radius:12px 2px 12px 12px; padding:9px 14px; margin:5px 0; font-size:14px; display:inline-block; font-style:italic;}
+  .err-line{display:flex; gap:10px; align-items:flex-start; font-size:14.3px; margin:8px 0; color:#33405C;}
+  .err-line .x{color:var(--coral-deep); font-weight:700;}
+  .summary-line{display:flex; gap:10px; align-items:flex-start; font-size:14.6px; margin:6px 0; color:#233047;}
+  .summary-line .c{color:var(--green-deep); font-weight:700;}
+
+  .diagram-frame{background:#FBFCFE; border:1px solid var(--line); border-radius:14px; padding:18px; margin-top:6px; overflow-x:auto;}
+  .diagram-frame .cap{font-family:'JetBrains Mono',monospace; font-size:11px; color:#5B6885; text-align:center; margin-top:10px;}
+  .legend{display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-top:14px; font-size:11.5px; font-family:'JetBrains Mono',monospace; color:#3B4864;}
+  .legend span{display:flex; align-items:center; gap:6px;}
+  .legend i{width:14px; height:14px; display:inline-block; border-radius:3px;}
+
+  .grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:10px;}
+  @media (max-width:900px){.grid4{grid-template-columns:repeat(2,1fr);}}
+  .comp-card{background:var(--white); border-radius:14px; box-shadow:var(--shadow); overflow:hidden; border-top:4px solid var(--blue);}
+  .comp-card.ee{border-top-color:var(--amber);}
+  .comp-card.ds{border-top-color:var(--violet);}
+  .comp-card.df{border-top-color:var(--teal);}
+  .comp-card .sym{background:#FAFBFF; padding:14px; display:flex; align-items:center; justify-content:center; height:76px;}
+  .comp-card .info{padding:12px 14px 16px;}
+  .comp-card h4{font-size:13.5px; margin-bottom:4px; color:var(--navy);}
+  .comp-card p{font-size:12px; color:#4A5670; margin:3px 0;}
+
+  .rules-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:8px;}
+  @media (max-width:820px){.rules-grid{grid-template-columns:1fr;}}
+  .rule-card{background:var(--white); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow); border:1px solid var(--line);}
+  .rule-card h4{font-size:14px; color:var(--navy); margin-bottom:10px;}
+  .rule-pair{display:flex; gap:12px; flex-wrap:wrap;}
+  .rule-pair .half{flex:1 1 150px; text-align:center;}
+  .rule-pair .tag{font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:1px; padding:3px 9px; border-radius:12px; display:inline-block; margin-bottom:6px;}
+  .rule-pair .tag.wrong{background:var(--coral-pale); color:var(--coral-deep);}
+  .rule-pair .tag.right{background:var(--green-pale); color:var(--green-deep);}
+
+  table.ref{width:100%; border-collapse:collapse; font-size:13.8px; background:var(--white); border-radius:14px; overflow:hidden; box-shadow:var(--shadow); margin-top:10px;}
+  table.ref th{background:var(--navy); color:#fff; text-align:left; padding:11px 18px; font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:1px;}
+  table.ref td{padding:11px 18px; border-bottom:1px solid var(--line); color:var(--ink);}
+  table.ref tr:last-child td{border-bottom:none;}
+
+  .levels-map{display:flex; justify-content:center; gap:0; margin-top:20px; flex-wrap:wrap;}
+  .levels-map .lv{flex:1 1 220px; background:var(--white); border-radius:14px; box-shadow:var(--shadow); padding:18px; margin:8px; border-top:4px solid var(--blue);}
+  .levels-map .lv:nth-child(2){border-top-color:var(--teal);}
+  .levels-map .lv:nth-child(3){border-top-color:var(--violet);}
+  .levels-map .lv h4{font-size:13.5px; color:var(--navy); margin-bottom:8px;}
+  .levels-map .lv ul{margin:0; padding-left:18px; font-size:12.8px; color:#3B4864;}
+
+  .final-card{background:linear-gradient(135deg, var(--navy-deep), var(--navy)); color:#EAF0FF; border-radius:18px; padding:30px 32px; margin-top:16px;}
+  .final-card h4{color:#fff; font-size:16px; margin-bottom:10px;}
+  .final-card p{font-size:14.8px; color:#CBD6F0;}
+
+  footer{text-align:center; padding:40px 24px 60px; color:#6B7690; font-size:12.5px; font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <a href="#intro">1 · Intro</a>
+  <a href="#dfd">2 · What is DFD</a>
+  <a href="#components">3 · Components</a>
+  <a href="#rules">4 · Rules</a>
+  <a href="#level0">5 · Level 0</a>
+  <a href="#level1">6 · Level 1</a>
+  <a href="#level2">7 · Level 2</a>
+  <a href="#balancing">8 · Balancing</a>
+  <a href="#revision">9 · Revision</a>
+</nav>
+
+<header class="hero">
+  <div class="tag">Software Engineering · Analysis Modeling</div>
+  <h1>Flow-Oriented Modeling &amp; <em>Data Flow Diagrams</em></h1>
+  <p class="sub">A complete self-study guide built around one running example — the ATM system — showing how data enters, moves, transforms, and leaves a system across Level&nbsp;0, Level&nbsp;1, and Level&nbsp;2 diagrams.</p>
+  <div class="chip-row">
+    <span>Context Diagram</span><span>Level 1 DFD</span><span>Level 2 DFD</span><span>Balancing Rules</span><span>Common Errors</span>
+  </div>
+</header>
+
+<!-- ============================================================ -->
+<!-- 1. INTRODUCTION -->
+<!-- ============================================================ -->
+<section id="intro">
+  <div class="eyebrow"><span class="num">1</span>Introduction</div>
+  <h2 class="title">What Is Flow-Oriented Modeling?</h2>
+  <p class="lede">Before drawing a single diagram, it helps to understand the question flow-oriented modeling is really answering.</p>
+
+  <div class="concept">
+    <div class="concept-head"><span class="idx">CONCEPT</span><h3>Flow-Oriented Modeling</h3></div>
+    <div class="concept-body">
+
+      <div class="step story">
+        <span class="step-label">① Story</span>
+        <p>Imagine you walk up to an ATM. You insert your card, enter your PIN, enter an amount, and receive money.</p>
+        <span class="ask">How did the ATM know your balance? How did it verify your PIN? How did it update your account afterward?</span>
+        <p>Every one of those questions has the same answer.</p>
+        <span class="say">Because information — data — was moving between the customer, the machine, and the bank.</span>
+      </div>
+
+      <div class="step intuition">
+        <span class="step-label">② Intuition</span>
+        <p>Some diagrams describe a system by asking <b>"who does what"</b> (actors and their goals). Flow-oriented modeling asks a different question entirely: <b>"what data moves, and how does it change shape as it moves?"</b> It follows the data — not the user — from the moment it enters the system to the moment it leaves.</p>
+      </div>
+
+      <div class="step definition">
+        <span class="step-label">③ Definition</span>
+        <div class="def-box"><b>Flow-Oriented Modeling</b> represents the way data objects are transformed as they move through a system — tracing input, processing, storage, and output.</div>
+      </div>
+
+      <div class="step example">
+        <span class="step-label">④ Example</span>
+        <p><b>ATM trace — what actually moves:</b></p>
+        <ul>
+          <li>Card Number → enters the system</li>
+          <li>PIN → sent for verification</li>
+          <li>Amount Requested → sent for processing</li>
+          <li>Balance → read from and written back to storage</li>
+          <li>Cash → produced as final output</li>
+        </ul>
+        <p>Card Number, PIN, Amount, and Balance are all <b>data</b> — this is exactly what flow-oriented modeling tracks.</p>
+      </div>
+
+      <div class="step diagram">
+        <span class="step-label">⑤ Correct Representation</span>
+        <div class="diagram-frame">
+          <svg viewBox="0 0 900 150" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="mk1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#0A7A7A"/></marker>
+            </defs>
+            <g font-family="Inter, sans-serif" font-size="13" fill="#152238">
+              <rect x="20" y="45" width="140" height="60" rx="8" fill="#FCF0DD" stroke="#B36A0F" stroke-width="2"/>
+              <text x="90" y="80" text-anchor="middle">Input Data</text>
+              <line x1="160" y1="75" x2="230" y2="75" stroke="#0A7A7A" stroke-width="2.5" marker-end="url(#mk1)"/>
+
+              <rect x="240" y="45" width="150" height="60" rx="8" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2"/>
+              <text x="315" y="80" text-anchor="middle">Processing</text>
+              <line x1="390" y1="75" x2="460" y2="75" stroke="#0A7A7A" stroke-width="2.5" marker-end="url(#mk1)"/>
+
+              <rect x="470" y="45" width="150" height="60" rx="8" fill="#EFEBFF" stroke="#5B3FD6" stroke-width="2"/>
+              <text x="545" y="80" text-anchor="middle">Storage</text>
+              <line x1="620" y1="75" x2="690" y2="75" stroke="#0A7A7A" stroke-width="2.5" marker-end="url(#mk1)"/>
+
+              <rect x="700" y="45" width="160" height="60" rx="8" fill="#E4F7ED" stroke="#167A4C" stroke-width="2"/>
+              <text x="780" y="80" text-anchor="middle">Output Data</text>
+            </g>
+          </svg>
+          <p class="cap">Every flow-oriented system reduces to this pipeline: Input → Processing → Storage → Output.</p>
+        </div>
+      </div>
+
+      <div class="step errors">
+        <span class="step-label">⑥ Common Errors</span>
+        <div class="err-line"><span class="x">✕</span><span>Confusing flow-oriented modeling with scenario-based modeling (they answer different questions — see the comparison in Section 9).</span></div>
+        <div class="err-line"><span class="x">✕</span><span>Describing the ATM story in terms of "steps the customer performs" instead of "data that moves" — this is a Use Case answer, not a DFD answer.</span></div>
+      </div>
+
+      <div class="step summary">
+        <span class="step-label">⑦ Summary</span>
+        <div class="summary-line"><span class="c">✓</span><span>Flow-oriented modeling = tracking the movement of DATA through a system.</span></div>
+        <div class="summary-line"><span class="c">✓</span><span>Memory trick — Use Case Diagram asks <b>WHO</b>; DFD asks <b>HOW</b> (data moves).</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 2. WHAT IS A DFD -->
+<!-- ============================================================ -->
+<section id="dfd" class="wide">
+  <div class="eyebrow"><span class="num">2</span>The Diagram</div>
+  <h2 class="title">Data Flow Diagram (DFD)</h2>
+  <p class="lede">Once we know we're tracking data, we need a notation to draw it. That notation is the DFD.</p>
+
+  <div class="concept">
+    <div class="concept-head"><span class="idx">CONCEPT</span><h3>Data Flow Diagram</h3></div>
+    <div class="concept-body">
+
+      <div class="step story">
+        <span class="step-label">① Story</span>
+        <p>Suppose you had to explain the ATM to someone using only boxes, circles, and arrows on a whiteboard — no sentences allowed. You'd naturally draw the customer as a box, the "verify PIN" activity as a bubble, the arrow between them as the PIN itself moving, and the account records as a filing cabinet. That whiteboard sketch <i>is</i> a DFD.</p>
+      </div>
+
+      <div class="step intuition">
+        <span class="step-label">② Intuition</span>
+        <p>A DFD is simply a <b>map of data in motion</b>. It deliberately hides control logic, timing, and decision conditions — it only cares about what data exists, where it comes from, what transforms it, where it is stored, and where it finally goes.</p>
+      </div>
+
+      <div class="step definition">
+        <span class="step-label">③ Definition</span>
+        <div class="def-box">A <b>Data Flow Diagram (DFD)</b> is a graphical representation that depicts the flow of information through a system.</div>
+        <p><b>Purpose of a DFD:</b></p>
+        <ul>
+          <li>Understand the movement of data</li>
+          <li>Identify inputs and outputs</li>
+          <li>Understand processing</li>
+          <li>Identify data storage</li>
+          <li>Improve overall system design</li>
+        </ul>
+      </div>
+
+      <div class="step example">
+        <span class="step-label">④ Example</span>
+        <p>For the ATM: Customer, ATM System, and Bank Server exchange Card Info, PIN, Amount, Balance, and Cash — this whole exchange, drawn with standard symbols, is the DFD you will build section by section below.</p>
+      </div>
+
+      <div class="step errors">
+        <span class="step-label">⑥ Common Errors</span>
+        <div class="err-line"><span class="x">✕</span><span>Treating a DFD like a flowchart and adding decision diamonds or loops — DFDs have no control-flow symbols.</span></div>
+        <div class="err-line"><span class="x">✕</span><span>Showing timing or sequence numbers on the arrows themselves — a DFD shows <i>what</i> flows, not <i>when</i>.</span></div>
+      </div>
+
+      <div class="step summary">
+        <span class="step-label">⑦ Summary</span>
+        <div class="summary-line"><span class="c">✓</span><span>DFD = a picture of data movement, built from exactly four symbol types (next section).</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="components"></div>
+  <h2 class="title" style="margin-top:52px;">The Four Components of a DFD</h2>
+  <p class="lede">Every DFD, at any level, is built from only these four symbols.</p>
+
+  <div class="grid4">
+    <div class="comp-card ee">
+      <div class="sym"><svg viewBox="0 0 130 60" width="120" height="55"><rect x="12" y="12" width="106" height="36" fill="#FCF0DD" stroke="#B36A0F" stroke-width="2.5"/><text x="65" y="34" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#152238">Customer</text></svg></div>
+      <div class="info">
+        <h4>1 · External Entity</h4>
+        <p>Rectangle · a person, organization, or system outside the boundary that supplies or receives data.</p>
+        <p><b>Naming:</b> Noun (Customer, Bank, Admin)</p>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="sym"><svg viewBox="0 0 130 60" width="120" height="55"><circle cx="65" cy="30" r="26" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2.5"/><text x="65" y="34" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#152238">Verify PIN</text></svg></div>
+      <div class="info">
+        <h4>2 · Process</h4>
+        <p>Circle / bubble · transforms incoming data into outgoing information. Must always have an input <i>and</i> an output.</p>
+        <p><b>Naming:</b> Verb + Noun (Verify PIN)</p>
+      </div>
+    </div>
+    <div class="comp-card df">
+      <div class="sym"><svg viewBox="0 0 130 60" width="120" height="55"><line x1="15" y1="30" x2="105" y2="30" stroke="#0A7A7A" stroke-width="3" marker-end="url(#mkdf)"/><text x="60" y="20" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#152238">PIN</text><defs><marker id="mkdf" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#0A7A7A"/></marker></defs></svg></div>
+      <div class="info">
+        <h4>3 · Data Flow</h4>
+        <p>Arrow · the movement of information from one component to another.</p>
+        <p><b>Naming:</b> Data name (PIN, Amount)</p>
+      </div>
+    </div>
+    <div class="comp-card ds">
+      <div class="sym"><svg viewBox="0 0 130 60" width="120" height="55"><path d="M22,16 L22,44 M22,16 L108,16 M22,44 L108,44" fill="none" stroke="#5B3FD6" stroke-width="2.5"/><text x="65" y="34" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#152238">Account DB</text></svg></div>
+      <div class="info">
+        <h4>4 · Data Store</h4>
+        <p>Open rectangle · a repository where information is stored for later use.</p>
+        <p><b>Naming:</b> Noun (Account Database)</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="concept" style="margin-top:30px;">
+    <div class="concept-head"><span class="idx">CONCEPT</span><h3>Putting the Four Symbols Together</h3></div>
+    <div class="concept-body">
+
+      <div class="step story">
+        <span class="step-label">① Story</span>
+        <p>The customer hands over a PIN. Somewhere, a process checks it against the account records, and a result comes back.</p>
+      </div>
+
+      <div class="step intuition">
+        <span class="step-label">② Intuition</span>
+        <p>Notice the shape of that sentence: <b>entity → process → store</b>, with an arrow (a data flow) connecting each pair. That three-symbol chain is the atomic building block of every DFD you will ever draw.</p>
+      </div>
+
+      <div class="step definition">
+        <span class="step-label">③ Definition</span>
+        <div class="def-box">A complete, valid data flow always connects an External Entity, a Process, or a Data Store to another of these — never entity-to-entity and never store-to-store directly.</div>
+      </div>
+
+      <div class="step diagram">
+        <span class="step-label">⑤ Correct DFD — Minimal Chain</span>
+        <div class="diagram-frame">
+          <svg viewBox="0 0 780 130" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="mkchain" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#0A7A7A"/></marker></defs>
+            <g font-family="Inter, sans-serif" font-size="13" fill="#152238">
+              <rect x="20" y="35" width="150" height="60" rx="6" fill="#FCF0DD" stroke="#B36A0F" stroke-width="2.5"/>
+              <text x="95" y="70" text-anchor="middle">Customer</text>
+
+              <line x1="170" y1="55" x2="260" y2="55" stroke="#0A7A7A" stroke-width="2.5" marker-end="url(#mkchain)"/>
+              <text x="215" y="42" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11">PIN</text>
+
+              <circle cx="330" cy="65" r="55" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2.5"/>
+              <text x="330" y="62" text-anchor="middle" font-size="11">1.0</text>
+              <text x="330" y="78" text-anchor="middle" font-size="11">Verify PIN</text>
+
+              <line x1="385" y1="55" x2="480" y2="55" stroke="#0A7A7A" stroke-width="2.5" marker-end="url(#mkchain)"/>
+              <text x="432" y="42" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11">Verification Result</text>
+
+              <path d="M490,35 L490,95 M490,35 L620,35 M490,95 L620,95" fill="none" stroke="#5B3FD6" stroke-width="2.5"/>
+              <text x="555" y="70" text-anchor="middle" font-size="11.5">Account Database</text>
+            </g>
+          </svg>
+          <p class="cap">Customer → 1.0 Verify PIN → Account Database — the atomic entity–process–store chain.</p>
+        </div>
+      </div>
+
+      <div class="step errors">
+        <span class="step-label">⑥ Common Errors</span>
+        <div class="err-line"><span class="x">✕</span><span>Drawing an arrow straight from Customer to Account Database, skipping the process — covered formally as Rule 2 below.</span></div>
+        <div class="err-line"><span class="x">✕</span><span>Labeling a data flow with a verb (e.g. "Sends PIN") instead of the data itself (e.g. "PIN") — flows are named after data, not actions.</span></div>
+      </div>
+
+      <div class="step summary">
+        <span class="step-label">⑦ Summary</span>
+        <div class="summary-line"><span class="c">✓</span><span>Four symbols only: External Entity (rectangle), Process (circle), Data Flow (arrow), Data Store (open rectangle).</span></div>
+        <div class="summary-line"><span class="c">✓</span><span>Everything in a DFD must pass through a process — this is the golden rule behind Section 4.</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 4. RULES -->
+<!-- ============================================================ -->
+<section id="rules" class="wide">
+  <div class="eyebrow"><span class="num">4</span>Notation Rules</div>
+  <h2 class="title">The Four DFD Connection Rules</h2>
+  <p class="lede">These are the rules examiners test most often — each one exists purely to enforce "everything passes through a process."</p>
+
+  <div class="rules-grid">
+
+    <div class="rule-card">
+      <h4>Rule 1 — Every process needs an input AND an output</h4>
+      <div class="rule-pair">
+        <div class="half">
+          <span class="tag wrong">Wrong</span>
+          <svg viewBox="0 0 260 110" width="100%"><g font-family="Inter, sans-serif" font-size="11" fill="#152238">
+            <line x1="15" y1="35" x2="95" y2="35" stroke="#E14B3A" stroke-width="2.5" marker-end="url(#mkw1)"/>
+            <defs><marker id="mkw1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#E14B3A"/></marker></defs>
+            <text x="55" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10">PIN</text>
+            <circle cx="140" cy="35" r="34" fill="#FBE9E7" stroke="#E14B3A" stroke-width="2.5" stroke-dasharray="4 3"/>
+            <text x="140" y="39" text-anchor="middle">Verify</text>
+            <text x="140" y="85" text-anchor="middle" fill="#B5372A" font-size="10.5">✕ no output (black hole)</text>
+          </g></svg>
+        </div>
+        <div class="half">
+          <span class="tag right">Correct</span>
+          <svg viewBox="0 0 260 110" width="100%"><g font-family="Inter, sans-serif" font-size="11" fill="#152238">
+            <defs><marker id="mkr1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1F9D62"/></marker></defs>
+            <line x1="8" y1="35" x2="72" y2="35" stroke="#1F9D62" stroke-width="2.5" marker-end="url(#mkr1)"/>
+            <text x="40" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10">PIN</text>
+            <circle cx="128" cy="35" r="32" fill="#E4F7ED" stroke="#1F9D62" stroke-width="2.5"/>
+            <text x="128" y="39" text-anchor="middle">Verify</text>
+            <line x1="160" y1="35" x2="228" y2="35" stroke="#1F9D62" stroke-width="2.5" marker-end="url(#mkr1)"/>
+            <text x="196" y="25" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10">Result</text>
+          </g></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <h4>Rule 2 — Entity cannot connect directly to a Data Store</h4>
+      <div class="rule-pair">
+        <div class="half">
+          <span class="tag wrong">Wrong</span>
+          <svg viewBox="0 0 260 110" width="100%"><g font-family="Inter, sans-serif" font-size="10.5" fill="#152238">
+            <rect x="6" y="16" width="80" height="38" fill="#FBE9E7" stroke="#E14B3A" stroke-width="2"/>
+            <text x="46" y="39" text-anchor="middle">Customer</text>
+            <line x1="86" y1="35" x2="168" y2="35" stroke="#E14B3A" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#mkw2)"/>
+            <defs><marker id="mkw2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#E14B3A"/></marker></defs>
+            <path d="M176,16 L176,54 M176,16 L246,16 M176,54 L246,54" fill="none" stroke="#E14B3A" stroke-width="2"/>
+            <text x="211" y="39" text-anchor="middle" font-size="9.5">Database</text>
+            <text x="130" y="85" text-anchor="middle" fill="#B5372A" font-size="10">✕ direct entity → store</text>
+          </g></svg>
+        </div>
+        <div class="half">
+          <span class="tag right">Correct</span>
+          <svg viewBox="0 0 260 110" width="100%"><g font-family="Inter, sans-serif" font-size="10" fill="#152238">
+            <defs><marker id="mkr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1F9D62"/></marker></defs>
+            <rect x="4" y="16" width="68" height="38" fill="#E4F7ED" stroke="#1F9D62" stroke-width="2"/>
+            <text x="38" y="39" text-anchor="middle" font-size="9.5">Customer</text>
+            <line x1="72" y1="35" x2="118" y2="35" stroke="#1F9D62" stroke-width="2.2" marker-end="url(#mkr2)"/>
+            <circle cx="150" cy="35" r="30" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2.2"/>
+            <text x="150" y="39" text-anchor="middle" font-size="9.5">Process</text>
+            <line x1="180" y1="35" x2="220" y2="35" stroke="#1F9D62" stroke-width="2.2" marker-end="url(#mkr2)"/>
+            <path d="M224,16 L224,54 M224,16 L256,16 M224,54 L256,54" fill="none" stroke="#5B3FD6" stroke-width="2"/>
+          </g></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <h4>Rule 3 — Data Store cannot connect to another Data Store</h4>
+      <div class="rule-pair">
+        <div class="half">
+          <span class="tag wrong">Wrong</span>
+          <svg viewBox="0 0 260 110" width="100%"><g font-family="Inter, sans-serif" font-size="10" fill="#152238">
+            <path d="M10,16 L10,54 L80,54 L80,16 Z" fill="none" stroke="#E14B3A" stroke-width="2"/>
+            <path d="M10,16 L80,16 M10,54 L80,54" stroke="#E14B3A" stroke-width="2"/>
+            <text x="45" y="39" text-anchor="middle">DB1</text>
+            <line x1="80" y1="35" x2="168" y2="35" stroke="#E14B3A" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#mkw3)"/>
+            <defs><marker id="mkw3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#E14B3A"/></marker></defs>
+            <path d="M176,16 L176,54 M176,16 L246,16 M176,54 L246,54" fill="none" stroke="#E14B3A" stroke-width="2"/>
+            <text x="211" y="39" text-anchor="middle">DB2</text>
+            <text x="130" y="85" text-anchor="middle" fill="#B5372A" font-size="10">✕ direct store → store</text>
+          </g></svg>
+        </div>
+        <div class="half">
+          <span class="tag right">Correct</span>
+          <svg viewBox="0 0 260 110" width="100%"><g font-family="Inter, sans-serif" font-size="10" fill="#152238">
+            <defs><marker id="mkr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1F9D62"/></marker></defs>
+            <path d="M4,16 L4,54 M4,16 L60,16 M4,54 L60,54" fill="none" stroke="#5B3FD6" stroke-width="2"/>
+            <text x="32" y="39" text-anchor="middle" font-size="9.5">DB1</text>
+            <line x1="60" y1="35" x2="118" y2="35" stroke="#1F9D62" stroke-width="2.2" marker-end="url(#mkr3)"/>
+            <circle cx="150" cy="35" r="30" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2.2"/>
+            <text x="150" y="39" text-anchor="middle" font-size="9.5">Process</text>
+            <line x1="180" y1="35" x2="220" y2="35" stroke="#1F9D62" stroke-width="2.2" marker-end="url(#mkr3)"/>
+            <path d="M224,16 L224,54 M224,16 L256,16 M224,54 L256,54" fill="none" stroke="#5B3FD6" stroke-width="2"/>
+          </g></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-card">
+      <h4>Rule 4 — Entity cannot connect to another Entity</h4>
+      <div class="rule-pair">
+        <div class="half">
+          <span class="tag wrong">Wrong</span>
+          <svg viewBox="0 0 260 110" width="100%"><g font-family="Inter, sans-serif" font-size="10" fill="#152238">
+            <rect x="6" y="16" width="80" height="38" fill="#FBE9E7" stroke="#E14B3A" stroke-width="2"/>
+            <text x="46" y="39" text-anchor="middle">Customer</text>
+            <line x1="86" y1="35" x2="168" y2="35" stroke="#E14B3A" stroke-width="2.5" stroke-dasharray="5 4" marker-end="url(#mkw4)"/>
+            <defs><marker id="mkw4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#E14B3A"/></marker></defs>
+            <rect x="176" y="16" width="70" height="38" fill="#FBE9E7" stroke="#E14B3A" stroke-width="2"/>
+            <text x="211" y="39" text-anchor="middle">Bank</text>
+            <text x="130" y="85" text-anchor="middle" fill="#B5372A" font-size="10">✕ direct entity → entity</text>
+          </g></svg>
+        </div>
+        <div class="half">
+          <span class="tag right">Correct</span>
+          <svg viewBox="0 0 260 110" width="100%"><g font-family="Inter, sans-serif" font-size="10" fill="#152238">
+            <defs><marker id="mkr4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1F9D62"/></marker></defs>
+            <rect x="4" y="16" width="68" height="38" fill="#E4F7ED" stroke="#1F9D62" stroke-width="2"/>
+            <text x="38" y="39" text-anchor="middle" font-size="9.5">Customer</text>
+            <line x1="72" y1="35" x2="118" y2="35" stroke="#1F9D62" stroke-width="2.2" marker-end="url(#mkr4)"/>
+            <circle cx="150" cy="35" r="30" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2.2"/>
+            <text x="150" y="39" text-anchor="middle" font-size="9.5">Process</text>
+            <line x1="180" y1="35" x2="220" y2="35" stroke="#1F9D62" stroke-width="2.2" marker-end="url(#mkr4)"/>
+            <rect x="224" y="16" width="32" height="38" fill="#FCF0DD" stroke="#B36A0F" stroke-width="2"/>
+          </g></svg>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <p class="lede" style="margin-top:24px;"><b>Exam-important statement:</b> everything in a DFD must pass through a process. This single sentence resolves all four rules above.</p>
+</section>
+
+<!-- ============================================================ -->
+<!-- 5. LEVEL 0 -->
+<!-- ============================================================ -->
+<section id="level0" class="wide">
+  <div class="eyebrow"><span class="num">5</span>Levels of DFD — Level 0</div>
+  <h2 class="title">Context Diagram (Level 0)</h2>
+  <p class="lede">The zoomed-out view: the entire system as a single process.</p>
+
+  <div class="concept">
+    <div class="concept-head"><span class="idx">LEVEL 0</span><h3>Context Diagram — ATM System</h3></div>
+    <div class="concept-body">
+
+      <div class="step story">
+        <span class="step-label">① Story</span>
+        <p>If you had ten seconds to describe the ATM to a stranger with a single circle and two boxes, what would you draw? One bubble labelled "ATM System," a Customer box on one side, a Bank Server box on the other, and arrows showing what crosses the boundary.</p>
+      </div>
+
+      <div class="step intuition">
+        <span class="step-label">② Intuition</span>
+        <p>Level 0 deliberately hides everything internal — no PIN-checking logic, no database. It only answers: <b>what is the system boundary, and what crosses it?</b></p>
+      </div>
+
+      <div class="step definition">
+        <span class="step-label">③ Definition</span>
+        <div class="def-box">The <b>Context Diagram</b> represents the entire system as one single process and shows its interaction with external entities. It shows the system boundary, the external entities, and the inputs/outputs — but never internal processes or data stores.</div>
+      </div>
+
+      <div class="step example">
+        <span class="step-label">④ Example</span>
+        <p>Customer sends Card Info / PIN and receives Cash / Receipt. ATM System queries Bank Server for Account Query and receives Balance / Approval in return. Only ONE process bubble is allowed at this level.</p>
+      </div>
+
+      <div class="step diagram">
+        <span class="step-label">⑤ Correct DFD — Context Diagram</span>
+        <div class="diagram-frame">
+          <svg viewBox="0 0 950 400" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="mkL0" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#0A7A7A"/></marker></defs>
+            <g font-family="Inter, sans-serif" fill="#152238">
+              <!-- Customer -->
+              <rect x="40" y="150" width="150" height="80" rx="6" fill="#FCF0DD" stroke="#B36A0F" stroke-width="2.5"/>
+              <text x="115" y="195" text-anchor="middle" font-size="15">Customer</text>
+
+              <!-- ATM process -->
+              <circle cx="475" cy="215" r="95" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="3"/>
+              <text x="475" y="205" text-anchor="middle" font-size="13">0</text>
+              <text x="475" y="225" text-anchor="middle" font-size="14.5">ATM SYSTEM</text>
+
+              <!-- Bank Server -->
+              <rect x="760" y="150" width="150" height="80" rx="6" fill="#FCF0DD" stroke="#B36A0F" stroke-width="2.5"/>
+              <text x="835" y="195" text-anchor="middle" font-size="15">Bank Server</text>
+
+              <!-- Customer <-> ATM -->
+              <line x1="190" y1="178" x2="380" y2="178" stroke="#0A7A7A" stroke-width="2.5" marker-end="url(#mkL0)"/>
+              <text x="285" y="165" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12">Card Info / PIN</text>
+
+              <line x1="380" y1="248" x2="190" y2="248" stroke="#0A7A7A" stroke-width="2.5" marker-end="url(#mkL0)"/>
+              <text x="285" y="268" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12">Cash / Receipt</text>
+
+              <!-- ATM <-> Bank -->
+              <line x1="570" y1="178" x2="760" y2="178" stroke="#0A7A7A" stroke-width="2.5" marker-end="url(#mkL0)"/>
+              <text x="665" y="165" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12">Account Query</text>
+
+              <line x1="760" y1="248" x2="570" y2="248" stroke="#0A7A7A" stroke-width="2.5" marker-end="url(#mkL0)"/>
+              <text x="665" y="268" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12">Balance / Approval</text>
+            </g>
+          </svg>
+          <div class="legend">
+            <span><i style="background:#FCF0DD;border:1.5px solid #B36A0F;"></i>External Entity</span>
+            <span><i style="background:#E8F0FE;border:1.5px solid #1D4ED8;border-radius:50%;"></i>Process (single bubble)</span>
+            <span><i style="background:#0A7A7A;height:3px;width:16px;margin-top:6px;"></i>Data Flow</span>
+          </div>
+          <p class="cap">Level 0 — one process bubble, two external entities, no internal detail, no data store.</p>
+        </div>
+      </div>
+
+      <div class="step errors">
+        <span class="step-label">⑥ Common Errors</span>
+        <div class="err-line"><span class="x">✕</span><span>Showing the Account Database inside the context diagram — data stores never appear at Level 0.</span></div>
+        <div class="err-line"><span class="x">✕</span><span>Drawing more than one process bubble — Level 0 must contain exactly one.</span></div>
+        <div class="err-line"><span class="x">✕</span><span>Forgetting a return flow — every input from an entity should have a corresponding output back, where applicable.</span></div>
+      </div>
+
+      <div class="step summary">
+        <span class="step-label">⑦ Summary</span>
+        <div class="summary-line"><span class="c">✓</span><span>Context Diagram = system as ONE process + its external entities + boundary-crossing data flows only.</span></div>
+        <div class="summary-line"><span class="c">✓</span><span>Exam definition: "Context Diagram represents the system as one single process and shows interaction with external entities."</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 6. LEVEL 1 -->
+<!-- ============================================================ -->
+<section id="level1" class="wide">
+  <div class="eyebrow"><span class="num">6</span>Levels of DFD — Level 1</div>
+  <h2 class="title">Level 1 DFD</h2>
+  <p class="lede">Open up the single Level 0 bubble into its major sub-processes.</p>
+
+  <div class="concept">
+    <div class="concept-head"><span class="idx">LEVEL 1</span><h3>Level 1 DFD — ATM System</h3></div>
+    <div class="concept-body">
+
+      <div class="step story">
+        <span class="step-label">① Story</span>
+        <p>"ATM System" is too vague to build software from. A developer would immediately ask: verify the PIN <i>how</i>? Process the withdrawal <i>how</i>? Level 1 answers exactly that by breaking the single bubble into its major functional steps.</p>
+      </div>
+
+      <div class="step intuition">
+        <span class="step-label">② Intuition</span>
+        <p>Level 1 is obtained through <b>functional decomposition</b> — splitting one large process into the smaller processes it is actually made of, while keeping the same external entities and the same boundary as Level 0.</p>
+      </div>
+
+      <div class="step definition">
+        <span class="step-label">③ Definition</span>
+        <div class="def-box"><b>Level 1 DFD</b> decomposes the single process of Level 0 into its major sub-processes, introducing data stores and the movement of data between them.</div>
+        <p><b>Functional decomposition:</b> the process of breaking one large process into smaller processes.</p>
+      </div>
+
+      <div class="step example">
+        <span class="step-label">④ Example</span>
+        <p>ATM System (process 0) decomposes into <b>1.0 Verify PIN</b>, <b>2.0 Process Withdrawal</b>, and <b>3.0 Update Account</b>, now working with an <b>Account Database</b> and still talking to the Customer and Bank Server exactly as Level 0 promised.</p>
+      </div>
+
+      <div class="step diagram">
+        <span class="step-label">⑤ Correct DFD — Level 1</span>
+        <div class="diagram-frame">
+          <svg viewBox="0 0 1180 600" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="mkL1" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#0A7A7A"/></marker></defs>
+            <g font-family="Inter, sans-serif" fill="#152238">
+
+              <!-- Customer -->
+              <rect x="40" y="260" width="140" height="70" rx="6" fill="#FCF0DD" stroke="#B36A0F" stroke-width="2.5"/>
+              <text x="110" y="300" text-anchor="middle" font-size="14">Customer</text>
+
+              <!-- Bank Server (top) -->
+              <rect x="260" y="90" width="140" height="60" rx="6" fill="#FCF0DD" stroke="#B36A0F" stroke-width="2.5"/>
+              <text x="330" y="126" text-anchor="middle" font-size="13.5">Bank Server</text>
+
+              <!-- 1.0 -->
+              <circle cx="330" cy="295" r="60" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2.5"/>
+              <text x="330" y="288" text-anchor="middle" font-size="11.5">1.0</text>
+              <text x="330" y="305" text-anchor="middle" font-size="12">Verify PIN</text>
+
+              <!-- 2.0 -->
+              <circle cx="650" cy="295" r="60" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2.5"/>
+              <text x="650" y="285" text-anchor="middle" font-size="11.5">2.0</text>
+              <text x="650" y="301" text-anchor="middle" font-size="11.5">Process</text>
+              <text x="650" y="316" text-anchor="middle" font-size="11.5">Withdrawal</text>
+
+              <!-- 3.0 -->
+              <circle cx="950" cy="295" r="60" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2.5"/>
+              <text x="950" y="288" text-anchor="middle" font-size="11.5">3.0</text>
+              <text x="950" y="304" text-anchor="middle" font-size="11">Update Acct</text>
+
+              <!-- Account DB (bottom, wide) -->
+              <path d="M560,460 L560,530 M560,460 L990,460 M560,530 L990,530" fill="none" stroke="#5B3FD6" stroke-width="2.5"/>
+              <text x="775" y="500" text-anchor="middle" font-size="13.5">Account Database</text>
+
+              <!-- Customer -> 1.0 -->
+              <line x1="180" y1="280" x2="270" y2="280" stroke="#0A7A7A" stroke-width="2.3" marker-end="url(#mkL1)"/>
+              <text x="225" y="267" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5">Card + PIN</text>
+
+              <!-- 1.0 <-> Bank Server -->
+              <line x1="310" y1="235" x2="310" y2="150" stroke="#0A7A7A" stroke-width="2.2" marker-end="url(#mkL1)"/>
+              <text x="248" y="192" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10">Verify Request</text>
+              <line x1="350" y1="150" x2="350" y2="235" stroke="#0A7A7A" stroke-width="2.2" marker-end="url(#mkL1)"/>
+              <text x="410" y="192" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10">PIN Match</text>
+
+              <!-- 1.0 -> 2.0 -->
+              <line x1="390" y1="280" x2="590" y2="280" stroke="#0A7A7A" stroke-width="2.3" marker-end="url(#mkL1)"/>
+              <text x="490" y="267" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5">PIN Verified</text>
+
+              <!-- 2.0 <-> Account DB -->
+              <line x1="630" y1="355" x2="630" y2="460" stroke="#0A7A7A" stroke-width="2.2" marker-end="url(#mkL1)"/>
+              <text x="590" y="415" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10">Check</text>
+              <line x1="690" y1="460" x2="690" y2="355" stroke="#0A7A7A" stroke-width="2.2" marker-end="url(#mkL1)"/>
+              <text x="732" y="415" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10">Balance</text>
+
+              <!-- 2.0 -> Customer (cash, routed low, below DB) -->
+              <path d="M600,340 L600,570 L110,570 L110,332" fill="none" stroke="#0A7A7A" stroke-width="2.2" marker-end="url(#mkL1)"/>
+              <text x="355" y="562" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5">Cash Dispensed</text>
+
+              <!-- 2.0 -> 3.0 -->
+              <line x1="710" y1="280" x2="890" y2="280" stroke="#0A7A7A" stroke-width="2.3" marker-end="url(#mkL1)"/>
+              <text x="800" y="267" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5">Approved Amount</text>
+
+              <!-- 3.0 -> Account DB -->
+              <line x1="930" y1="355" x2="930" y2="460" stroke="#0A7A7A" stroke-width="2.3" marker-end="url(#mkL1)"/>
+              <text x="985" y="415" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10">Update Balance</text>
+            </g>
+          </svg>
+          <div class="legend">
+            <span><i style="background:#FCF0DD;border:1.5px solid #B36A0F;"></i>External Entity</span>
+            <span><i style="background:#E8F0FE;border:1.5px solid #1D4ED8;border-radius:50%;"></i>Process</span>
+            <span><i style="background:#EFEBFF;border:1.5px solid #5B3FD6;"></i>Data Store</span>
+            <span><i style="background:#0A7A7A;height:3px;width:16px;margin-top:6px;"></i>Data Flow</span>
+          </div>
+          <p class="cap">Level 1 — three numbered sub-processes, one data store, same two external entities carried over from Level 0.</p>
+        </div>
+      </div>
+
+      <div class="step errors">
+        <span class="step-label">⑥ Common Errors</span>
+        <div class="err-line"><span class="x">✕</span><span>Dropping the Customer or Bank Server entity that appeared in Level 0 — every Level 1 diagram must preserve all Level 0 boundary flows (this is the balancing rule, Section 8).</span></div>
+        <div class="err-line"><span class="x">✕</span><span>Numbering processes out of order, or reusing "1.0" for two different processes.</span></div>
+        <div class="err-line"><span class="x">✕</span><span>Connecting Account Database directly to Customer — still illegal at Level 1 (Rule 2 applies at every level).</span></div>
+      </div>
+
+      <div class="step summary">
+        <span class="step-label">⑦ Summary</span>
+        <div class="summary-line"><span class="c">✓</span><span>Level 1 = functional decomposition of Level 0's single process into its numbered major processes.</span></div>
+        <div class="summary-line"><span class="c">✓</span><span>Why Level 1? Because Level 0 is too general to design or build from.</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 7. LEVEL 2 -->
+<!-- ============================================================ -->
+<section id="level2" class="wide">
+  <div class="eyebrow"><span class="num">7</span>Levels of DFD — Level 2</div>
+  <h2 class="title">Level 2 DFD</h2>
+  <p class="lede">Zoom into exactly one Level 1 process and expand it further.</p>
+
+  <div class="concept">
+    <div class="concept-head"><span class="idx">LEVEL 2</span><h3>Level 2 DFD — Decomposing "2.0 Process Withdrawal"</h3></div>
+    <div class="concept-body">
+
+      <div class="step story">
+        <span class="step-label">① Story</span>
+        <p>"2.0 Process Withdrawal" is still hiding detail. What actually happens inside it? The balance is checked, the amount is verified against it, and only then is cash dispensed. Level 2 draws exactly that.</p>
+      </div>
+
+      <div class="step intuition">
+        <span class="step-label">② Intuition</span>
+        <p>Level 2 does <b>not</b> re-explain the whole system — it takes <b>one single process from Level 1</b> and expands only that one. Every other Level 1 process stays exactly as it was.</p>
+      </div>
+
+      <div class="step definition">
+        <span class="step-label">③ Definition</span>
+        <div class="def-box"><b>Level 2 DFD</b> further decomposes one process from Level 1 into its own detailed sub-processes.</div>
+      </div>
+
+      <div class="step example">
+        <span class="step-label">④ Example</span>
+        <p><b>2.0 Process Withdrawal</b> expands into <b>2.1 Check Balance → 2.2 Verify Amount → 2.3 Dispense Cash</b>, reading and writing the Account Database and finally returning Cash to the Customer.</p>
+      </div>
+
+      <div class="step diagram">
+        <span class="step-label">⑤ Correct DFD — Level 2</span>
+        <div class="diagram-frame">
+          <svg viewBox="0 0 1150 500" xmlns="http://www.w3.org/2000/svg">
+            <defs><marker id="mkL2" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#0A7A7A"/></marker></defs>
+            <g font-family="Inter, sans-serif" fill="#152238">
+
+              <!-- Customer -->
+              <rect x="40" y="190" width="130" height="70" rx="6" fill="#FCF0DD" stroke="#B36A0F" stroke-width="2.5"/>
+              <text x="105" y="230" text-anchor="middle" font-size="13.5">Customer</text>
+
+              <!-- 2.1 -->
+              <circle cx="320" cy="225" r="58" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2.5"/>
+              <text x="320" y="217" text-anchor="middle" font-size="11">2.1</text>
+              <text x="320" y="233" text-anchor="middle" font-size="11.5">Check Balance</text>
+
+              <!-- 2.2 -->
+              <circle cx="590" cy="225" r="58" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2.5"/>
+              <text x="590" y="217" text-anchor="middle" font-size="11">2.2</text>
+              <text x="590" y="233" text-anchor="middle" font-size="11.5">Verify Amount</text>
+
+              <!-- 2.3 -->
+              <circle cx="860" cy="225" r="58" fill="#E8F0FE" stroke="#1D4ED8" stroke-width="2.5"/>
+              <text x="860" y="217" text-anchor="middle" font-size="11">2.3</text>
+              <text x="860" y="233" text-anchor="middle" font-size="11.5">Dispense Cash</text>
+
+              <!-- Account DB -->
+              <path d="M250,360 L250,420 L430,420 L430,360" fill="none" stroke="#5B3FD6" stroke-width="2.5"/>
+              <text x="340" y="395" text-anchor="middle" font-size="12.5">Account Database</text>
+
+              <!-- Customer -> 2.1 -->
+              <line x1="170" y1="210" x2="262" y2="210" stroke="#0A7A7A" stroke-width="2.3" marker-end="url(#mkL2)"/>
+              <text x="216" y="197" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5">Amount Entered</text>
+
+              <!-- 2.1 <-> DB -->
+              <line x1="300" y1="283" x2="300" y2="360" stroke="#0A7A7A" stroke-width="2.2" marker-end="url(#mkL2)"/>
+              <text x="262" y="322" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10">Check</text>
+              <line x1="340" y1="360" x2="340" y2="283" stroke="#0A7A7A" stroke-width="2.2" marker-end="url(#mkL2)"/>
+              <text x="378" y="322" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10">Balance</text>
+
+              <!-- 2.1 -> 2.2 -->
+              <line x1="378" y1="210" x2="532" y2="210" stroke="#0A7A7A" stroke-width="2.3" marker-end="url(#mkL2)"/>
+              <text x="455" y="197" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5">Balance Info</text>
+
+              <!-- 2.2 -> 2.3 -->
+              <line x1="648" y1="210" x2="802" y2="210" stroke="#0A7A7A" stroke-width="2.3" marker-end="url(#mkL2)"/>
+              <text x="725" y="197" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5">Approved Amount</text>
+
+              <!-- 2.3 -> Customer, cash return path, routed low below DB -->
+              <path d="M820,270 L820,450 L105,450 L105,262" fill="none" stroke="#0A7A7A" stroke-width="2.2" marker-end="url(#mkL2)"/>
+              <text x="460" y="443" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5">Cash Dispensed</text>
+            </g>
+          </svg>
+          <div class="legend">
+            <span><i style="background:#FCF0DD;border:1.5px solid #B36A0F;"></i>External Entity</span>
+            <span><i style="background:#E8F0FE;border:1.5px solid #1D4ED8;border-radius:50%;"></i>Process</span>
+            <span><i style="background:#EFEBFF;border:1.5px solid #5B3FD6;"></i>Data Store</span>
+            <span><i style="background:#0A7A7A;height:3px;width:16px;margin-top:6px;"></i>Data Flow</span>
+          </div>
+          <p class="cap">Level 2 — the internal detail of process 2.0 only: 2.1 → 2.2 → 2.3, all numbered under their parent process.</p>
+        </div>
+      </div>
+
+      <div class="step errors">
+        <span class="step-label">⑥ Common Errors</span>
+        <div class="err-line"><span class="x">✕</span><span>Also expanding 1.0 Verify PIN or 3.0 Update Account inside this same diagram — Level 2 explains only ONE parent process at a time.</span></div>
+        <div class="err-line"><span class="x">✕</span><span>Numbering the sub-processes 1, 2, 3 instead of 2.1, 2.2, 2.3 — the numbering must show which parent process they belong to.</span></div>
+        <div class="err-line"><span class="x">✕</span><span>Losing the Account Database connection that existed at Level 1 for process 2.0 — sub-processes must still touch every store/entity the parent touched.</span></div>
+      </div>
+
+      <div class="step summary">
+        <span class="step-label">⑦ Summary</span>
+        <div class="summary-line"><span class="c">✓</span><span>Level 2 explains ONE Level-1 process in detail — not the whole system.</span></div>
+        <div class="summary-line"><span class="c">✓</span><span>Numbering convention: parent 2.0 → children 2.1, 2.2, 2.3 …</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <h2 class="title" style="margin-top:56px;">How the Three Levels Connect</h2>
+  <div class="levels-map">
+    <div class="lv">
+      <h4>LEVEL 0 — Whole System</h4>
+      <ul><li>0 ATM System</li></ul>
+    </div>
+    <div class="lv">
+      <h4>LEVEL 1 — Major Processes</h4>
+      <ul><li>1.0 Verify PIN</li><li>2.0 Process Withdrawal</li><li>3.0 Update Account</li></ul>
+    </div>
+    <div class="lv">
+      <h4>LEVEL 2 — Detailed Process</h4>
+      <ul><li>2.1 Check Balance</li><li>2.2 Verify Amount</li><li>2.3 Dispense Cash</li></ul>
+    </div>
+  </div>
+  <p class="lede" style="margin-top:10px;"><b>Memory trick:</b> Level 0 = Whole System · Level 1 = Major Processes · Level 2 = Detailed Process.</p>
+</section>
+
+<!-- ============================================================ -->
+<!-- 8. BALANCING -->
+<!-- ============================================================ -->
+<section id="balancing">
+  <div class="eyebrow"><span class="num">8</span>Consistency Rule</div>
+  <h2 class="title">Balancing Between Levels</h2>
+  <p class="lede">A DFD set is only correct if every level agrees with the one above it.</p>
+
+  <div class="concept">
+    <div class="concept-head"><span class="idx">RULE</span><h3>The Balancing Rule</h3></div>
+    <div class="concept-body">
+      <div class="step definition">
+        <span class="step-label">③ Definition</span>
+        <div class="def-box"><b>Balancing</b> means every data flow entering or leaving a parent process at one level must reappear, in total, among the flows entering or leaving its child processes at the next level.</div>
+      </div>
+      <div class="step example">
+        <span class="step-label">④ Example</span>
+        <p>Level 0 shows Customer ↔ ATM (Card Info/PIN in, Cash/Receipt out). Level 1 must still show a Card+PIN flow reaching the Customer boundary and a Cash flow leaving it — it does, via 1.0 and 2.0.</p>
+      </div>
+      <div class="step errors">
+        <span class="step-label">⑥ Common Errors</span>
+        <div class="err-line"><span class="x">✕</span><span>Introducing a brand-new external entity at Level 1 that never appeared at Level 0.</span></div>
+        <div class="err-line"><span class="x">✕</span><span>Silently dropping a boundary flow when decomposing — this breaks balancing even if the diagram still "looks" complete.</span></div>
+      </div>
+      <div class="step summary">
+        <span class="step-label">⑦ Summary</span>
+        <div class="summary-line"><span class="c">✓</span><span>Child-level diagrams must preserve every parent-level boundary flow — nothing added, nothing dropped.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- 9. REVISION -->
+<!-- ============================================================ -->
+<section id="revision" class="wide">
+  <div class="eyebrow"><span class="num">9</span>Final Revision</div>
+  <h2 class="title">Scenario-Based vs. Flow-Oriented, and Exam Recap</h2>
+
+  <table class="ref">
+    <tr><th>Scenario-Based Modeling</th><th>Flow-Oriented Modeling</th></tr>
+    <tr><td>Focuses on the User</td><td>Focuses on the Data</td></tr>
+    <tr><td>Actor</td><td>Data</td></tr>
+    <tr><td>WHO uses the system</td><td>HOW data moves</td></tr>
+    <tr><td>Use Case Diagram</td><td>Data Flow Diagram (DFD)</td></tr>
+  </table>
+
+  <table class="ref" style="margin-top:24px;">
+    <tr><th>Topic</th><th>Important Point</th></tr>
+    <tr><td>Flow-Oriented Modeling</td><td>Focuses on data</td></tr>
+    <tr><td>DFD</td><td>Shows the movement of information</td></tr>
+    <tr><td>External Entity</td><td>Rectangle</td></tr>
+    <tr><td>Process</td><td>Circle</td></tr>
+    <tr><td>Data Flow</td><td>Arrow</td></tr>
+    <tr><td>Data Store</td><td>Open rectangle</td></tr>
+    <tr><td>Level 0</td><td>Single bubble (Context Diagram)</td></tr>
+    <tr><td>Level 1</td><td>Major processes</td></tr>
+    <tr><td>Level 2</td><td>One process explained in detail</td></tr>
+    <tr><td>Functional Decomposition</td><td>Breaking a process into sub-processes</td></tr>
+  </table>
+
+  <div class="final-card">
+    <h4>One-line exam revision</h4>
+    <p>Flow-oriented modeling tracks how data enters, gets processed, gets stored, and leaves the system. This single sentence works as the opening line for almost any 10-mark DFD question.</p>
+  </div>
+</section>
+
+<footer>FLOW-ORIENTED MODELING · DATA FLOW DIAGRAMS · STUDY GUIDE</footer>
+
+</body>
+</html>

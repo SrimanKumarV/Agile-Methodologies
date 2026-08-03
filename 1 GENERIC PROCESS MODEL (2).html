@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Software Engineering Layers &amp; Process Models — Study Notes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Work+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#faf9f6;
+    --ink:#1b2430;
+    --ink-soft:#4a5568;
+    --navy:#1c2541;
+    --navy-deep:#10182b;
+    --line:#d8d3c8;
+
+    --c-comm:#0f8b8d;      /* Communication - teal */
+    --c-comm-bg:#e4f5f4;
+    --c-plan:#c9820a;      /* Planning - amber */
+    --c-plan-bg:#fbeed9;
+    --c-model:#a8326e;     /* Modeling - berry */
+    --c-model-bg:#fbe4ee;
+    --c-build:#5b3ea6;     /* Construction - violet */
+    --c-build-bg:#ede4fa;
+    --c-deploy:#237a3d;    /* Deployment - green */
+    --c-deploy-bg:#e2f3e6;
+
+    --water:#1f6fb2;       /* Waterfall - blue */
+    --water-bg:#e3f0fa;
+    --incr:#d9481f;        /* Incremental - burnt orange */
+    --incr-bg:#fbe6dc;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      linear-gradient(rgba(28,37,65,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(28,37,65,0.035) 1px, transparent 1px);
+    background-size:28px 28px;
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    line-height:1.6;
+  }
+  h1,h2,h3,h4{
+    font-family:'Fraunces', serif;
+    color:var(--navy);
+    margin:0 0 .4em 0;
+    line-height:1.15;
+  }
+  p{margin:.5em 0;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- NAV ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(250,249,246,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:2px solid var(--navy);
+  }
+  nav .wrap{display:flex; align-items:center; gap:22px; padding:12px 24px; flex-wrap:wrap;}
+  nav .brand{font-family:'Fraunces',serif; font-weight:700; color:var(--navy); font-size:1.05rem; margin-right:auto;}
+  nav a{
+    color:var(--ink-soft); text-decoration:none; font-weight:600; font-size:.82rem;
+    letter-spacing:.03em; text-transform:uppercase; padding:6px 10px; border-radius:20px;
+    transition:.15s;
+  }
+  nav a:hover{background:var(--navy); color:#fff;}
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    background:
+      radial-gradient(ellipse at 15% 20%, rgba(15,139,141,0.55), transparent 55%),
+      radial-gradient(ellipse at 85% 30%, rgba(201,130,10,0.45), transparent 50%),
+      radial-gradient(ellipse at 50% 90%, rgba(217,72,31,0.35), transparent 55%),
+      var(--navy-deep);
+    color:#f4f1ea;
+    padding:70px 24px 56px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 26px);
+    pointer-events:none;
+  }
+  .hero-inner{max-width:1080px;margin:0 auto; position:relative;}
+  .kicker{
+    display:inline-block; font-family:'JetBrains Mono',monospace; font-size:.75rem;
+    letter-spacing:.14em; text-transform:uppercase; color:#ffd9a8;
+    border:1px solid rgba(255,217,168,0.4); padding:5px 12px; border-radius:20px; margin-bottom:18px;
+  }
+  header.hero h1{color:#fff; font-size:2.6rem; font-weight:900; max-width:760px;}
+  header.hero p.lead{color:#cfd6e6; max-width:620px; font-size:1.05rem;}
+  .hero-chips{display:flex; gap:10px; flex-wrap:wrap; margin-top:26px;}
+  .hero-chips span{
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18);
+    color:#f4f1ea; padding:7px 14px; border-radius:8px; font-size:.85rem; font-weight:600;
+  }
+
+  /* ---------- SECTION SCAFFOLDING ---------- */
+  section{padding:64px 0;}
+  .section-head{margin-bottom:34px;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.16em;
+    text-transform:uppercase; font-weight:700;
+  }
+  .section-head h2{font-size:2rem; font-weight:800;}
+  .section-head .sub{color:var(--ink-soft); max-width:680px; font-size:1.02rem;}
+
+  .divider{
+    height:3px; width:64px; border-radius:3px; margin:14px 0 22px;
+  }
+
+  /* ---------- ANALOGY BOX ---------- */
+  .analogy{
+    background:#fff; border:1.5px solid var(--line); border-radius:14px;
+    padding:24px 26px; margin:22px 0; box-shadow:0 3px 0 var(--line);
+  }
+  .analogy .tag{font-weight:800; font-family:'Fraunces',serif; font-size:1.05rem; color:var(--navy); margin-bottom:6px;}
+
+  /* ---------- DEFINITION CALLOUT ---------- */
+  .definition{
+    border-radius:14px; padding:22px 26px; margin:20px 0;
+    font-size:1.05rem; font-weight:500; position:relative;
+  }
+  .definition .lbl{
+    font-family:'JetBrains Mono',monospace; font-size:.7rem; letter-spacing:.1em;
+    text-transform:uppercase; font-weight:700; display:block; margin-bottom:8px; opacity:.8;
+  }
+
+  /* ---------- FRAMEWORK ACTIVITY CARDS ---------- */
+  .activity-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:20px; margin-top:26px;}
+  .a-card{
+    background:#fff; border-radius:16px; overflow:hidden; border:1.5px solid var(--line);
+    box-shadow:0 4px 0 rgba(0,0,0,0.05);
+  }
+  .a-card .a-head{padding:18px 20px; display:flex; align-items:center; gap:14px; color:#fff;}
+  .a-card .a-head .num{
+    font-family:'Fraunces',serif; font-weight:900; font-size:1.5rem;
+    width:42px; height:42px; border-radius:50%; background:rgba(255,255,255,0.22);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .a-card .a-head h3{color:#fff; margin:0; font-size:1.25rem;}
+  .a-card .a-head .icon{font-size:1.6rem; margin-left:auto;}
+  .a-card .a-body{padding:18px 20px;}
+  .a-card .a-body .ex{
+    margin-top:12px; padding:12px 14px; border-radius:10px; font-size:.92rem;
+  }
+  .a-card .a-body .ex b{font-family:'Fraunces',serif;}
+  .a-card ul{margin:8px 0 0 0; padding-left:20px;}
+  .a-card li{margin:3px 0;}
+
+  .comm  .a-head{background:var(--c-comm);}   .comm  .ex{background:var(--c-comm-bg);}
+  .plan  .a-head{background:var(--c-plan);}   .plan  .ex{background:var(--c-plan-bg);}
+  .model .a-head{background:var(--c-model);}  .model .ex{background:var(--c-model-bg);}
+  .build .a-head{background:var(--c-build);}  .build .ex{background:var(--c-build-bg);}
+  .deploy .a-head{background:var(--c-deploy);} .deploy .ex{background:var(--c-deploy-bg);}
+
+  /* arrow connector between cards on wide screens */
+  .flow-row{display:flex; align-items:center; gap:6px; overflow-x:auto; padding:10px 2px 22px;}
+  .flow-row .fnode{
+    flex:1 1 150px; min-width:130px; text-align:center; padding:14px 10px; border-radius:12px;
+    color:#fff; font-weight:700; font-size:.88rem; font-family:'Fraunces',serif;
+  }
+  .flow-row .farrow{font-size:1.4rem; color:var(--navy); flex-shrink:0;}
+
+  /* ---------- SVG DIAGRAM CARD ---------- */
+  .diagram-card{
+    background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:24px;
+    margin:24px 0; box-shadow:0 4px 0 rgba(0,0,0,0.05);
+  }
+  .diagram-card .cap{text-align:center; font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--ink-soft); margin-top:10px; letter-spacing:.03em;}
+  .diagram-card svg{width:100%; height:auto; display:block;}
+
+  /* ---------- UMBRELLA GRID ---------- */
+  .umbrella-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px; margin-top:22px;}
+  .u-item{
+    background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:16px;
+    display:flex; gap:12px; align-items:flex-start;
+  }
+  .u-item .u-ic{font-size:1.5rem; flex-shrink:0;}
+  .u-item b{font-family:'Fraunces',serif; font-size:.98rem; display:block; margin-bottom:2px; color:var(--navy);}
+  .u-item span{font-size:.86rem; color:var(--ink-soft);}
+
+  /* ---------- TASK SET COMPARISON ---------- */
+  .compare-2{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:20px;}
+  @media(max-width:700px){.compare-2{grid-template-columns:1fr;}}
+  .compare-card{border-radius:14px; padding:20px; border:1.5px solid var(--line); background:#fff;}
+  .compare-card h4{margin-bottom:10px;}
+  .compare-card.small{border-top:5px solid var(--c-comm);}
+  .compare-card.large{border-top:5px solid var(--c-model);}
+
+  /* ---------- PROCESS FLOW GRID ---------- */
+  .pf-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:18px; margin-top:24px;}
+  .pf-card{background:#fff; border:1.5px solid var(--line); border-radius:14px; padding:16px;}
+  .pf-card h4{font-size:1.02rem; margin-bottom:4px;}
+  .pf-card .pf-tag{
+    display:inline-block; font-family:'JetBrains Mono',monospace; font-size:.68rem;
+    text-transform:uppercase; letter-spacing:.08em; padding:2px 8px; border-radius:6px; margin-bottom:8px;
+  }
+  .pf-card p{font-size:.88rem; color:var(--ink-soft); margin:8px 0 0;}
+
+  /* ---------- CHAPTER BANNERS ---------- */
+  .chapter-banner{
+    border-radius:18px; padding:34px 34px; color:#fff; position:relative; overflow:hidden; margin-bottom:6px;
+  }
+  .chapter-banner .chnum{
+    font-family:'JetBrains Mono',monospace; font-size:.78rem; letter-spacing:.16em; text-transform:uppercase;
+    opacity:.85; margin-bottom:6px; display:block;
+  }
+  .chapter-banner h2{color:#fff; font-size:2.1rem; margin-bottom:6px;}
+  .chapter-banner p{color:rgba(255,255,255,0.88); max-width:640px; margin:0;}
+  .chapter-banner.wf{background:linear-gradient(120deg, #123a63, var(--water));}
+  .chapter-banner.inc{background:linear-gradient(120deg, #7a2a10, var(--incr));}
+
+  /* ---------- PHASE TIMELINE (waterfall) ---------- */
+  .wf-list{display:flex; flex-direction:column; gap:14px; margin-top:24px;}
+  .wf-step{
+    display:grid; grid-template-columns:56px 1fr; gap:16px; background:#fff;
+    border:1.5px solid var(--line); border-radius:14px; padding:16px 18px; align-items:start;
+  }
+  .wf-step .wf-num{
+    width:44px; height:44px; border-radius:50%; background:var(--water); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif;
+    font-weight:800; font-size:1.15rem;
+  }
+  .wf-step h4{margin:0 0 4px; color:var(--navy);}
+  .wf-step .ex-line{
+    margin-top:8px; font-size:.87rem; background:var(--water-bg); padding:8px 12px; border-radius:8px;
+  }
+
+  /* ---------- INCREMENT TABLE ---------- */
+  table.increment-table{width:100%; border-collapse:collapse; margin-top:22px; font-size:.92rem;}
+  table.increment-table th{
+    background:var(--incr); color:#fff; text-align:left; padding:10px 14px; font-family:'Fraunces',serif;
+  }
+  table.increment-table td{padding:10px 14px; border-bottom:1px solid var(--line); background:#fff;}
+  table.increment-table tr:nth-child(even) td{background:#fdf3ee;}
+
+  /* ---------- ADV / DISADV ---------- */
+  .adv-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:22px;}
+  @media(max-width:700px){.adv-grid{grid-template-columns:1fr;}}
+  .adv-box{border-radius:14px; padding:20px 22px;}
+  .adv-box h4{display:flex; align-items:center; gap:8px; margin-bottom:12px;}
+  .adv-box ul{margin:0; padding-left:20px;}
+  .adv-box li{margin:7px 0; font-size:.93rem;}
+  .adv-box.good{background:#e7f6ec; border:1.5px solid #b9e3c4;}
+  .adv-box.bad{background:#fbe9e7; border:1.5px solid #f3c3bd;}
+
+  /* ---------- COMPARISON TABLE ---------- */
+  table.compare-table{width:100%; border-collapse:collapse; margin-top:20px; font-size:.92rem; background:#fff;}
+  table.compare-table th{background:var(--navy); color:#fff; padding:12px 14px; text-align:left; font-family:'Fraunces',serif;}
+  table.compare-table td{padding:11px 14px; border-bottom:1px solid var(--line);}
+  table.compare-table td:first-child{font-weight:700; color:var(--navy); width:180px;}
+  table.compare-table tr:nth-child(odd) td{background:#f6f4ee;}
+
+  /* ---------- WHEN TO USE ---------- */
+  .use-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:20px;}
+  .use-card{
+    background:#fff; border:1.5px solid var(--line); border-radius:12px; padding:16px;
+    border-left:5px solid var(--navy);
+  }
+  .use-card.wf{border-left-color:var(--water);}
+  .use-card.inc{border-left-color:var(--incr);}
+  .use-card b{display:block; font-family:'Fraunces',serif; margin-bottom:4px; color:var(--navy);}
+  .use-card{font-size:.88rem; color:var(--ink-soft);}
+
+  /* ---------- SUMMARY / FOOTER ---------- */
+  .summary-band{
+    background:var(--navy-deep); color:#eef0f5; border-radius:20px; padding:36px 34px; margin-top:20px;
+  }
+  .summary-band h3{color:#ffd9a8;}
+  .summary-band .sgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; margin-top:16px;}
+  .summary-band .scard{background:rgba(255,255,255,0.06); border-radius:12px; padding:16px 18px; border:1px solid rgba(255,255,255,0.12);}
+  .summary-band .scard b{color:#ffd9a8; font-family:'Fraunces',serif; display:block; margin-bottom:4px;}
+  .summary-band .scard{font-size:.9rem; color:#cfd6e6;}
+
+  footer{text-align:center; padding:34px 24px 50px; color:var(--ink-soft); font-size:.85rem;}
+
+  .badge-key{
+    display:inline-flex; align-items:center; gap:6px; font-size:.78rem; font-weight:700;
+    padding:3px 10px; border-radius:20px; margin:2px 4px 2px 0;
+  }
+
+  @media(max-width:640px){
+    header.hero h1{font-size:1.9rem;}
+    .section-head h2{font-size:1.55rem;}
+    .compare-2, .adv-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <span class="brand">📘</span>
+    <a href="#framework">Process Framework</a>
+    <a href="#umbrella">Umbrella Activities</a>
+    <a href="#flow">Process Flow</a>
+    <a href="#waterfall">Waterfall Model</a>
+    <a href="#incremental">Incremental Model</a>
+    <a href="#summary">Summary</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <span class="kicker">Unit I · Software Engineering</span>
+    <h1>The Generic Process Framework, Waterfall Model &amp; Incremental Model</h1>
+    <div class="hero-chips">
+      <span>🗣️ Communication</span>
+      <span>🗺️ Planning</span>
+      <span>🧩 Modeling</span>
+      <span>🛠️ Construction</span>
+      <span>🚀 Deployment</span>
+      <span>☔ Umbrella Activities</span>
+      <span>📉 Waterfall</span>
+      <span>📶 Incremental</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section id="intro">
+    <div class="section-head">
+      <span class="eyebrow" style="color:var(--c-comm);">Getting Started</span>
+      <h2>Why do we need a "Process" at all?</h2>
+      <div class="divider" style="background:var(--c-comm);"></div>
+      <p class="sub">Before jumping into definitions, picture something you already understand — building a house.</p>
+    </div>
+
+    <div class="analogy">
+      <div class="tag">🏠 The House-Building Analogy</div>
+      <p>You never plaster the walls before laying the foundation, and you never fit the roof before the walls exist. Construction always follows a natural order: <b>foundation → walls → roof → interiors</b>.</p>
+      <p>Software is no different. Whether you're building a food delivery app or a hospital management system, every project quietly passes through the <b>same broad stages</b>. That common skeleton — the one thing every software project shares — is called the <b>Generic Process Framework</b>.</p>
+    </div>
+  </section>
+
+  <!-- ============ FRAMEWORK ============ -->
+  <section id="framework">
+    <div class="section-head">
+      <span class="eyebrow" style="color:var(--c-model);">Core Concept</span>
+      <h2>The Generic Process Framework</h2>
+      <div class="divider" style="background:var(--c-model);"></div>
+      <p class="sub">A small number of broad activities that apply to <b>every</b> software project, no matter its size or domain.</p>
+    </div>
+
+    <div class="definition" style="background:var(--c-model-bg); border:1.5px solid #eec3da;">
+      <span class="lbl" style="color:var(--c-model);">Definition</span>
+      A software process is a framework for the activities, actions, and tasks required to build high-quality software. The Generic Process Framework defines <b>5 framework activities</b>, supported throughout by a set of <b>umbrella activities</b>.
+    </div>
+
+    <!-- Flow row -->
+    <div class="flow-row">
+      <div class="fnode" style="background:var(--c-comm);">Communication</div>
+      <div class="farrow">→</div>
+      <div class="fnode" style="background:var(--c-plan);">Planning</div>
+      <div class="farrow">→</div>
+      <div class="fnode" style="background:var(--c-model);">Modeling</div>
+      <div class="farrow">→</div>
+      <div class="fnode" style="background:var(--c-build);">Construction</div>
+      <div class="farrow">→</div>
+      <div class="fnode" style="background:var(--c-deploy);">Deployment</div>
+    </div>
+
+    <!-- Umbrella hub SVG -->
+    <div class="diagram-card">
+      <svg viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg">
+        <!-- umbrella arc -->
+        <path d="M 60 150 A 390 390 0 0 1 840 150" fill="none" stroke="#1c2541" stroke-width="4"/>
+        <text x="450" y="55" text-anchor="middle" font-family="Fraunces, serif" font-weight="800" font-size="22" fill="#1c2541">☔ Umbrella Activities</text>
+        <text x="450" y="80" text-anchor="middle" font-family="Work Sans, sans-serif" font-size="13" fill="#4a5568">Run continuously, across every activity below</text>
+
+        <!-- ribs -->
+        <line x1="150" y1="145" x2="150" y2="205" stroke="#1c2541" stroke-width="3"/>
+        <line x1="325" y1="112" x2="325" y2="205" stroke="#1c2541" stroke-width="3"/>
+        <line x1="500" y1="100" x2="500" y2="205" stroke="#1c2541" stroke-width="3"/>
+        <line x1="675" y1="112" x2="675" y2="205" stroke="#1c2541" stroke-width="3"/>
+        <line x1="820" y1="145" x2="820" y2="205" stroke="#1c2541" stroke-width="3"/>
+
+        <!-- five activity boxes -->
+        <g>
+          <rect x="30" y="205" width="150" height="90" rx="14" fill="#0f8b8d"/>
+          <text x="105" y="240" text-anchor="middle" fill="#fff" font-family="Fraunces, serif" font-weight="700" font-size="15">Communication</text>
+          <text x="105" y="262" text-anchor="middle" fill="#dff5f4" font-size="11">Talk to customer</text>
+        </g>
+        <g>
+          <rect x="205" y="205" width="150" height="90" rx="14" fill="#c9820a"/>
+          <text x="280" y="240" text-anchor="middle" fill="#fff" font-family="Fraunces, serif" font-weight="700" font-size="15">Planning</text>
+          <text x="280" y="262" text-anchor="middle" fill="#fdf0da" font-size="11">Map the project</text>
+        </g>
+        <g>
+          <rect x="380" y="205" width="150" height="90" rx="14" fill="#a8326e"/>
+          <text x="455" y="240" text-anchor="middle" fill="#fff" font-family="Fraunces, serif" font-weight="700" font-size="15">Modeling</text>
+          <text x="455" y="262" text-anchor="middle" fill="#fbe4ee" font-size="11">Sketch the design</text>
+        </g>
+        <g>
+          <rect x="555" y="205" width="150" height="90" rx="14" fill="#5b3ea6"/>
+          <text x="630" y="240" text-anchor="middle" fill="#fff" font-family="Fraunces, serif" font-weight="700" font-size="15">Construction</text>
+          <text x="630" y="262" text-anchor="middle" fill="#ede4fa" font-size="11">Code + test</text>
+        </g>
+        <g>
+          <rect x="730" y="205" width="150" height="90" rx="14" fill="#237a3d"/>
+          <text x="805" y="240" text-anchor="middle" fill="#fff" font-family="Fraunces, serif" font-weight="700" font-size="15">Deployment</text>
+          <text x="805" y="262" text-anchor="middle" fill="#e2f3e6" font-size="11">Deliver + feedback</text>
+        </g>
+
+        <!-- feedback loop -->
+        <path d="M 805 295 C 805 330, 105 330, 105 295" fill="none" stroke="#1c2541" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrow)"/>
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6 Z" fill="#1c2541"/>
+          </marker>
+        </defs>
+        <text x="450" y="325" text-anchor="middle" font-family="Work Sans, sans-serif" font-size="11" fill="#4a5568">feedback loop → shapes the next cycle</text>
+      </svg>
+      <div class="cap">Umbrella Activities sit "above" all five Framework Activities and support them continuously</div>
+    </div>
+
+    <!-- Activity cards -->
+    <div class="activity-grid">
+
+      <div class="a-card comm">
+        <div class="a-head"><div class="num">1</div><h3>Communication</h3><div class="icon">🗣️</div></div>
+        <div class="a-body">
+          <p>Heavy interaction with the customer to gather requirements and understand the real problem, before writing any code.</p>
+          <ul><li>Meetings &amp; interviews with stakeholders</li><li>Understanding business objectives</li><li>Collecting requirements</li></ul>
+          <div class="ex"><b>Example:</b> A hospital asks for "Patient Management Software." The team talks to doctors, receptionists, and lab staff first — otherwise they might build a system only doctors can use, missing what receptionists actually need.</div>
+        </div>
+      </div>
+
+      <div class="a-card plan">
+        <div class="a-head"><div class="num">2</div><h3>Planning</h3><div class="icon">🗺️</div></div>
+        <div class="a-body">
+          <p>Creates a "map" for the project — the tasks to do, risks involved, resources required, and the work schedule.</p>
+          <ul><li>Estimation (time, cost, effort)</li><li>Scheduling (timeline, milestones)</li><li>Risk analysis</li></ul>
+          <div class="ex"><b>Example:</b> Like planning a road trip before driving — deciding the route, fuel stops, and budget — the team decides how many developers are needed and by when each module will be ready.</div>
+        </div>
+      </div>
+
+      <div class="a-card model">
+        <div class="a-head"><div class="num">3</div><h3>Modeling</h3><div class="icon">🧩</div></div>
+        <div class="a-body">
+          <p>Sketching a "blueprint" of the software — understanding <b>what</b> it must do (analysis) and <b>how</b> it will be built (design).</p>
+          <ul><li>Analysis Model — requirements</li><li>Design Model — architecture, data, UI</li></ul>
+          <div class="ex"><b>Example:</b> For a Library System — deciding database tables (Book, Student, Issue-Record) and screens (Search Page, Issue Page) before any coding begins.</div>
+        </div>
+      </div>
+
+      <div class="a-card build">
+        <div class="a-head"><div class="num">4</div><h3>Construction</h3><div class="icon">🛠️</div></div>
+        <div class="a-body">
+          <p>Combines code generation with testing needed to uncover errors — this is where the software is actually "built."</p>
+          <ul><li>Coding — writing the program</li><li>Testing — unit &amp; integration testing</li></ul>
+          <div class="ex"><b>Example:</b> Writing the actual "Issue Book" function, then repeatedly testing it with different inputs to make sure it never crashes.</div>
+        </div>
+      </div>
+
+      <div class="a-card deploy">
+        <div class="a-head"><div class="num">5</div><h3>Deployment</h3><div class="icon">🚀</div></div>
+        <div class="a-body">
+          <p>The complete (or partially complete) product is delivered to the customer, who evaluates it and gives feedback.</p>
+          <ul><li>Installation / release</li><li>User training</li><li>Feedback collection</li></ul>
+          <div class="ex"><b>Example:</b> The Library System is installed on the college server; librarians are trained; feedback like "Return Book button is hard to find" feeds into the next update.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ UMBRELLA ACTIVITIES ============ -->
+  <section id="umbrella">
+    <div class="section-head">
+      <span class="eyebrow" style="color:var(--c-build);">Continuous Support</span>
+      <h2>☔ Umbrella Activities</h2>
+      <div class="divider" style="background:var(--c-build);"></div>
+      <p class="sub">If the 5 Framework Activities are the "rooms" of a building, Umbrella Activities are the electricity and water supply — running through every room, all the time.</p>
+    </div>
+
+    <div class="definition" style="background:var(--c-build-bg); border:1.5px solid #d7c4f0;">
+      <span class="lbl" style="color:var(--c-build);">Definition</span>
+      Umbrella activities are applied throughout the software process, helping the team manage and control progress, quality, change, and risk — during Communication, Planning, Modeling, Construction, <i>and</i> Deployment simultaneously.
+    </div>
+
+    <div class="umbrella-grid">
+      <div class="u-item"><div class="u-ic">📊</div><div><b>Project Tracking &amp; Control</b><span>Comparing actual progress vs. the plan every week</span></div></div>
+      <div class="u-item"><div class="u-ic">⚠️</div><div><b>Risk Management</b><span>Preparing backup plans for things that could go wrong</span></div></div>
+      <div class="u-item"><div class="u-ic">✅</div><div><b>Quality Assurance</b><span>Ensuring quality processes are actually followed</span></div></div>
+      <div class="u-item"><div class="u-ic">🗂️</div><div><b>Configuration Management</b><span>Tracking every version of the software (e.g. Git)</span></div></div>
+      <div class="u-item"><div class="u-ic">🔍</div><div><b>Technical Reviews</b><span>Expert-led checks that catch defects early</span></div></div>
+      <div class="u-item"><div class="u-ic">♻️</div><div><b>Reusability Management</b><span>Reusing existing components instead of rebuilding</span></div></div>
+      <div class="u-item"><div class="u-ic">📄</div><div><b>Documentation</b><span>Preparing SRS, design docs, manuals</span></div></div>
+      <div class="u-item"><div class="u-ic">📐</div><div><b>Measurement</b><span>Collecting metrics like bugs found per week</span></div></div>
+    </div>
+
+    <!-- Task Set -->
+    <div class="section-head" style="margin-top:50px;">
+      <span class="eyebrow" style="color:var(--c-plan);">Getting Specific</span>
+      <h2>📋 Task Set</h2>
+      <div class="divider" style="background:var(--c-plan);"></div>
+      <p class="sub">Each Framework Activity is broad. A <b>Task Set</b> breaks it down into the actual, specific work to be done.</p>
+    </div>
+
+    <div class="definition" style="background:var(--c-plan-bg); border:1.5px solid #f0d9a8;">
+      <span class="lbl" style="color:var(--c-plan);">Definition</span>
+      A Task Set defines the actual work to accomplish a framework activity's objectives — it includes a list of <b>tasks</b> to be done, a list of <b>work products</b> to be produced, and a list of <b>quality assurance filters</b> to be applied.
+    </div>
+
+    <div class="compare-2">
+      <div class="compare-card small">
+        <h4 style="color:var(--c-comm);">🪶 Small / Simple Project</h4>
+        <p style="font-size:.9rem; color:var(--ink-soft);">A light task set is enough:</p>
+        <ul><li>Quick call with the client</li><li>Short notes of requirements</li><li>Informal confirmation</li></ul>
+      </div>
+      <div class="compare-card large">
+        <h4 style="color:var(--c-model);">🏛️ Large / Critical Project</h4>
+        <p style="font-size:.9rem; color:var(--ink-soft);">A heavy task set is needed:</p>
+        <ul><li>Formal stakeholder meetings</li><li>Detailed requirement documents</li><li>Sign-off approvals</li></ul>
+      </div>
+    </div>
+    <p style="margin-top:16px; font-size:.92rem; color:var(--ink-soft);"><b>Key idea:</b> the Framework Activity stays the same across every project — only the Task Set changes, based on the size and criticality of the project. This is what makes the framework "generic" yet flexible.</p>
+  </section>
+
+  <!-- ============ PROCESS FLOW ============ -->
+  <section id="flow">
+    <div class="section-head">
+      <span class="eyebrow" style="color:var(--c-deploy);">Sequencing the Work</span>
+      <h2>🔀 Process Flow</h2>
+      <div class="divider" style="background:var(--c-deploy);"></div>
+      <p class="sub">Process Flow describes how the framework activities — and the tasks within them — are organized with respect to <b>sequence and time</b>.</p>
+    </div>
+
+    <div class="pf-grid">
+      <div class="pf-card">
+        <span class="pf-tag" style="background:var(--c-comm-bg); color:var(--c-comm);">Linear</span>
+        <h4>Straight-line flow</h4>
+        <svg viewBox="0 0 220 40" width="100%" height="40">
+          <g font-family="Work Sans" font-size="9" fill="#fff">
+            <rect x="0" y="8" width="42" height="24" rx="5" fill="#0f8b8d"/><text x="21" y="23" text-anchor="middle">Comm</text>
+            <rect x="52" y="8" width="42" height="24" rx="5" fill="#c9820a"/><text x="73" y="23" text-anchor="middle">Plan</text>
+            <rect x="104" y="8" width="42" height="24" rx="5" fill="#a8326e"/><text x="125" y="23" text-anchor="middle">Model</text>
+            <rect x="156" y="8" width="60" height="24" rx="5" fill="#5b3ea6"/><text x="186" y="23" text-anchor="middle">Build</text>
+          </g>
+        </svg>
+        <p>All 5 activities happen once, in order. Best for small, fully-understood projects.</p>
+      </div>
+
+      <div class="pf-card">
+        <span class="pf-tag" style="background:var(--c-plan-bg); color:var(--c-plan);">Iterative</span>
+        <h4>Repeats &amp; refines</h4>
+        <svg viewBox="0 0 220 55" width="100%" height="55">
+          <g font-family="Work Sans" font-size="9" fill="#fff">
+            <rect x="20" y="8" width="180" height="24" rx="5" fill="#c9820a"/>
+            <text x="110" y="23" text-anchor="middle">Comm → Plan → Model → Build</text>
+          </g>
+          <path d="M 200 32 C 210 45, 20 45, 20 32" fill="none" stroke="#1c2541" stroke-width="2" marker-end="url(#a2)"/>
+          <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#1c2541"/></marker></defs>
+        </svg>
+        <p>The full cycle repeats, refining the product each time. Great when the customer wants changes after seeing a version.</p>
+      </div>
+
+      <div class="pf-card">
+        <span class="pf-tag" style="background:var(--c-model-bg); color:var(--c-model);">Evolutionary</span>
+        <h4>Spiral, growing completeness</h4>
+        <svg viewBox="0 0 220 55" width="100%" height="55">
+          <circle cx="110" cy="28" r="22" fill="none" stroke="#a8326e" stroke-width="3"/>
+          <circle cx="110" cy="28" r="14" fill="none" stroke="#a8326e" stroke-width="2.5" stroke-dasharray="3 3"/>
+          <circle cx="110" cy="28" r="6" fill="#a8326e"/>
+          <text x="110" y="52" text-anchor="middle" font-size="8" fill="#4a5568">v1 → v2 → v3 (more complete)</text>
+        </svg>
+        <p>Activities repeat in a spiral, each pass producing a more complete version of the software.</p>
+      </div>
+
+      <div class="pf-card">
+        <span class="pf-tag" style="background:var(--c-build-bg); color:var(--c-build);">Parallel</span>
+        <h4>Simultaneous activities</h4>
+        <svg viewBox="0 0 220 55" width="100%" height="55">
+          <g font-family="Work Sans" font-size="8" fill="#fff">
+            <rect x="0" y="4" width="70" height="18" rx="4" fill="#5b3ea6"/><text x="35" y="16" text-anchor="middle">UI Design</text>
+            <rect x="0" y="34" width="70" height="18" rx="4" fill="#5b3ea6"/><text x="35" y="46" text-anchor="middle">DB Design</text>
+            <rect x="150" y="18" width="70" height="18" rx="4" fill="#237a3d"/><text x="185" y="30" text-anchor="middle">Build</text>
+          </g>
+          <line x1="70" y1="13" x2="150" y2="27" stroke="#1c2541" stroke-width="1.5"/>
+          <line x1="70" y1="43" x2="150" y2="27" stroke="#1c2541" stroke-width="1.5"/>
+        </svg>
+        <p>Independent tasks (like UI design and database design) run at the same time to save overall project time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WATERFALL ============ -->
+  <section id="waterfall">
+    <div class="chapter-banner wf">
+      <span class="chnum">Chapter 4</span>
+      <h2>📉 The Waterfall Model</h2>
+      <p>Just like a real waterfall, water flows downward step-by-step — never backward. Each phase must fully finish before the next begins.</p>
+    </div>
+
+    <div class="analogy" style="margin-top:26px;">
+      <div class="tag">💧 Quick Facts</div>
+      <p>First formally described by <b>Winston W. Royce in 1970</b>. It is the <b>first and simplest</b> process model ever introduced — also called the <b>Linear-Sequential Life Cycle Model</b>. Phases never overlap: a phase begins only after the previous one is fully complete.</p>
+    </div>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="Fraunces, serif" font-weight="700" font-size="14" fill="#fff">
+          <rect x="10" y="10" width="140" height="46" rx="10" fill="#123a63"/><text x="80" y="38" text-anchor="middle">Requirements</text>
+          <rect x="130" y="66" width="140" height="46" rx="10" fill="#17538c"/><text x="200" y="94" text-anchor="middle">System Design</text>
+          <rect x="250" y="122" width="150" height="46" rx="10" fill="#1c6bab"/><text x="325" y="150" text-anchor="middle">Implementation</text>
+          <rect x="380" y="178" width="130" height="46" rx="10" fill="#2382c9"/><text x="445" y="206" text-anchor="middle">Testing</text>
+          <rect x="490" y="234" width="140" height="46" rx="10" fill="#4a9de0"/><text x="560" y="262" text-anchor="middle">Deployment</text>
+          <rect x="610" y="290" width="140" height="30" rx="10" fill="#7fbde8"/>
+        </g>
+        <text x="680" y="310" text-anchor="middle" font-family="Fraunces, serif" font-weight="700" font-size="13" fill="#123a63">Maintenance</text>
+        <path d="M 150 33 L 130 33" stroke="#1c2541" stroke-width="2" marker-end="url(#a3)"/>
+        <path d="M 270 89 L 250 89" stroke="#1c2541" stroke-width="2" marker-end="url(#a3)"/>
+        <path d="M 400 145 L 380 145" stroke="#1c2541" stroke-width="2" marker-end="url(#a3)"/>
+        <path d="M 510 201 L 490 201" stroke="#1c2541" stroke-width="2" marker-end="url(#a3)"/>
+        <path d="M 630 257 L 610 257" stroke="#1c2541" stroke-width="2" marker-end="url(#a3)"/>
+        <defs><marker id="a3" markerWidth="8" markerHeight="8" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#1c2541"/></marker></defs>
+      </svg>
+      <div class="cap">Each phase cascades into the next — like steps of a waterfall — with no going back</div>
+    </div>
+
+    <div class="wf-list">
+      <div class="wf-step">
+        <div class="wf-num">1</div>
+        <div><h4>Requirement Analysis</h4><p>All possible requirements are gathered and documented completely, up front.</p>
+        <div class="ex-line">📌 For a College ERP: attendance, marks, fees, library — everything is listed before any design starts.</div></div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">2</div>
+        <div><h4>System Design</h4><p>Requirements are studied and a complete design (architecture, database, screens) is prepared.</p>
+        <div class="ex-line">📌 Deciding the database tables (Student, Attendance, Marks) and overall architecture.</div></div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">3</div>
+        <div><h4>Implementation (Coding)</h4><p>Code is written strictly based on the design, usually as small units.</p>
+        <div class="ex-line">📌 Developers code the Attendance module exactly as per the design document.</div></div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">4</div>
+        <div><h4>Testing</h4><p>All units are integrated and tested together as a complete system.</p>
+        <div class="ex-line">📌 Checking that marking attendance correctly reflects in the reports module.</div></div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">5</div>
+        <div><h4>Deployment</h4><p>The finished, tested product is delivered and installed at the customer's site.</p>
+        <div class="ex-line">📌 The ERP goes live on the college servers for staff and students.</div></div>
+      </div>
+      <div class="wf-step">
+        <div class="wf-num">6</div>
+        <div><h4>Maintenance</h4><p>Issues found in live use are fixed, and small enhancements are made.</p>
+        <div class="ex-line">📌 A bug allowing marks above 100 is discovered and fixed after a month of use.</div></div>
+      </div>
+    </div>
+
+    <div class="definition" style="background:var(--water-bg); border:1.5px solid #b7d7ef; margin-top:30px;">
+      <span class="lbl" style="color:var(--water);">Golden Rule</span>
+      You must <b>fully complete</b> one phase before moving to the next — there is <b>no going back</b>. If a misunderstood requirement is discovered during Testing, the entire waterfall must restart from the top. This is the model's biggest weakness.
+    </div>
+
+    <div class="adv-grid">
+      <div class="adv-box good">
+        <h4>✅ Advantages</h4>
+        <ul>
+          <li>Very simple and easy to understand and use</li>
+          <li>Each phase has clear deliverables and a review process</li>
+          <li>Best suited when requirements are well understood and fixed</li>
+          <li>Easy to manage due to the rigidity of the model</li>
+          <li>Clear milestones, so progress is easy to track</li>
+        </ul>
+      </div>
+      <div class="adv-box bad">
+        <h4>⚠️ Disadvantages</h4>
+        <ul>
+          <li>No working software until very late in the life cycle</li>
+          <li>High risk if requirements change midway</li>
+          <li>Not suitable for complex or long-running projects</li>
+          <li>Poor fit when requirements may change moderately-to-highly</li>
+          <li>Real projects rarely follow such a strict sequential flow</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="use-grid">
+      <div class="use-card wf"><b>Clear Requirements</b>Requirements are well understood and unlikely to change.</div>
+      <div class="use-card wf"><b>Stable Technology</b>The technology being used is familiar and stable.</div>
+      <div class="use-card wf"><b>Short, Fixed Scope</b>The project is short with a clearly fixed scope — e.g. a basic payroll calculator with fixed rules.</div>
+    </div>
+  </section>
+
+  <!-- ============ INCREMENTAL ============ -->
+  <section id="incremental">
+    <div class="chapter-banner inc">
+      <span class="chnum">Chapter 5</span>
+      <h2>📶 The Incremental Model</h2>
+      <p>Also known as the <b>Multi-Waterfall Model</b> — requirements are broken into standalone modules, each delivered as a usable increment.</p>
+    </div>
+
+    <div class="analogy" style="margin-top:26px;">
+      <div class="tag">🏗️ The Growing House Analogy</div>
+      <p>Instead of building an entire house before anyone can live in it, you build <b>one room first</b> — the family moves in. Then you add a second room, then a kitchen, then a garden. At every stage, there's a usable part of the house, and it keeps getting bigger.</p>
+      <p>Incremental development goes through the same steps every time — <b>analysis → design → implementation → testing → maintenance</b> — but repeats them for each increment.</p>
+    </div>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 760 300" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="Work Sans" font-size="10" fill="#fff" font-weight="600">
+          <!-- increment 1 -->
+          <rect x="10" y="15" width="90" height="26" rx="6" fill="#d9481f"/><text x="55" y="32" text-anchor="middle">Analysis</text>
+          <rect x="110" y="15" width="90" height="26" rx="6" fill="#e05c34"/><text x="155" y="32" text-anchor="middle">Design</text>
+          <rect x="210" y="15" width="90" height="26" rx="6" fill="#e77049"/><text x="255" y="32" text-anchor="middle">Code</text>
+          <rect x="310" y="15" width="90" height="26" rx="6" fill="#ee845e"/><text x="355" y="32" text-anchor="middle">Test</text>
+          <rect x="410" y="15" width="120" height="26" rx="6" fill="#237a3d"/><text x="470" y="32" text-anchor="middle">Increment 1 ✓</text>
+
+          <!-- increment 2 -->
+          <rect x="80" y="65" width="90" height="26" rx="6" fill="#d9481f"/><text x="125" y="82" text-anchor="middle">Analysis</text>
+          <rect x="180" y="65" width="90" height="26" rx="6" fill="#e05c34"/><text x="225" y="82" text-anchor="middle">Design</text>
+          <rect x="280" y="65" width="90" height="26" rx="6" fill="#e77049"/><text x="325" y="82" text-anchor="middle">Code</text>
+          <rect x="380" y="65" width="90" height="26" rx="6" fill="#ee845e"/><text x="425" y="82" text-anchor="middle">Test</text>
+          <rect x="480" y="65" width="150" height="26" rx="6" fill="#237a3d"/><text x="555" y="82" text-anchor="middle">Increment 2 ✓✓</text>
+
+          <!-- increment 3 -->
+          <rect x="150" y="115" width="90" height="26" rx="6" fill="#d9481f"/><text x="195" y="132" text-anchor="middle">Analysis</text>
+          <rect x="250" y="115" width="90" height="26" rx="6" fill="#e05c34"/><text x="295" y="132" text-anchor="middle">Design</text>
+          <rect x="350" y="115" width="90" height="26" rx="6" fill="#e77049"/><text x="395" y="132" text-anchor="middle">Code</text>
+          <rect x="450" y="115" width="90" height="26" rx="6" fill="#ee845e"/><text x="495" y="132" text-anchor="middle">Test</text>
+          <rect x="550" y="115" width="170" height="26" rx="6" fill="#237a3d"/><text x="635" y="132" text-anchor="middle">Increment 3 ✓✓✓</text>
+        </g>
+        <text x="380" y="175" text-anchor="middle" font-family="Work Sans" font-size="11" fill="#4a5568">Each row is one increment — a small mini-waterfall that adds new features to the previous release</text>
+        <g font-family="Fraunces, serif" font-size="12" font-weight="700" fill="#1c2541">
+          <text x="30" y="205">Time →</text>
+        </g>
+        <line x1="10" y1="215" x2="720" y2="215" stroke="#1c2541" stroke-width="2" marker-end="url(#a4)"/>
+        <defs><marker id="a4" markerWidth="8" markerHeight="8" refX="5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#1c2541"/></marker></defs>
+        <text x="365" y="245" text-anchor="middle" font-family="Work Sans" font-size="11" fill="#4a5568" font-style="italic">Software gets more complete with every increment delivered</text>
+      </svg>
+      <div class="cap">The Incremental Model — a staggered series of mini-waterfalls, each adding new functionality</div>
+    </div>
+
+    <table class="increment-table">
+      <tr><th>Increment</th><th>Features Delivered — College ERP Example</th></tr>
+      <tr><td>Increment 1</td><td>Student login + Attendance module (core, usable product)</td></tr>
+      <tr><td>Increment 2</td><td>+ Marks module added</td></tr>
+      <tr><td>Increment 3</td><td>+ Fee payment module added</td></tr>
+      <tr><td>Increment 4</td><td>+ Library module + Notifications added</td></tr>
+    </table>
+    <p style="font-size:.9rem; color:var(--ink-soft); margin-top:10px;">Notice: after <b>Increment 1 alone</b>, the college already has a working piece of software — even though the full ERP isn't finished yet. That's the biggest strength of this model.</p>
+
+    <div class="definition" style="background:var(--incr-bg); border:1.5px solid #f3cbb5; margin-top:26px;">
+      <span class="lbl" style="color:var(--incr);">Key Characteristics</span>
+      Each iteration passes through requirements, design, coding, and testing. Every subsequent release adds function to the previous one, until all designed functionality is implemented. The system is put into production as soon as the <b>first increment</b> is delivered — and once the client evaluates the core product, planning begins for the next increment.
+    </div>
+
+    <div class="adv-grid">
+      <div class="adv-box good">
+        <h4>✅ Advantages</h4>
+        <ul>
+          <li>Working software is generated early — from the first increment itself</li>
+          <li>Customers can use and review each increment, shaping future ones</li>
+          <li>Lower risk of complete project failure — problems surface early</li>
+          <li>Smaller increments are easier to test and debug</li>
+          <li>Flexible — future increments can absorb changing requirements</li>
+        </ul>
+      </div>
+      <div class="adv-box bad">
+        <h4>⚠️ Disadvantages</h4>
+        <ul>
+          <li>Requires good planning to properly divide the system into increments</li>
+          <li>Total cost can exceed Waterfall if not managed well</li>
+          <li>Each increment must integrate cleanly without breaking earlier ones</li>
+          <li>Not ideal if the problem can't be split into independent pieces</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-head" style="margin-top:44px;">
+      <h3 style="font-size:1.3rem;">🧭 When to Use the Incremental Model</h3>
+    </div>
+    <div class="use-grid">
+      <div class="use-card inc"><b>Requirements are Clear</b>The core system requirements are clearly understood upfront.</div>
+      <div class="use-card inc"><b>Early Release Needed</b>There's demand for an early release of a working product.</div>
+      <div class="use-card inc"><b>Less-Skilled Team</b>The software engineering team isn't very well trained — smaller pieces are easier to manage.</div>
+      <div class="use-card inc"><b>High-Risk Features Involved</b>High-risk goals can be tackled in an early increment to reduce overall project risk.</div>
+    </div>
+  </section>
+
+  <!-- ============ SUMMARY ============ -->
+  <section id="summary">
+    <div class="section-head">
+      <span class="eyebrow" style="color:var(--navy);">Wrapping Up</span>
+      <h2>Waterfall vs. Incremental — At a Glance</h2>
+      <div class="divider" style="background:var(--navy);"></div>
+    </div>
+
+    <table class="compare-table">
+      <tr><th></th><th>Waterfall Model</th><th>Incremental Model</th></tr>
+      <tr><td>Delivery</td><td>Entire software delivered at the end</td><td>Delivered in usable increments</td></tr>
+      <tr><td>Customer Feedback</td><td>Only after full completion</td><td>After every increment</td></tr>
+      <tr><td>Risk</td><td>High if requirements change</td><td>Lower — issues caught early</td></tr>
+      <tr><td>Flexibility</td><td>Rigid, hard to change mid-way</td><td>Adapts as increments progress</td></tr>
+      <tr><td>Best For</td><td>Small, well-defined, unchanging projects</td><td>Larger projects with evolving needs</td></tr>
+      <tr><td>Working Software</td><td>Only at the very end</td><td>From the first increment onward</td></tr>
+    </table>
+
+    <div class="summary-band">
+      <h3>🎯 Big-Picture Recap</h3>
+      <div class="sgrid">
+        <div class="scard"><b>Generic Process Framework</b>Every project shares 5 activities — Communication, Planning, Modeling, Construction, Deployment — continuously supported by Umbrella Activities.</div>
+        <div class="scard"><b>Task Set</b>Breaks each framework activity into specific tasks, work products, and QA checkpoints — scaled to project size.</div>
+        <div class="scard"><b>Process Flow</b>The pattern in which activities occur — Linear, Iterative, Evolutionary, or Parallel.</div>
+        <div class="scard"><b>Waterfall Model</b>Strict linear flow — one phase fully finishes before the next begins. Best for small, fixed-scope projects.</div>
+        <div class="scard"><b>Incremental Model</b>Repeats the framework in stages, delivering usable software early and often — best for evolving, larger projects.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>Software Engineering · Unit I Study Notes — Generic Process Framework, Waterfall Model &amp; Incremental Model</footer>
+
+</body>
+</html>

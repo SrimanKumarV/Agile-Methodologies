@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Topic 1 · Evolutionary Process Models — Beginner Study Notes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f3f5fc;
+    --ink:#26293b;
+    --ink-soft:#5b5f78;
+    --card:#ffffff;
+    --purple:#7c5cff;
+    --purple-soft:#efe9ff;
+    --teal:#17b6a7;
+    --teal-soft:#e2f8f5;
+    --pink:#ff6f9c;
+    --pink-soft:#ffe7ee;
+    --amber:#ffab2e;
+    --amber-soft:#fff2df;
+    --blue:#3d8bfd;
+    --blue-soft:#e7f1ff;
+    --green:#3bb273;
+    --green-soft:#e5f7ec;
+    --red:#ef5350;
+    --red-soft:#fdecea;
+    --line:#e5e3f5;
+    --radius:20px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Nunito', sans-serif; line-height:1.7; font-size:16px;
+  }
+  h1,h2,h3,h4{font-family:'Poppins',sans-serif; color:var(--ink); line-height:1.3;}
+  .wrap{max-width:980px; margin:0 auto; padding:0 22px;}
+  p{margin:.6em 0;}
+  code, .code-block code{font-family:'Fira Code', monospace;}
+
+  /* ===== TOP BAR / PROGRESS ===== */
+  .topicbar{
+    position:sticky; top:0; z-index:60; background:rgba(243,245,252,0.92); backdrop-filter:blur(8px);
+    border-bottom:2px solid var(--purple-soft); padding:10px 0;
+  }
+  .topicbar .wrap{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .topicbar .pill{
+    background:var(--purple); color:#fff; font-family:'Poppins'; font-weight:700; font-size:.78rem;
+    padding:6px 14px; border-radius:20px; letter-spacing:.02em;
+  }
+  .topicbar .steps{display:flex; gap:8px; margin-left:auto; flex-wrap:wrap;}
+  .topicbar .steps span{
+    font-size:.74rem; font-weight:700; padding:5px 11px; border-radius:14px; font-family:'Poppins';
+  }
+  .step-active{background:var(--purple); color:#fff;}
+  .step-upcoming{background:#e9e8f5; color:var(--ink-soft);}
+
+  /* ===== HERO ===== */
+  .hero{
+    background:linear-gradient(135deg, #7c5cff 0%, #5a7bff 45%, #17b6a7 100%);
+    color:#fff; padding:56px 0 46px; position:relative; overflow:hidden;
+  }
+  .hero::before{
+    content:"🧬"; position:absolute; font-size:220px; opacity:.12; right:-30px; top:-40px; transform:rotate(12deg);
+  }
+  .hero .wrap{position:relative;}
+  .hero .eyebrow{font-family:'Poppins'; font-weight:700; font-size:.85rem; letter-spacing:.08em; text-transform:uppercase; opacity:.9;}
+  .hero h1{color:#fff; font-size:2.5rem; font-weight:800; max-width:700px; margin-top:8px;}
+  .hero p.lead{color:#eef0ff; max-width:620px; font-size:1.08rem;}
+  .hero .tags{display:flex; gap:10px; flex-wrap:wrap; margin-top:20px;}
+  .hero .tags span{background:rgba(255,255,255,0.18); padding:7px 14px; border-radius:12px; font-size:.85rem; font-weight:700; font-family:'Poppins';}
+
+  /* ===== NAV (topic-internal) ===== */
+  .subnav{background:#fff; border-bottom:1px solid var(--line); position:sticky; top:49px; z-index:55; overflow-x:auto; white-space:nowrap;}
+  .subnav .wrap{padding:10px 22px; display:flex; gap:6px;}
+  .subnav a{
+    color:var(--ink-soft); text-decoration:none; font-family:'Poppins'; font-weight:600; font-size:.76rem;
+    padding:7px 12px; border-radius:10px; flex-shrink:0;
+  }
+  .subnav a:hover{background:var(--purple-soft); color:var(--purple);}
+
+  section{padding:46px 0;}
+  .sec-head{margin-bottom:22px;}
+  .sec-head .num{
+    display:inline-flex; align-items:center; justify-content:center; width:34px; height:34px;
+    border-radius:10px; background:var(--purple); color:#fff; font-family:'Poppins'; font-weight:800;
+    font-size:.95rem; margin-right:10px;
+  }
+  .sec-head h2{display:inline-flex; align-items:center; font-size:1.55rem; font-weight:800; vertical-align:middle;}
+  .sec-head .tagline{color:var(--ink-soft); margin-top:6px; max-width:680px;}
+
+  /* ===== CARD ===== */
+  .card{background:var(--card); border-radius:var(--radius); padding:24px 26px; box-shadow:0 6px 20px rgba(90,80,180,0.08); margin:18px 0;}
+
+  /* ===== CALLOUTS ===== */
+  .callout{border-radius:16px; padding:16px 20px; margin:16px 0; display:flex; gap:12px; align-items:flex-start;}
+  .callout .ic{font-size:1.35rem; flex-shrink:0; line-height:1;}
+  .callout b{font-family:'Poppins'; display:block; margin-bottom:2px; font-size:.92rem;}
+  .callout p{margin:0; font-size:.94rem;}
+  .co-example{background:var(--blue-soft);} .co-example b{color:var(--blue);}
+  .co-analogy{background:var(--pink-soft);} .co-analogy b{color:var(--pink);}
+  .co-mistake{background:var(--red-soft);} .co-mistake b{color:var(--red);}
+  .co-remember{background:var(--amber-soft);} .co-remember b{color:#b9760a;}
+  .co-interview{background:var(--teal-soft);} .co-interview b{color:var(--teal);}
+  .co-exam{background:var(--purple-soft);} .co-exam b{color:var(--purple);}
+
+  /* ===== DEFINITION BOX ===== */
+  .definition{
+    background:linear-gradient(135deg, var(--purple-soft), #fff);
+    border:2px dashed var(--purple); border-radius:16px; padding:20px 24px; margin:18px 0; font-weight:600;
+  }
+  .definition .lbl{display:block; font-family:'Poppins'; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--purple); margin-bottom:6px; font-weight:800;}
+
+  /* ===== FLOWCHART (HTML/CSS) ===== */
+  .flow{display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin:22px 0; justify-content:center;}
+  .flow .node{
+    background:#fff; border:2px solid var(--purple); color:var(--purple); font-family:'Poppins'; font-weight:700;
+    padding:12px 18px; border-radius:14px; font-size:.9rem; text-align:center; min-width:120px;
+  }
+  .flow .arrow{font-size:1.4rem; color:var(--ink-soft);}
+  .flow-vert{display:flex; flex-direction:column; align-items:center; gap:4px; margin:20px 0;}
+  .flow-vert .node{width:min(320px,90%);}
+  .flow-vert .arrow{font-size:1.3rem; color:var(--ink-soft);}
+
+  /* ===== TYPE PREVIEW CARDS ===== */
+  .type-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px; margin-top:20px;}
+  .type-card{border-radius:18px; padding:20px; color:#fff; position:relative; overflow:hidden;}
+  .type-card h4{color:#fff; margin:6px 0 8px; font-size:1.15rem;}
+  .type-card p{font-size:.88rem; color:rgba(255,255,255,0.92); margin:0;}
+  .type-card .big-emoji{font-size:2rem;}
+  .type-card.t1{background:linear-gradient(135deg,#ff6f9c,#ff9770);}
+  .type-card.t2{background:linear-gradient(135deg,#3d8bfd,#7c5cff);}
+  .type-card.t3{background:linear-gradient(135deg,#17b6a7,#3bb273);}
+  .type-card .soon{
+    position:absolute; top:14px; right:14px; background:rgba(255,255,255,0.25); font-family:'Poppins';
+    font-size:.68rem; font-weight:700; padding:3px 9px; border-radius:10px;
+  }
+
+  /* ===== ADV/DISADV ===== */
+  .adv-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px;}
+  @media(max-width:680px){.adv-grid{grid-template-columns:1fr;}}
+  .adv-box{border-radius:16px; padding:20px 22px;}
+  .adv-box h4{margin:0 0 10px; font-size:1.05rem;}
+  .adv-box ul{margin:0; padding-left:20px;}
+  .adv-box li{margin:7px 0; font-size:.93rem;}
+  .adv-box.good{background:var(--green-soft); border:1.5px solid #b9e6c9;}
+  .adv-box.bad{background:var(--red-soft); border:1.5px solid #f5c6c4;}
+
+  /* ===== TABLE ===== */
+  table{width:100%; border-collapse:collapse; margin:18px 0; font-size:.92rem; background:#fff; border-radius:14px; overflow:hidden;}
+  th{background:var(--purple); color:#fff; text-align:left; padding:12px 14px; font-family:'Poppins'; font-weight:700;}
+  td{padding:11px 14px; border-bottom:1px solid var(--line);}
+  tr:nth-child(even) td{background:#faf9ff;}
+
+  /* ===== CODE BLOCK ===== */
+  .code-block{
+    background:#1e2130; color:#e5e7ff; border-radius:14px; padding:18px 20px; margin:18px 0;
+    font-size:.86rem; overflow-x:auto; position:relative;
+  }
+  .code-block .tag{position:absolute; top:10px; right:14px; font-family:'Poppins'; font-size:.68rem; color:#8b90c9; letter-spacing:.06em;}
+  .code-block pre{margin:0; white-space:pre-wrap;}
+  .code-block .cmt{color:#7de3c8;}
+  .code-block .kw{color:#ff9770;}
+  .code-block .str{color:#ffd479;}
+
+  /* ===== SUMMARY BOX ===== */
+  .summary-box{
+    background:linear-gradient(135deg,#26293b,#3a2f6b); color:#f1f0ff; border-radius:20px; padding:26px 28px; margin:22px 0;
+  }
+  .summary-box h3{color:#ffd479;}
+  .summary-box ul{padding-left:20px; margin:10px 0 0;}
+  .summary-box li{margin:6px 0; font-size:.94rem;}
+
+  /* ===== ACCORDION (details) ===== */
+  details{background:#fff; border-radius:14px; padding:14px 18px; margin:10px 0; border:1.5px solid var(--line); cursor:pointer;}
+  details summary{font-family:'Poppins'; font-weight:700; font-size:.95rem; color:var(--purple); list-style:none; display:flex; align-items:center; gap:8px;}
+  details summary::-webkit-details-marker{display:none;}
+  details summary::before{content:"▸"; transition:.2s;}
+  details[open] summary::before{transform:rotate(90deg);}
+  details p, details ul{font-size:.92rem; color:var(--ink-soft); margin-top:10px;}
+
+  /* ===== MCQ ===== */
+  .mcq{background:#fff; border-radius:14px; padding:16px 20px; margin:12px 0; border:1.5px solid var(--line);}
+  .mcq .q{font-family:'Poppins'; font-weight:700; margin-bottom:8px; font-size:.95rem;}
+  .mcq ol{margin:0; padding-left:22px; font-size:.9rem;}
+  .mcq li{margin:4px 0;}
+  .mcq details{margin-top:10px; background:var(--green-soft); border:none; padding:8px 14px;}
+  .mcq details summary{color:var(--green); font-size:.85rem;}
+
+  /* ===== QUESTION LISTS ===== */
+  .qlist{background:#fff; border-radius:16px; padding:20px 24px; margin:16px 0; border:1.5px solid var(--line);}
+  .qlist ol, .qlist ul{padding-left:22px; margin:0;}
+  .qlist li{margin:8px 0; font-size:.94rem;}
+
+  /* ===== FILL BLANKS / TRUE-FALSE ===== */
+  .fb-item, .tf-item{
+    background:#fff; border-radius:12px; padding:12px 16px; margin:8px 0; border:1.5px solid var(--line);
+    font-size:.92rem; display:flex; justify-content:space-between; gap:14px; align-items:center; flex-wrap:wrap;
+  }
+  .fb-item .ans, .tf-item .ans{font-family:'Poppins'; font-weight:700; color:var(--green); font-size:.82rem;}
+
+  /* ===== THINK & ANSWER ===== */
+  .think-box{background:var(--amber-soft); border:2px dotted var(--amber); border-radius:16px; padding:18px 22px; margin:14px 0;}
+  .think-box b{font-family:'Poppins'; color:#a9670a;}
+
+  footer{text-align:center; padding:36px 22px 50px; color:var(--ink-soft); font-size:.85rem;}
+  .next-banner{
+    background:var(--purple); color:#fff; border-radius:18px; padding:22px 26px; margin-top:20px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+  }
+  .next-banner b{font-family:'Poppins'; font-size:1.05rem;}
+  .next-banner span{font-size:.88rem; opacity:.9;}
+
+  @media(max-width:640px){
+    .hero h1{font-size:1.8rem;}
+    .sec-head h2{font-size:1.25rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topicbar">
+  <div class="wrap">
+    <span class="pill">📘 Unit — Evolutionary &amp; Related Process Models</span>
+    <div class="steps">
+      <span class="step-active">1. Evolutionary Models</span>
+      <span class="step-upcoming">2. Prototyping Model</span>
+      <span class="step-upcoming">3. Spiral Model</span>
+      <span class="step-upcoming">4. Concurrent Model</span>
+    </div>
+  </div>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Topic 1 of 4</span>
+    <h1>Evolutionary Process Models</h1>
+    <p class="lead"></p>
+    <div class="tags">
+      <span>🧬 Iterative + Incremental</span>
+      <span>🔁 Repeated Cycles</span>
+      <span>📈 Growing Completeness</span>
+    </div>
+  </div>
+</header>
+
+<nav class="subnav">
+  <div class="wrap">
+    <a href="#what">1. What is it?</a>
+    <a href="#why">2. Why needed?</a>
+    <a href="#where">3. Where used?</a>
+    <a href="#how">4. How it works</a>
+    <a href="#adv">5–6. Adv/Disadv</a>
+    <a href="#analogy">7. Analogy</a>
+    <a href="#example">8–9. Examples</a>
+    <a href="#mistakes">10. Mistakes</a>
+    <a href="#compare">Comparison</a>
+    <a href="#summary">Summary</a>
+    <a href="#viva">Viva/Univ Qs</a>
+    <a href="#revision">Quick Revision</a>
+    <a href="#faq">FAQ</a>
+    <a href="#mcq">MCQs</a>
+    <a href="#practice">Practice</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- 1. WHAT IS IT -->
+  <section id="what">
+    <div class="sec-head">
+      <h2><span class="num">1</span>What is an Evolutionary Process Model?</h2>
+      <p class="tagline">Let's build the definition slowly, one word at a time, instead of just memorizing it.</p>
+    </div>
+
+    <div class="card">
+      <p>The word <b>"Evolutionary"</b> comes from <b>"Evolution"</b> — the idea of something changing gradually, over many small steps, into a better and more developed form. Think of how a tiny seed slowly becomes a full-grown tree — not overnight, but through repeated cycles of growth.</p>
+      <p>In Software Engineering, an <b>Evolutionary Process Model</b> is a way of developing software where the product is built through <b>repeated cycles (iterations)</b>, and with every cycle, the software becomes <b>more complete and more refined</b> than it was before.</p>
+    </div>
+
+    <div class="definition">
+      <span class="lbl">Formal Definition</span>
+      An Evolutionary Process Model is a software development approach that combines the <b>Iterative</b> approach (repeating a cycle of activities again and again) with the <b>Incremental</b> approach (adding a little more functionality with each pass) — so that the software "evolves" into a complete, polished system across multiple versions.
+    </div>
+
+    <div class="flow">
+      <div class="node">Version 1<br><small>(basic)</small></div>
+      <div class="arrow">→</div>
+      <div class="node">Version 2<br><small>(better)</small></div>
+      <div class="arrow">→</div>
+      <div class="node">Version 3<br><small>(even better)</small></div>
+      <div class="arrow">→</div>
+      <div class="node">Final Version<br><small>(complete)</small></div>
+    </div>
+
+    <div class="callout co-remember">
+      <div class="ic">📝</div>
+      <div><b>Remember</b><p>Evolutionary = Iterative + Incremental, working together. It's not just "doing something again and again" — it's doing it again <i>while also adding more each time</i>.</p></div>
+    </div>
+  </section>
+
+  <!-- 2. WHY NEEDED -->
+  <section id="why">
+    <div class="sec-head">
+      <h2><span class="num">2</span>Why do we need Evolutionary Models?</h2>
+      <p class="tagline">To understand "why," we must first understand a problem with older models.</p>
+    </div>
+
+    <div class="card">
+      <p>Recall the <b>Waterfall Model</b> — it assumes that <b>all requirements are fully known and fixed</b> before any design or coding begins. This works fine when the customer knows exactly what they want.</p>
+      <p>But in real life, this is often <b>not true</b>. Many times:</p>
+      <ul>
+        <li>The customer has only a <b>rough idea</b> of what they want.</li>
+        <li>Requirements may <b>change</b> as the customer sees the product taking shape.</li>
+        <li>New technology or new competitor products may force changes mid-way.</li>
+      </ul>
+      <p>Evolutionary Models solve exactly this problem — by letting the software <b>grow and adapt gradually</b>, based on real feedback, instead of assuming everything is known on day one.</p>
+    </div>
+
+    <div class="callout co-example">
+      <div class="ic">💡</div>
+      <div><b>Example</b><p>A startup wants a food delivery app but isn't fully sure what features users will actually like. Instead of designing the "perfect" app in one shot, they release a simple version, watch how users respond, then improve it — a textbook case for an evolutionary approach.</p></div>
+    </div>
+  </section>
+
+  <!-- 3. WHERE USED -->
+  <section id="where">
+    <div class="sec-head">
+      <h2><span class="num">3</span>Where is it used?</h2>
+      <p class="tagline">Real situations where "build a little, learn a little, improve a little" makes the most sense.</p>
+    </div>
+
+    <div class="card">
+      <ul>
+        <li>🚀 <b>Startups &amp; MVPs</b> — building a Minimum Viable Product first, then evolving it</li>
+        <li>📱 <b>Mobile &amp; web apps</b> — where user feedback constantly shapes new features</li>
+        <li>🤖 <b>AI / Machine Learning products</b> — where the "right" solution is discovered through experimentation</li>
+        <li>🏛️ <b>Large, novel government or enterprise systems</b> — where requirements are too complex to fully define upfront</li>
+        <li>🔬 <b>Research-driven software projects</b> — where nobody knows the final shape of the solution at the start</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4. HOW IT WORKS -->
+  <section id="how">
+    <div class="sec-head">
+      <h2><span class="num">4</span>How does it work?</h2>
+      <p class="tagline">Two familiar ideas combine to create the evolutionary approach.</p>
+    </div>
+
+    <div class="card">
+      <div class="flow">
+        <div class="node" style="border-color:var(--blue); color:var(--blue);">🔁 Iterative<br><small>repeat the cycle</small></div>
+        <div class="arrow">+</div>
+        <div class="node" style="border-color:var(--teal); color:var(--teal);">🧱 Incremental<br><small>add more each time</small></div>
+        <div class="arrow">=</div>
+        <div class="node" style="border-color:var(--purple); color:var(--purple);">🧬 Evolutionary<br><small>grow &amp; refine</small></div>
+      </div>
+      <p><b>Iterative</b> means repeating a cycle of operations to get closer to a desired result — like practicing a drawing again and again to make it better each time.</p>
+      <p><b>Incremental</b> means building the product piece by piece, where each piece adds new functionality on top of what already exists.</p>
+      <p>An Evolutionary Model does <b>both at once</b>: it repeats the development cycle (Communication → Planning → Modeling → Construction → Deployment), and with every repetition, the software becomes a more complete, more capable version of itself.</p>
+    </div>
+
+    <div class="callout co-exam">
+      <div class="ic">🏆</div>
+      <div><b>Exam Point</b><p>If asked "Is Evolutionary Model the same as Incremental Model?" — answer: No. Incremental delivers separate <i>pieces</i> of functionality one after another. Evolutionary <i>repeatedly refines the whole product</i>, producing better and more complete versions each time.</p></div>
+    </div>
+
+    <h3 style="margin-top:34px; font-size:1.2rem;">🌱 The Three Evolutionary Models (Preview)</h3>
+    <p class="tagline">We will study each one in full detail as a separate topic — here's a quick preview so you see the bigger picture.</p>
+
+    <div class="type-grid">
+      <div class="type-card t1">
+        <span class="soon">Topic 2 →</span>
+        <div class="big-emoji">🧪</div>
+        <h4>Prototyping Model</h4>
+        <p>Build a quick, rough working sample first, so the customer can react to something real — rather than describe requirements in the abstract.</p>
+      </div>
+      <div class="type-card t2">
+        <span class="soon">Topic 3 →</span>
+        <div class="big-emoji">🌀</div>
+        <h4>Spiral Model</h4>
+        <p>Development moves in loops like a spiral, with heavy focus on identifying and managing risk at every loop.</p>
+      </div>
+      <div class="type-card t3">
+        <span class="soon">Topic 4 →</span>
+        <div class="big-emoji">⚙️</div>
+        <h4>Concurrent Development Model</h4>
+        <p>Different activities (like Communication and Modeling) happen at the same time, each moving independently between states.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5-6 ADV/DISADV -->
+  <section id="adv">
+    <div class="sec-head">
+      <h2><span class="num">5–6</span>Advantages &amp; Disadvantages</h2>
+    </div>
+
+    <div class="adv-grid">
+      <div class="adv-box good">
+        <h4>✅ Advantages</h4>
+        <ul>
+          <li>Handles unclear or changing requirements gracefully</li>
+          <li>Customer sees working software early and can give real feedback</li>
+          <li>Reduces the risk of building the "wrong" product</li>
+          <li>More flexible than rigid models like Waterfall</li>
+          <li>Mistakes are caught early, in smaller and cheaper iterations</li>
+        </ul>
+      </div>
+      <div class="adv-box bad">
+        <h4>⚠️ Disadvantages</h4>
+        <ul>
+          <li>Harder to plan a fixed timeline or fixed budget upfront</li>
+          <li>Needs constant, active customer involvement</li>
+          <li>Risk of "scope creep" — the project keeps expanding without end</li>
+          <li>Documentation can become inconsistent across many iterations</li>
+          <li>Requires an experienced team to manage the repeated cycles well</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. ANALOGY -->
+  <section id="analogy">
+    <div class="sec-head">
+      <h2><span class="num">7</span>Real-World Analogy</h2>
+    </div>
+
+    <div class="callout co-analogy">
+      <div class="ic">🎯</div>
+      <div><b>The Sculptor's Analogy</b><p>A sculptor never carves a perfect statue in one single attempt. They first rough out a basic shape (like a first prototype). Then they step back, look at it, and refine the details — again, and again, and again. Each pass makes the statue slightly more complete and polished, until finally it becomes the finished artwork. This is exactly how an evolutionary model works — start rough, refine repeatedly, and gradually reach a polished, complete product.</p></div>
+    </div>
+
+    <div class="callout co-analogy">
+      <div class="ic">🌳</div>
+      <div><b>The Growing Tree Analogy</b><p>A seed doesn't become a fruit-bearing tree overnight. It grows a sapling, then branches, then leaves, then flowers, then fruit — a slow, staged process where every stage builds on the one before. Evolutionary software development grows the same way.</p></div>
+    </div>
+  </section>
+
+  <!-- 8-9 EXAMPLES -->
+  <section id="example">
+    <div class="sec-head">
+      <h2><span class="num">8–9</span>Simple Example &amp; Programming-Style Example</h2>
+    </div>
+
+    <div class="card">
+      <h4>💡 Simple Example — Food Delivery App</h4>
+      <div class="flow-vert">
+        <div class="node" style="border-color:var(--pink); color:var(--pink);">Version 1: Just browse restaurants + place an order</div>
+        <div class="arrow">↓ customer feedback</div>
+        <div class="node" style="border-color:var(--blue); color:var(--blue);">Version 2: Add live order tracking</div>
+        <div class="arrow">↓ customer feedback</div>
+        <div class="node" style="border-color:var(--teal); color:var(--teal);">Version 3: Add online payments + ratings</div>
+        <div class="arrow">↓ customer feedback</div>
+        <div class="node" style="border-color:var(--purple); color:var(--purple);">Version 4: Add personalized recommendations</div>
+      </div>
+      <p>Each version is a real, usable app — just less complete than the next one. The app "evolves" release after release.</p>
+    </div>
+
+    <div class="code-block">
+      <span class="tag">pseudo-version-log.txt</span>
+      <pre><span class="cmt">// Evolutionary growth of a simple "Calculator App" — shown as version notes</span>
+
+<span class="kw">Version 1</span>: supports only <span class="str">addition</span> and <span class="str">subtraction</span>
+<span class="kw">Version 2</span>: adds <span class="str">multiplication</span> and <span class="str">division</span>   (built on top of Version 1)
+<span class="kw">Version 3</span>: adds <span class="str">memory (M+, M-, MR)</span>                (built on top of Version 2)
+<span class="kw">Version 4</span>: adds <span class="str">scientific functions (sin, cos, log)</span>  (built on top of Version 3)
+
+<span class="cmt">// Notice: nothing is thrown away — each version evolves from the last</span></pre>
+    </div>
+
+    <div class="callout co-mistake">
+      <div class="ic">⚠️</div>
+      <div><b>Common Mistake</b><p>Students sometimes think each "version" above is unrelated code written from scratch. In reality, each version <i>reuses and builds on top of</i> the previous version's code and design — that's what makes it "evolutionary" and not just "repeated."</p></div>
+    </div>
+  </section>
+
+  <!-- 10. MISTAKES -->
+  <section id="mistakes">
+    <div class="sec-head">
+      <h2><span class="num">10</span>Common Mistakes Students Make</h2>
+    </div>
+
+    <div class="qlist">
+      <ul>
+        <li>❌ Thinking "Evolutionary" only means "Iterative" — it's actually <b>Iterative + Incremental</b> together.</li>
+        <li>❌ Believing evolutionary models have <b>no planning at all</b> — planning still happens, just freshly for each iteration/cycle.</li>
+        <li>❌ Confusing Evolutionary Model with the plain <b>Incremental Model</b> — Incremental delivers separate independent pieces; Evolutionary keeps refining the <i>same evolving product</i>.</li>
+        <li>❌ Assuming evolutionary models are always "faster" — they can actually take <b>longer overall</b> due to repeated cycles, even though customers see results sooner.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <section id="compare">
+    <div class="sec-head">
+      <h2>🔍 Quick Comparison: Waterfall vs Incremental vs Evolutionary</h2>
+    </div>
+    <table>
+      <tr><th></th><th>Waterfall Model</th><th>Incremental Model</th><th>Evolutionary Model</th></tr>
+      <tr><td>Requirements</td><td>Fully known upfront</td><td>Mostly known upfront</td><td>May be unclear / evolving</td></tr>
+      <tr><td>Delivery style</td><td>One final delivery</td><td>Separate pieces, one by one</td><td>Whole product, refined repeatedly</td></tr>
+      <tr><td>Flexibility</td><td>Very rigid</td><td>Moderately flexible</td><td>Highly flexible</td></tr>
+      <tr><td>Best for</td><td>Small, fixed-scope projects</td><td>Larger projects, clear modules</td><td>Unclear, evolving, or research-driven projects</td></tr>
+    </table>
+  </section>
+
+  <!-- SUMMARY -->
+  <section id="summary">
+    <div class="summary-box">
+      <h3>📌 Chapter Summary</h3>
+      <ul>
+        <li>Evolutionary = Iterative (repeat cycles) + Incremental (add more each time)</li>
+        <li>Solves the problem of unclear or changing requirements</li>
+        <li>Software grows through multiple versions, each more complete than the last</li>
+        <li>Three major evolutionary models: <b>Prototyping</b>, <b>Spiral</b>, and <b>Concurrent Development</b></li>
+        <li>Trade-off: more flexibility, but harder to plan a fixed schedule/budget</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- VIVA / UNIVERSITY QUESTIONS -->
+  <section id="viva">
+    <div class="sec-head"><h2>🎓 Expected Viva &amp; University Questions</h2></div>
+
+    <div class="qlist">
+      <h4 style="margin-top:0;">Expected Viva Questions</h4>
+      <ol>
+        <li>What does the word "Evolutionary" mean in the context of software models?</li>
+        <li>Why can't Waterfall Model handle changing requirements well?</li>
+        <li>Name the three types of Evolutionary Process Models.</li>
+        <li>What is the difference between Iterative and Incremental?</li>
+      </ol>
+      <h4>Expected University Exam Questions</h4>
+      <ol>
+        <li>(2 Marks) Define Evolutionary Process Model.</li>
+        <li>(2 Marks) List the types of Evolutionary Process Models.</li>
+        <li>(5 Marks) Explain why Evolutionary Models are needed, with an example.</li>
+        <li>(8/13 Marks) Describe the concept of Evolutionary Process Models. Explain how they combine Iterative and Incremental approaches, along with their advantages and disadvantages.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- QUICK REVISION -->
+  <section id="revision">
+    <div class="sec-head"><h2>⚡ Quick Revision</h2></div>
+    <div class="card">
+      <ul>
+        <li><b>Evolutionary</b> = Iterative + Incremental</li>
+        <li>Used when requirements are <b>unclear or changing</b></li>
+        <li>Software is released as <b>versions</b>, each more complete</li>
+        <li>Types: <b>Prototyping</b>, <b>Spiral</b>, <b>Concurrent Development</b></li>
+        <li>Pros: flexible, early feedback &nbsp;|&nbsp; Cons: harder to plan, needs active customer involvement</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="sec-head"><h2>❓ Frequently Asked Questions</h2></div>
+
+    <details><summary>Is Evolutionary Model a single model or a category?</summary>
+      <p>It's a <b>category</b> (a family) of models. Prototyping, Spiral, and Concurrent Development are all examples that belong to this evolutionary family.</p>
+    </details>
+    <details><summary>Does Evolutionary Model skip planning?</summary>
+      <p>No. Planning still happens — but it happens fresh for each cycle/iteration, rather than once at the very start like in Waterfall.</p>
+    </details>
+    <details><summary>Is Evolutionary Model suitable for very small, simple projects?</summary>
+      <p>Usually not necessary. Small projects with clear, fixed requirements are better suited to the simpler Waterfall Model.</p>
+    </details>
+    <details><summary>Can Evolutionary Models take longer than Waterfall overall?</summary>
+      <p>Yes, they can — because of repeated cycles of refinement — even though the customer sees usable software much earlier.</p>
+    </details>
+  </section>
+
+  <!-- MCQ -->
+  <section id="mcq">
+    <div class="sec-head"><h2>✅ Multiple Choice Questions</h2></div>
+
+    <div class="mcq">
+      <div class="q">1. Evolutionary Process Models are a combination of which two approaches?</div>
+      <ol type="A"><li>Linear and Parallel</li><li>Iterative and Incremental</li><li>Waterfall and Spiral</li><li>Design and Testing</li></ol>
+      <details><summary>Show Answer</summary><p><b>Answer: B — Iterative and Incremental</b></p></details>
+    </div>
+
+    <div class="mcq">
+      <div class="q">2. Which of these is NOT an Evolutionary Process Model?</div>
+      <ol type="A"><li>Prototyping Model</li><li>Spiral Model</li><li>Waterfall Model</li><li>Concurrent Development Model</li></ol>
+      <details><summary>Show Answer</summary><p><b>Answer: C — Waterfall Model</b> (it's a linear model, not evolutionary)</p></details>
+    </div>
+
+    <div class="mcq">
+      <div class="q">3. Evolutionary Models are best suited when:</div>
+      <ol type="A"><li>Requirements are completely fixed and clear</li><li>Requirements are unclear or likely to change</li><li>The project has zero budget</li><li>No customer feedback is available</li></ol>
+      <details><summary>Show Answer</summary><p><b>Answer: B — Requirements are unclear or likely to change</b></p></details>
+    </div>
+
+    <div class="mcq">
+      <div class="q">4. In an Evolutionary Model, each new version of the software is:</div>
+      <ol type="A"><li>Completely unrelated to the previous version</li><li>Exactly the same as the previous version</li><li>More complete than the previous version</li><li>Less complete than the previous version</li></ol>
+      <details><summary>Show Answer</summary><p><b>Answer: C — More complete than the previous version</b></p></details>
+    </div>
+  </section>
+
+  <!-- PRACTICE: short/long answer, fill blanks, true-false, think and answer -->
+  <section id="practice">
+    <div class="sec-head"><h2>📝 Practice Zone</h2></div>
+
+    <div class="qlist">
+      <h4 style="margin-top:0;">Short Answer Questions</h4>
+      <ul>
+        <li>Define an Evolutionary Process Model in one sentence.</li>
+        <li>Name any two situations where Evolutionary Models are preferred.</li>
+        <li>State one disadvantage of using Evolutionary Models.</li>
+      </ul>
+      <h4>Long Answer Questions</h4>
+      <ul>
+        <li>Explain the concept of Evolutionary Process Models with a real-world analogy and a suitable diagram.</li>
+        <li>Compare Waterfall, Incremental, and Evolutionary models with examples.</li>
+      </ul>
+    </div>
+
+    <h4 style="margin-top:30px;">Fill in the Blanks</h4>
+    <div class="fb-item"><span>1. Evolutionary models combine ______ and ______ approaches.</span><span class="ans">Iterative, Incremental</span></div>
+    <div class="fb-item"><span>2. The word "Evolutionary" is derived from the word ______.</span><span class="ans">Evolution</span></div>
+    <div class="fb-item"><span>3. The three types of Evolutionary Models are Prototyping, ______, and Concurrent Development.</span><span class="ans">Spiral</span></div>
+
+    <h4 style="margin-top:30px;">True / False</h4>
+    <div class="tf-item"><span>1. Evolutionary models assume all requirements are known before development starts.</span><span class="ans">False</span></div>
+    <div class="tf-item"><span>2. Evolutionary models allow the software to be refined across multiple versions.</span><span class="ans">True</span></div>
+    <div class="tf-item"><span>3. The Incremental Model and the Evolutionary Model are exactly the same thing.</span><span class="ans">False</span></div>
+
+    <div class="think-box" style="margin-top:26px;">
+      <b>🤔 Think and Answer:</b>
+      <p>Imagine you're building a new social media app and you're not sure which features users will actually enjoy. Would you choose a Waterfall Model or an Evolutionary Model? Justify your answer in 3–4 lines before checking with your professor.</p>
+    </div>
+  </section>
+
+
+
+</div>
+
+<footer></footer>
+
+</body>
+</html>

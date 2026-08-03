@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Requirement Engineering — The Canteen App Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#2B1B12;
+    --maroon:#6B1E23;
+    --maroon-deep:#4A1418;
+    --rust:#C1440E;
+    --rust-deep:#9A350B;
+    --mustard:#E8A33D;
+    --mustard-deep:#C9871F;
+    --token:#FFF3DD;
+    --token-line:#E6CE9E;
+    --green:#3F7D5C;
+    --bg:#FAF6F1;
+    --white:#FFFFFF;
+    --shadow:0 10px 30px rgba(75,20,20,0.10);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.display{font-family:'Sora',sans-serif; color:var(--maroon-deep); margin:0;}
+  .mono{font-family:'Space Mono',monospace;}
+  a{color:inherit;}
+
+  nav.stage-nav{
+    position:sticky; top:0; z-index:50; background:rgba(255,243,221,0.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--token-line); overflow-x:auto; white-space:nowrap; padding:10px 18px;
+    display:flex; gap:6px; scrollbar-width:thin;
+  }
+  nav.stage-nav a{
+    font-family:'Space Mono',monospace; font-size:12px; text-decoration:none; color:var(--maroon-deep);
+    padding:7px 12px; border-radius:20px; border:1px solid transparent; opacity:0.75; transition:all .2s;
+  }
+  nav.stage-nav a:hover{opacity:1; border-color:var(--rust); background:#FDEBD8;}
+
+  header.hero{
+    position:relative; padding:90px 24px 110px;
+    background:
+      radial-gradient(circle at 85% 10%, rgba(232,163,61,0.35), transparent 45%),
+      linear-gradient(160deg, var(--maroon-deep) 0%, var(--maroon) 55%, var(--rust) 100%);
+    color:#FBEAD9; text-align:center; overflow:hidden;
+  }
+  header.hero .tag{font-family:'Space Mono',monospace; letter-spacing:3px; text-transform:uppercase; font-size:12px; color:var(--mustard); margin-bottom:18px;}
+  header.hero h1{color:#FFF6EA; font-size:clamp(32px,6vw,60px); font-weight:800; max-width:900px; margin:0 auto 18px; line-height:1.1;}
+  header.hero h1 em{color:var(--mustard); font-style:italic;}
+  header.hero p.sub{max-width:640px; margin:0 auto; font-size:17px; color:#F3D9C4;}
+  .queue-row{margin-top:46px; display:flex; justify-content:center; gap:14px; flex-wrap:wrap;}
+  .queue-row span{
+    font-family:'Space Mono',monospace; font-size:12.5px; background:rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.25); padding:8px 14px; border-radius:30px; color:#FFF6EA;
+  }
+
+  section{max-width:980px; margin:0 auto; padding:70px 24px;}
+  section.wide{max-width:1140px;}
+  .eyebrow{font-family:'Space Mono',monospace; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--rust-deep); margin-bottom:10px; display:flex; align-items:center; gap:10px;}
+  .eyebrow .num{background:var(--maroon-deep); color:#fff; border-radius:50%; width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; font-size:11px;}
+  h2.title{font-size:clamp(26px,4vw,38px); margin-bottom:6px;}
+  p.lede{font-size:16.5px; max-width:680px; color:#4A3527;}
+
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-top:34px;}
+  @media (max-width:1100px){.duo{grid-template-columns:1fr;}}
+
+  .story-card{background:var(--white); border-radius:18px; padding:26px 26px 22px; box-shadow:var(--shadow); border-left:5px solid var(--mustard); position:relative;}
+  .story-card .label{font-family:'Space Mono',monospace; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--mustard-deep); margin-bottom:10px; display:block;}
+  .story-card p, .story-card li{font-size:15px; color:#3A281E;}
+  .story-card .say{background:#FDEBD8; border-radius:12px 12px 12px 2px; padding:10px 14px; margin:6px 0; font-size:14.5px; display:inline-block;}
+  .story-card .ask{background:#F4EEE6; border-radius:12px 2px 12px 12px; padding:10px 14px; margin:6px 0; font-size:14.5px; display:inline-block; font-style:italic;}
+
+  /* Token card — the signature element: a canteen order token */
+  .token{
+    background:var(--token); border-radius:14px; box-shadow:var(--shadow); position:relative;
+    display:grid; grid-template-columns:110px 1fr; overflow:hidden;
+  }
+  .token .stub{
+    background:var(--rust); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family:'Space Mono',monospace; padding:14px 6px; position:relative;
+  }
+  .token .stub .no{font-size:28px; font-weight:700; line-height:1;}
+  .token .stub .lbl{font-size:9px; letter-spacing:1px; text-transform:uppercase; opacity:.85; margin-top:6px; text-align:center;}
+  .token .divider{position:relative; width:0; border-left:2px dashed rgba(75,20,20,0.25);}
+  .token .divider::before, .token .divider::after{
+    content:""; position:absolute; left:50%; transform:translateX(-50%); width:16px; height:16px; border-radius:50%; background:var(--bg);
+  }
+  .token .divider::before{top:-8px;} .token .divider::after{bottom:-8px;}
+
+  .token .content{
+    padding:20px 24px;
+    width:100%;
+    min-width:0;
+    font-size:15px;
+    font-family:'Inter',sans-serif;
+    color:#3A2812;
+    line-height:1.8;
+}
+  .token .content dd{
+    margin:6px 0 12px;
+    white-space:normal;
+    word-break:normal;
+    overflow-wrap:normal;
+    display:block;
+    line-height:1.8;
+}
+
+  .token .content .r-title{font-family:'Sora',sans-serif; font-size:15px; font-weight:700; color:var(--maroon-deep); margin-bottom:8px;}
+  .token .content dt{font-weight:700; margin-top:8px; color:var(--rust-deep); font-size:11.5px; text-transform:uppercase; letter-spacing:.5px;}
+  .token .content dd{
+    margin:6px 0 12px;
+    white-space:normal;
+    word-break:normal;
+    overflow-wrap:normal;
+    display:block;
+    line-height:1.8;
+}
+
+  /* task flow timeline */
+  .flow{display:flex; flex-wrap:wrap; gap:0; margin-top:40px;}
+  .flow .step{flex:1 1 130px; position:relative; text-align:center; padding:20px 8px;}
+  .flow .step .dot{
+    width:46px; height:46px; border-radius:50%; margin:0 auto 12px; background:var(--rust); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-family:'Space Mono',monospace; font-weight:700; font-size:18px;
+    box-shadow:0 6px 16px rgba(193,68,14,0.35);
+  }
+  .flow .step:nth-child(even) .dot{background:var(--mustard); color:var(--maroon-deep); box-shadow:0 6px 16px rgba(232,163,61,0.4);}
+  .flow .step h4{font-family:'Sora',sans-serif; font-weight:700; font-size:13px; margin:0 0 4px; color:var(--maroon-deep);}
+  .flow .step p{font-size:11.5px; color:#6B5644; margin:0;}
+  .flow .step::after{content:"→"; position:absolute; right:-4px; top:32px; font-size:18px; color:#D9C4AE;}
+  .flow .step:last-child::after{content:none;}
+  @media (max-width:760px){.flow .step::after{content:none;}}
+
+  .mnemonic{
+    margin-top:30px; background:linear-gradient(160deg,var(--maroon-deep),var(--maroon)); border-radius:18px;
+    padding:28px 30px; color:#FFF6EA; text-align:center; box-shadow:var(--shadow);
+  }
+  .mnemonic .phrase{font-family:'Sora',sans-serif; font-size:clamp(19px,3vw,26px); font-weight:800; color:var(--mustard); margin-bottom:14px;}
+  .mnemonic .letters{display:flex; flex-wrap:wrap; justify-content:center; gap:10px;}
+  .mnemonic .letters span{
+    font-family:'Space Mono',monospace; font-size:12px; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.25);
+    padding:6px 12px; border-radius:20px;
+  }
+  .mnemonic .letters b{color:var(--mustard);}
+
+  /* requirement type chips */
+  .reqtypes{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:30px;}
+  @media (max-width:820px){.reqtypes{grid-template-columns:1fr;}}
+  .reqcard{background:var(--white); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow); border-top:4px solid var(--rust);}
+  .reqcard.nonfunc{border-top-color:var(--mustard);}
+  .reqcard.constraint{border-top-color:var(--green);}
+  .reqcard h4{font-size:16px; margin-bottom:6px; color:var(--maroon-deep);}
+  .reqcard .q{font-family:'Space Mono',monospace; font-size:11.5px; color:var(--rust-deep); background:#FDEBD8; display:inline-block; padding:3px 10px; border-radius:14px; margin-bottom:10px;}
+  .reqcard ul{margin:0; padding-left:18px; font-size:13.5px;}
+
+  /* conflict rows */
+  .clash{display:grid; gap:16px; margin-top:30px;}
+  .clash .row{background:var(--white); border-radius:14px; padding:20px 22px; box-shadow:var(--shadow); display:grid; grid-template-columns:120px 1fr; gap:16px; align-items:start;}
+  @media (max-width:640px){.clash .row{grid-template-columns:1fr;}}
+  .clash .tagbox{font-family:'Space Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:1px; background:var(--rust); color:#fff; padding:6px 10px; border-radius:8px; text-align:center; height:fit-content;}
+  .clash .bubble{background:#F4EEE6; border-radius:10px 10px 10px 2px; padding:8px 12px; display:inline-block; font-size:14px; margin:4px 6px 4px 0;}
+
+  /* menu board for 4 categories */
+  .menuboard{margin-top:34px; background:var(--maroon-deep); border-radius:20px; padding:30px; box-shadow:var(--shadow);}
+  .menuboard .heading{color:var(--mustard); font-family:'Space Mono',monospace; text-align:center; letter-spacing:2px; font-size:12px; text-transform:uppercase; margin-bottom:20px;}
+  .menuboard .items{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
+  @media (max-width:700px){.menuboard .items{grid-template-columns:1fr;}}
+  .menuboard .item{background:rgba(255,255,255,0.06); border:1px dashed rgba(255,255,255,0.25); border-radius:12px; padding:16px 18px;}
+  .menuboard .item h4{color:#FFF6EA; font-size:15.5px; margin-bottom:6px;}
+  .menuboard .item p{color:#EBD5C2; font-size:13.5px; margin:0;}
+
+  /* recipe cards for SRS models */
+  .recipe-row{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:30px;}
+  @media (max-width:820px){.recipe-row{grid-template-columns:1fr;}}
+  .recipe{background:var(--white); border-radius:14px; padding:22px; box-shadow:var(--shadow); text-align:center;}
+  .recipe .ic{font-size:28px; margin-bottom:10px;}
+  .recipe h4{font-size:15.5px; margin-bottom:8px; color:var(--maroon-deep);}
+  .recipe p{font-size:13.5px; color:#4A3527; margin:0;}
+
+  /* checklist grid */
+  .checklist{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:26px;}
+  @media (max-width:760px){.checklist{grid-template-columns:repeat(2,1fr);}}
+  .checklist .ck{background:var(--white); border-radius:10px; padding:14px; text-align:center; box-shadow:var(--shadow); font-size:13.5px; font-weight:600; color:var(--maroon-deep);}
+  .checklist .ck::before{content:"✔"; display:block; color:var(--green); font-size:18px; margin-bottom:4px;}
+
+  /* steps numbered list (analysis process) */
+  .steps5{margin-top:34px; display:grid; gap:14px;}
+  .steps5 .s{display:grid; grid-template-columns:52px 1fr; gap:16px; background:var(--white); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow); align-items:start;}
+  .steps5 .s .n{width:40px; height:40px; border-radius:50%; background:var(--mustard); color:var(--maroon-deep); display:flex; align-items:center; justify-content:center; font-family:'Space Mono',monospace; font-weight:700;}
+  .steps5 .s h4{font-size:15.5px; margin-bottom:4px; color:var(--maroon-deep);}
+  .steps5 .s p{font-size:13.5px; margin:0; color:#4A3527;}
+
+  /* golden statement banner */
+  .golden{
+    margin:70px auto; max-width:900px; text-align:center; background:var(--mustard); color:var(--maroon-deep);
+    border-radius:20px; padding:36px 30px; box-shadow:var(--shadow); font-family:'Sora',sans-serif; font-weight:700; font-size:clamp(17px,2.6vw,22px);
+  }
+
+  .recap{background:linear-gradient(160deg,var(--maroon-deep),#3a1013); color:#FFF6EA; border-radius:24px; padding:50px 34px; margin:70px auto; max-width:980px; text-align:center;}
+  .recap h2{color:#fff;}
+  .recap .chain{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:26px;}
+  .recap .chain span{font-family:'Space Mono',monospace; font-size:13px; background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.2); padding:8px 14px; border-radius:30px;}
+  .recap .chain .arrow{background:none; border:none; opacity:.5; padding:8px 0;}
+
+  .glossary{margin-top:34px; background:var(--token); border-radius:16px; box-shadow:var(--shadow); padding:6px 0; overflow:hidden;}
+  .glossary table{width:100%; border-collapse:collapse; font-family:'Space Mono',monospace; font-size:13px;}
+  .glossary th{text-align:left; padding:16px 24px 10px; color:var(--maroon-deep); border-bottom:1px dashed var(--token-line); font-size:12px; text-transform:uppercase; letter-spacing:1px;}
+  .glossary td{padding:10px 24px; border-bottom:1px dashed var(--token-line); color:#3A2812;}
+  .glossary tr:last-child td{border-bottom:none;}
+
+  footer{text-align:center; padding:40px 24px 60px; font-size:13px; color:#8A7362;}
+
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.show{opacity:1; transform:translateY(0);}
+
+@media (max-width:700px){
+  .token{
+      grid-template-columns:1fr !important;
+  }
+  .token .stub{
+      padding:14px;
+  }
+  .token .divider{
+      display:none;
+  }
+  .token .content{
+      padding:22px !important;
+      font-size:16px !important;
+      font-family:'Inter',sans-serif !important;
+      line-height:1.8 !important;
+      width:100% !important;
+  }
+  .token .content dd{
+      white-space:normal !important;
+      word-break:normal !important;
+      overflow-wrap:break-word !important;
+      line-height:1.8 !important;
+  }
+}
+
+
+.book-toggle{
+  width:100%;
+  background:#f8efe0;
+  border:1px solid #e2d2b3;
+  border-radius:10px;
+  padding:12px 14px;
+  text-align:left;
+  font-weight:700;
+  color:#4A1418;
+  cursor:pointer;
+  margin-bottom:12px;
+}
+.book-content{
+  display:none;
+}
+.book-content.open{
+  display:block;
+}
+
+</style>
+</head>
+<body>
+
+<nav class="stage-nav">
+  <a href="#intro">Intro</a>
+  <a href="#definition">What is RE?</a>
+  <a href="#flow">7 Tasks</a>
+  <a href="#inception">Inception</a>
+  <a href="#elicitation">Elicitation</a>
+  <a href="#elaboration">Elaboration</a>
+  <a href="#negotiation">Negotiation</a>
+  <a href="#specification">Specification</a>
+  <a href="#validation">Validation</a>
+  <a href="#management">Management</a>
+  <a href="#analysis-process">Analysis Process</a>
+  <a href="#glossary">Glossary</a>
+</nav>
+
+<header class="hero" id="intro">
+  <div class="tag">Prepared by A.KIRUTHIKA AP/CSE , KEC</div>
+  <h1>Requirement Engineering,<br>told through the <em>College Canteen App</em></h1>
+  <p class="sub">The Principal has a complaint: students are stuck in long canteen queues every single day. Before anyone opens a code editor, that one complaint has to travel through seven well-defined tasks. Follow it end to end, one task at a time.</p>
+  <div class="queue-row">
+    <span>🍽️ Long canteen queues</span>
+    <span>⏱️ Students waiting too long</span>
+    <span>📋 No clear feature list yet</span>
+    <span>💰 Only ₹50,000 budget</span>
+  </div>
+</header>
+
+<section id="definition">
+  <div class="eyebrow"><span class="num">1</span> The Core Idea</div>
+  <h2 class="title">"Can we directly start coding?"</h2>
+  <p class="lede">That's the very first question worth asking about any software project — including this one.</p>
+  <div class="duo">
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p>The Principal says:</p>
+      <span class="say">"Students are standing in long queues in the canteen."</span>
+      <p>Can we directly start coding a solution? <b>No.</b></p>
+      <p>Ask: <em>"Then what should we do first?"</em> The expected answer: "We should know what the customer wants." That entire discovery process — before a single line of code — has a name.</p>
+    </div>
+    <div class="token">
+      <div class="stub"><span class="no">RE</span><span class="lbl">Book Def.</span></div>
+      <div class="divider"></div>
+      <div class="content"><button class="book-toggle">📖 Show / Hide Book Definition</button><div class="book-content">
+        <div class="r-title">Requirement Engineering</div>
+        <dt>Book Definition</dt>
+        <dd>The process of establishing the services that the customer requires from a system, and the constraints under which it operates and is developed.</dd>
+        <dt>Easy Meaning</dt>
+        <dd>Before writing even one line of code, know: what should the software do, who will use it, and what restrictions exist.</dd>
+      </div></div></div>
+  </div>
+</section>
+
+<section class="wide" id="flow">
+  <div class="eyebrow"><span class="num">2</span> The Whole Journey</div>
+  <h2 class="title">Seven tasks, one canteen app</h2>
+  <p class="lede">Every requirement engineering effort — canteen app or otherwise — moves through the same seven tasks, in this order.</p>
+  <div class="flow">
+    <div class="step"><div class="dot">1</div><h4>Inception</h4><p>Understand the problem</p></div>
+    <div class="step"><div class="dot">2</div><h4>Elicitation</h4><p>Draw out requirements</p></div>
+    <div class="step"><div class="dot">3</div><h4>Elaboration</h4><p>Refine into detail</p></div>
+    <div class="step"><div class="dot">4</div><h4>Negotiation</h4><p>Agree on what's realistic</p></div>
+    <div class="step"><div class="dot">5</div><h4>Specification</h4><p>Write it down (SRS)</p></div>
+    <div class="step"><div class="dot">6</div><h4>Validation</h4><p>Check for errors</p></div>
+    <div class="step"><div class="dot">7</div><h4>Management</h4><p>Track what changes</p></div>
+  </div>
+  <div class="mnemonic">
+    <div class="phrase">"I Eat Eggs Near School Very Merrily"</div>
+    <div class="letters">
+      <span><b>I</b> — Inception</span>
+      <span><b>E</b> — Elicitation</span>
+      <span><b>E</b> — Elaboration</span>
+      <span><b>N</b> — Negotiation</span>
+      <span><b>S</b> — Specification</span>
+      <span><b>V</b> — Validation</span>
+      <span><b>M</b> — Management</span>
+    </div>
+  </div>
+</section>
+
+<section id="inception">
+  <div class="eyebrow"><span class="num">3</span> Task One</div>
+  <h2 class="title">Inception 💡 — "What exactly is the problem?"</h2>
+  <p class="lede">Before anything else, the team builds a basic understanding of the problem itself, who wants it solved, and how well everyone is communicating so far.</p>
+  <div class="duo">
+    <div class="token">
+      <div class="stub"><span class="no">01</span><span class="lbl">Book Def.</span></div>
+      <div class="divider"></div>
+      <div class="content"><button class="book-toggle">📖 Show / Hide Book Definition</button><div class="book-content">
+        <div class="r-title">Inception</div>
+        <dt>Book Definition</dt>
+        <dd>Establish a basic understanding of the problem, the people who want a solution, the nature of the solution, and the effectiveness of communication.</dd>
+        <dt>Requirement engineer must</dt>
+        <dd>Identify stakeholders · recognize multiple viewpoints · work toward collaboration · break the ice and start communication.</dd>
+      </div></div></div>
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p class="ask">Q: What is the problem?</p>
+      <p class="say">A: Long waiting time.</p>
+      <p class="ask">Q: Why do we need the app?</p>
+      <p class="say">A: To reduce waiting time.</p>
+      <p class="ask">Q: Who is involved?</p>
+      <p class="say">A: Students, Canteen Staff, Principal.</p>
+      <p>These people are called <b>Stakeholders</b> — people who are affected by or interested in the system.</p>
+    </div>
+  </div>
+</section>
+
+<section id="elicitation">
+  <div class="eyebrow"><span class="num">4</span> Task Two</div>
+  <h2 class="title">Elicitation 🎤 — "What do you actually want?"</h2>
+  <p class="lede">Now the team draws the actual requirements out of everyone who has a stake in the app.</p>
+  <div class="duo">
+    <div class="token">
+      <div class="stub"><span class="no">02</span><span class="lbl">Book Def.</span></div>
+      <div class="divider"></div>
+      <div class="content"><button class="book-toggle">📖 Show / Hide Book Definition</button><div class="book-content">
+        <div class="r-title">Elicitation</div>
+        <dt>Book Definition</dt>
+        <dd>Draw out requirements from customers, users, and other stakeholders.</dd>
+        <dt>What can go wrong</dt>
+        <dd>Problem of scope · Problem of understanding · Problem of volatility. The fix: gather requirements in an organized way.</dd>
+      </div></div></div>
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p class="ask">"What features do you need?"</p>
+      <p><b>Students say:</b> View menu · Order food · Online payment</p>
+      <p><b>Canteen staff say:</b> Update menu · View orders</p>
+      <p><b>Principal says:</b> Daily reports</p>
+      <p>Each of these is a <b>Requirement</b> — a condition or capability needed by a user to solve a problem.</p>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top:36px;">Every requirement gathered here falls into one of three buckets:</p>
+  <div class="reqtypes">
+    <div class="reqcard">
+      <h4>Functional</h4>
+      <div class="q">What the system should do</div>
+      <ul><li>Login</li><li>Place Order</li><li>Pay Online</li></ul>
+    </div>
+    <div class="reqcard nonfunc">
+      <h4>Non-Functional</h4>
+      <div class="q">How the system should work</div>
+      <ul><li>Response within 2 seconds</li><li>Secure payment</li><li>Easy to use</li></ul>
+    </div>
+    <div class="reqcard constraint">
+      <h4>Constraints</h4>
+      <div class="q">Restrictions on the project</div>
+      <ul><li>Budget ₹50,000</li><li>Android only</li><li>Finish in 2 months</li></ul>
+    </div>
+  </div>
+</section>
+
+<section id="elaboration">
+  <div class="eyebrow"><span class="num">5</span> Task Three</div>
+  <h2 class="title">Elaboration 🔍 — "Tell me exactly what you mean"</h2>
+  <p class="lede">Raw requirements are still too vague to build from. Elaboration turns "I want online payment" into something a developer can actually implement.</p>
+  <div class="duo">
+    <div class="token">
+      <div class="stub"><span class="no">03</span><span class="lbl">Book Def.</span></div>
+      <div class="divider"></div>
+      <div class="content"><button class="book-toggle">📖 Show / Hide Book Definition</button><div class="book-content">
+        <div class="r-title">Elaboration</div>
+        <dt>Book Definition</dt>
+        <dd>Create an analysis model that identifies data, functions, and behavioral requirements — a refined technical model of software functions, features, and constraints.</dd>
+        <dt>How it's done</dt>
+        <dd>Use cases are developed · domain classes identified · state machine diagrams used.</dd>
+      </div></div></div>
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p class="say">"I want online payment."</p>
+      <p class="ask">Ask: UPI? Debit card? Credit card?</p>
+      <p class="say">"I want order history."</p>
+      <p class="ask">Ask: Last 5 orders? Last 10 orders?</p>
+      <p>Now the requirement is no longer vague — it is detailed enough to build.</p>
+    </div>
+  </div>
+</section>
+
+<section id="negotiation">
+  <div class="eyebrow"><span class="num">6</span> Task Four</div>
+  <h2 class="title">Negotiation 🤝 — "We can't build everything"</h2>
+  <p class="lede">Wish lists are always bigger than budgets. This task is where reality and ambition sit down together.</p>
+  <div class="duo">
+    <div class="token">
+      <div class="stub"><span class="no">04</span><span class="lbl">Book Def.</span></div>
+      <div class="divider"></div>
+      <div class="content"><button class="book-toggle">📖 Show / Hide Book Definition</button><div class="book-content">
+        <div class="r-title">Negotiation</div>
+        <dt>Book Definition</dt>
+        <dd>Customers and developers negotiate to agree on a realistic set of requirements — ranking priority, assessing cost and risk, and resolving internal conflicts.</dd>
+        <dt>Easy Meaning</dt>
+        <dd>Not every requirement can be implemented. Compromise is needed.</dd>
+      </div></div></div>
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p class="say">Students: "Add AI Recommendation."</p>
+      <p class="ask">Principal: "Budget is only ₹50,000."</p>
+      <p class="say">Developer: "Impossible — for now."</p>
+      <p><b>Version 1 ships with:</b> ✔ Ordering · ✔ Payment · ✔ Menu Display. The AI feature is deferred to a later version.</p>
+    </div>
+  </div>
+</section>
+
+<section id="specification">
+  <div class="eyebrow"><span class="num">7</span> Task Five</div>
+  <h2 class="title">Specification 📄 — "Write it all down"</h2>
+  <p class="lede">Everything agreed upon so far now needs to exist somewhere other than people's memories.</p>
+  <div class="duo">
+    <div class="token">
+      <div class="stub"><span class="no">05</span><span class="lbl">Book Def.</span></div>
+      <div class="divider"></div>
+      <div class="content"><button class="book-toggle">📖 Show / Hide Book Definition</button><div class="book-content">
+        <div class="r-title">Specification</div>
+        <dt>Book Definition</dt>
+        <dd>Requirements are documented in a form that can be reviewed and approved. Can be a written document, a set of models, a formal mathematical model, use-case scenarios, or a prototype.</dd>
+      </div></div></div>
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p>Login, Menu, Order, Payment — everything gets written down. Why? Because people forget discussions. The document becomes proof.</p>
+      <p>This document is called the <b>SRS — Software Requirement Specification</b>: a document that describes the complete behavior and requirements of the software, containing Functional Requirements, Non-Functional Requirements, Constraints, and Interfaces.</p>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top:36px;">The SRS is usually built using three modeling tools:</p>
+  <div class="recipe-row">
+    <div class="recipe"><div class="ic">🔀</div><h4>Data Flow Diagram (DFD)</h4><p>Shows how data flows through the system, from input to processing to output.</p></div>
+    <div class="recipe"><div class="ic">📖</div><h4>Data Dictionary</h4><p>A repository storing information about every data item that appears inside the DFDs.</p></div>
+    <div class="recipe"><div class="ic">🔗</div><h4>Entity-Relationship (E-R) Diagram</h4><p>A logical representation of data using entities, relationships, and their attributes.</p></div>
+  </div>
+</section>
+
+<section id="validation">
+  <div class="eyebrow"><span class="num">8</span> Task Six</div>
+  <h2 class="title">Validation ✔️ — "Is this actually right?"</h2>
+  <p class="lede">A written document can still be wrong. Validation is the quality gate before development truly begins.</p>
+  <div class="duo">
+    <div class="token">
+      <div class="stub"><span class="no">06</span><span class="lbl">Book Def.</span></div>
+      <div class="divider"></div>
+      <div class="content"><button class="book-toggle">📖 Show / Hide Book Definition</button><div class="book-content">
+        <div class="r-title">Validation</div>
+        <dt>Book Definition</dt>
+        <dd>Examine the specification to ensure that all requirements have been stated unambiguously, and that inconsistencies have been detected and errors corrected.</dd>
+        <dt>Looks for</dt>
+        <dd>Errors in content or interpretation · missing information · inconsistencies · conflicting or unrealistic requirements.</dd>
+      </div></div></div>
+    <div class="story-card">
+      <span class="label">The Story — a conflict caught</span>
+      <p class="say">Requirement 1: "System works only inside college."</p>
+      <p class="say">Requirement 2: "Students can order from home."</p>
+      <p>These two directly contradict each other — the requirement is <b>inconsistent</b> and needs correction before development starts.</p>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top:36px;">Every requirement is checked against this list:</p>
+  <div class="checklist">
+    <div class="ck">Correct</div>
+    <div class="ck">Complete</div>
+    <div class="ck">Consistent</div>
+    <div class="ck">Unambiguous</div>
+    <div class="ck">Feasible</div>
+    <div class="ck">Verifiable</div>
+  </div>
+  <p class="lede" style="margin-top:26px;">Formal techniques used to validate:</p>
+  <div class="reqtypes" style="margin-top:16px;">
+    <div class="reqcard"><h4>Reviews / Inspections</h4><ul><li>Systematic manual analysis of the requirements.</li></ul></div>
+    <div class="reqcard nonfunc"><h4>Prototyping</h4><ul><li>An executable model checks requirements in practice.</li></ul></div>
+    <div class="reqcard constraint"><h4>Test-Case Generation</h4><ul><li>Tests are built to check that each requirement is testable.</li></ul></div>
+  </div>
+</section>
+
+<section id="management">
+  <div class="eyebrow"><span class="num">9</span> Task Seven</div>
+  <h2 class="title">Requirement Management 🔄 — "It never really stops"</h2>
+  <p class="lede">Shipping the app doesn't end the story. Requirements keep changing, and someone has to track it all.</p>
+  <div class="duo">
+    <div class="token">
+      <div class="stub"><span class="no">07</span><span class="lbl">Book Def.</span></div>
+      <div class="divider"></div>
+      <div class="content"><button class="book-toggle">📖 Show / Hide Book Definition</button><div class="book-content">
+        <div class="r-title">Requirement Management</div>
+        <dt>Book Definition</dt>
+        <dd>Helps the project team identify, control, and track requirements and changes to requirements as the project proceeds.</dd>
+      </div></div></div>
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p class="say">One month later — Students: "Add coupon feature."</p>
+      <p class="say">Principal: "Add QR payment."</p>
+      <p>Requirements have changed. The SRS now needs to be updated to match.</p>
+    </div>
+  </div>
+
+  <div class="story-card" style="margin-top:26px; border-left-color:var(--rust);">
+    <span class="label">⭐ Scope Creep — the trap to watch for</span>
+    <p class="say">"Just one more feature."</p>
+    <p class="say">"Just one more requirement."</p>
+    <p class="say">"Just... one more."</p>
+    <p>Requirements keep increasing, uncontrolled, after the project has already started. This pattern is called <b>Scope Creep</b> — the uncontrolled addition of requirements after the project starts. Requirement Management exists specifically to keep it in check.</p>
+  </div>
+</section>
+
+<div class="golden">"If requirements are wrong, even perfect coding will produce the wrong software."</div>
+
+<section class="wide" id="analysis-process">
+  <div class="eyebrow"><span class="num">✚</span> A Complementary Lens</div>
+  <h2 class="title">The Requirements Analysis Process</h2>
+  <p class="lede">Alongside the seven tasks above, the same underlying work is often described as five practical steps — useful for exam answers that ask for "the requirements analysis process" specifically.</p>
+  <div class="steps5">
+    <div class="s"><div class="n">1</div><div><h4>Identify Key Stakeholders &amp; End-Users</h4><p>Find the main sponsors of the project — they have final say on scope — then the end-users, since the product exists to satisfy their needs.</p></div></div>
+    <div class="s"><div class="n">2</div><div><h4>Capture Requirements</h4><p>Ask each stakeholder and end-user for their requirements, using one-on-one interviews, focus groups, use cases, and prototypes.</p></div></div>
+    <div class="s"><div class="n">3</div><div><h4>Categorize Requirements</h4><p>Group requirements to avoid confusion — see the menu board below for the four categories.</p></div></div>
+    <div class="s"><div class="n">4</div><div><h4>Interpret &amp; Record Requirements</h4><p>Determine what's actually achievable and document it — by defining requirements precisely, prioritizing them, running impact analysis, resolving conflicts, and analyzing feasibility.</p></div></div>
+    <div class="s"><div class="n">5</div><div><h4>Sign Off</h4><p>Get a signed agreement from key stakeholders once the final decision is made — so the scope can't quietly grow out of control later.</p></div></div>
+  </div>
+
+  <div class="menuboard">
+    <div class="heading">— Today's Requirement Menu — Four Counters —</div>
+    <div class="items">
+      <div class="item"><h4>Functional Requirements</h4><p>Functions the product is required to perform — e.g. placing an order.</p></div>
+      <div class="item"><h4>Technical Requirements</h4><p>Technical issues to consider for successful implementation — e.g. which payment gateway API to use.</p></div>
+      <div class="item"><h4>Transitional Requirements</h4><p>Steps required to implement the new product smoothly — e.g. migrating from the old paper token system.</p></div>
+      <div class="item"><h4>Operational Requirements</h4><p>Backend operations needed for the product to function properly — e.g. syncing daily sales reports.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="recap">
+  <div class="eyebrow" style="justify-content:center; color:var(--mustard);"><span class="num" style="background:var(--mustard); color:var(--maroon-deep);">✓</span> Why All This Matters</div>
+  <h2>Without Requirement Engineering</h2>
+  <p style="max-width:600px; margin:14px auto 0; color:#F3D9C4;">Wrong software gets built · costs increase · projects get delayed · customers end up dissatisfied. Every one of the seven tasks above exists to prevent exactly these four outcomes.</p>
+  <div class="chain">
+    <span>Idea</span><span class="arrow">→</span>
+    <span>Gather</span><span class="arrow">→</span>
+    <span>Detail</span><span class="arrow">→</span>
+    <span>Agree</span><span class="arrow">→</span>
+    <span>Document</span><span class="arrow">→</span>
+    <span>Check</span><span class="arrow">→</span>
+    <span>Change</span>
+  </div>
+</div>
+
+<section id="glossary">
+  <div class="eyebrow"><span class="num">✓</span> Keep for Quick Revision</div>
+  <h2 class="title">Glossary Token Board</h2>
+  <div class="glossary">
+    <table>
+      <tr><th>Term</th><th>Meaning</th></tr>
+      <tr><td>Stakeholder</td><td>Person affected by or interested in the system</td></tr>
+      <tr><td>Requirement</td><td>A condition or capability needed by a user to solve a problem</td></tr>
+      <tr><td>Functional Requirement</td><td>WHAT the system should do</td></tr>
+      <tr><td>Non-Functional Requirement</td><td>HOW the system should work</td></tr>
+      <tr><td>Constraint</td><td>A restriction on budget, platform, or time</td></tr>
+      <tr><td>Elaboration</td><td>Refining vague requirements into precise detail</td></tr>
+      <tr><td>Negotiation</td><td>Agreeing on a realistic, achievable set of requirements</td></tr>
+      <tr><td>SRS</td><td>Formal document describing all software requirements</td></tr>
+      <tr><td>Validation</td><td>Checking requirements are correct, complete &amp; consistent</td></tr>
+      <tr><td>Requirement Management</td><td>Tracking and controlling requirement changes over time</td></tr>
+      <tr><td>Scope Creep</td><td>Uncontrolled addition of requirements after the project starts</td></tr>
+      <tr><td>Sign Off</td><td>Formal, signed stakeholder agreement on final requirements</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>Prepared by A.KIRUTHIKA AP/CSE , KEC </footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('section, .recap, .golden');
+    els.forEach(el => el.classList.add('reveal'));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } });
+    }, {threshold:0.1});
+    els.forEach(el => io.observe(el));
+  });
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.book-toggle').forEach(btn=>{
+    btn.addEventListener('click', function(){
+      const c = this.nextElementSibling;
+      c.classList.toggle('open');
+    });
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scenario-Based Modeling — The Canteen App Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0B1F3A; --navy-deep:#071527; --cyan:#31C4D8; --cyan-deep:#1C9DAF;
+    --amber:#FFB84D; --amber-deep:#E09A2E; --red:#E4572E; --green:#3FA796;
+    --paper:#EAF3FB; --paper-line:#C7DCEE; --ink:#0B1F3A; --bg:#F5F8FB; --white:#FFFFFF;
+    --shadow:0 10px 30px rgba(11,31,58,0.12);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif; color:var(--navy); margin:0;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;} svg{display:block;}
+
+  nav.stage-nav{
+    position:sticky; top:0; z-index:50; background:rgba(234,243,251,0.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--paper-line); overflow-x:auto; white-space:nowrap; padding:10px 18px;
+    display:flex; gap:6px; scrollbar-width:thin;
+  }
+  nav.stage-nav a{
+    font-family:'JetBrains Mono',monospace; font-size:12px; text-decoration:none; color:var(--navy);
+    padding:7px 12px; border-radius:20px; border:1px solid transparent; opacity:0.75; transition:all .2s;
+  }
+  nav.stage-nav a:hover{opacity:1; border-color:var(--cyan); background:#DCF3F6;}
+
+  header.hero{
+    position:relative; padding:90px 24px 110px;
+    background:
+      radial-gradient(circle at 82% 12%, rgba(49,196,216,0.28), transparent 45%),
+      linear-gradient(160deg, var(--navy-deep) 0%, var(--navy) 60%, #123A63 100%);
+    color:#E7F1FA; text-align:center; overflow:hidden;
+  }
+  header.hero::before{
+    content:""; position:absolute; inset:0; opacity:.08; pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.4) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,.4) 1px, transparent 1px);
+    background-size:34px 34px;
+  }
+  header.hero .tag{font-family:'JetBrains Mono',monospace; letter-spacing:3px; text-transform:uppercase; font-size:12px; color:var(--cyan); margin-bottom:18px; position:relative;}
+  header.hero h1{color:#F4FAFF; font-size:clamp(32px,6vw,58px); font-weight:700; max-width:920px; margin:0 auto 18px; line-height:1.12; position:relative;}
+  header.hero h1 em{color:var(--amber); font-style:italic;}
+  header.hero p.sub{max-width:660px; margin:0 auto; font-size:17px; color:#C9DDF0; position:relative;}
+  .queue-row{margin-top:46px; display:flex; justify-content:center; gap:14px; flex-wrap:wrap; position:relative;}
+  .queue-row span{
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.25); padding:8px 14px; border-radius:30px; color:#F4FAFF;
+  }
+
+  section{max-width:1000px; margin:0 auto; padding:70px 24px;}
+  section.wide{max-width:1160px;}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--cyan-deep); margin-bottom:10px; display:flex; align-items:center; gap:10px;}
+  .eyebrow .num{background:var(--navy); color:#fff; border-radius:50%; width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center; font-size:11px;}
+  h2.title{font-size:clamp(26px,4vw,38px); margin-bottom:6px;}
+  p.lede{font-size:16.5px; max-width:700px; color:#2A3B52;}
+
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-top:34px;}
+  @media (max-width:820px){.duo{grid-template-columns:1fr;}}
+
+  .story-card{background:var(--white); border-radius:18px; padding:26px 26px 22px; box-shadow:var(--shadow); border-left:5px solid var(--amber); position:relative;}
+  .story-card .label{font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--amber-deep); margin-bottom:10px; display:block;}
+  .story-card p, .story-card li{font-size:15px; color:#243149;}
+  .story-card .say{background:#DCF3F6; border-radius:12px 12px 12px 2px; padding:10px 14px; margin:6px 0; font-size:14.5px; display:inline-block;}
+  .story-card .ask{background:#EFF3F8; border-radius:12px 2px 12px 12px; padding:10px 14px; margin:6px 0; font-size:14.5px; display:inline-block; font-style:italic;}
+
+  .blueprint{
+    background:var(--paper); border-radius:14px; box-shadow:var(--shadow); position:relative; padding:0;
+    border:1px solid var(--paper-line); overflow:hidden;
+  }
+  .blueprint::before{
+    content:""; position:absolute; inset:0; opacity:.5; pointer-events:none;
+    background-image:linear-gradient(rgba(199,220,238,.6) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(199,220,238,.6) 1px, transparent 1px);
+    background-size:18px 18px;
+  }
+  .blueprint .bp-head{
+    background:var(--navy); color:#fff; padding:12px 20px; display:flex; justify-content:space-between; align-items:center;
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase; position:relative;
+  }
+  .blueprint .bp-head b{font-size:13px; letter-spacing:.5px;}
+  .blueprint .bp-body{padding:20px 22px 24px; position:relative; font-size:14px; color:#1B2A42;}
+  .blueprint .bp-body dt{font-family:'JetBrains Mono',monospace; font-weight:700; margin-top:12px; color:var(--cyan-deep); font-size:11.5px; text-transform:uppercase; letter-spacing:.5px;}
+  .blueprint .bp-body dt:first-child{margin-top:0;}
+  .blueprint .bp-body dd{margin:3px 0 0; color:#1B2A42;}
+  .blueprint .bp-body dd.exam{background:#FFF3E0; border-left:3px solid var(--red); padding:8px 10px; margin-top:6px; font-weight:600;}
+
+  .flow{display:flex; flex-wrap:wrap; gap:0; margin-top:40px;}
+  .flow .step{flex:1 1 130px; position:relative; text-align:center; padding:20px 8px;}
+  .flow .step .dot{
+    width:46px; height:46px; border-radius:50%; margin:0 auto 12px; background:var(--cyan); color:var(--navy-deep);
+    display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:18px;
+    box-shadow:0 6px 16px rgba(49,196,216,0.35);
+  }
+  .flow .step:nth-child(even) .dot{background:var(--amber); color:var(--navy-deep); box-shadow:0 6px 16px rgba(255,184,77,0.4);}
+  .flow .step h4{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px; margin:0 0 4px; color:var(--navy);}
+  .flow .step p{font-size:11.5px; color:#5A6E88; margin:0;}
+  .flow .step::after{content:"→"; position:absolute; right:-4px; top:32px; font-size:18px; color:#B9CEE3;}
+  .flow .step:last-child::after{content:none;}
+  @media (max-width:760px){.flow .step::after{content:none;}}
+
+  .stage4{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:34px;}
+  @media (max-width:860px){.stage4{grid-template-columns:repeat(2,1fr);}}
+  .stage4 .sc{background:var(--white); border-radius:14px; padding:18px 16px; box-shadow:var(--shadow); text-align:center; border-top:4px solid var(--paper-line);}
+  .stage4 .sc.active{border-top-color:var(--cyan); background:var(--navy); color:#fff;}
+  .stage4 .sc.active h4{color:#fff;}
+  .stage4 .sc.active .tick{color:var(--cyan);}
+  .stage4 .sc h4{font-size:14.5px; margin-bottom:6px; color:var(--navy);}
+  .stage4 .sc p{font-size:12.5px; color:#5A6E88; margin:0;}
+  .stage4 .sc.active p{color:#B9D2E8;}
+  .stage4 .sc .tick{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:1px; text-transform:uppercase; color:var(--cyan-deep); margin-bottom:8px; display:block;}
+
+  .components5{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-top:34px;}
+  @media (max-width:900px){.components5{grid-template-columns:repeat(2,1fr);}}
+  .components5 .cc{background:var(--white); border-radius:12px; padding:16px 12px; box-shadow:var(--shadow); text-align:center; border-top:4px solid var(--cyan);}
+  .components5 .cc:nth-child(2){border-top-color:var(--amber);}
+  .components5 .cc:nth-child(3){border-top-color:var(--red);}
+  .components5 .cc:nth-child(4){border-top-color:var(--green);}
+  .components5 .cc:nth-child(5){border-top-color:var(--navy);}
+  .components5 .cc .ic{font-size:22px; margin-bottom:6px;}
+  .components5 .cc h4{font-size:13px; margin:0; color:var(--navy);}
+
+  .checklist-q{display:grid; gap:12px; margin-top:26px;}
+  .checklist-q .q{background:var(--white); border-radius:12px; padding:14px 18px; box-shadow:var(--shadow); font-size:14.5px; display:flex; gap:12px; align-items:flex-start;}
+  .checklist-q .q::before{content:"?"; flex:none; width:26px; height:26px; border-radius:50%; background:var(--amber); color:var(--navy-deep); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13px;}
+
+  .diagram-frame{
+    background:var(--white); border-radius:16px; box-shadow:var(--shadow); padding:20px; margin-top:30px; overflow-x:auto;
+  }
+  .diagram-frame .cap{font-family:'JetBrains Mono',monospace; font-size:11.5px; color:#5A6E88; text-align:center; margin-top:10px;}
+
+  .diff-table, .symbols-table{margin-top:26px; background:var(--white); border-radius:14px; box-shadow:var(--shadow); overflow:hidden;}
+  .diff-table table, .symbols-table table{width:100%; border-collapse:collapse; font-size:14px;}
+  .diff-table th, .symbols-table th{background:var(--navy); color:#fff; text-align:left; padding:12px 20px; font-family:'JetBrains Mono',monospace; font-size:11.5px; text-transform:uppercase; letter-spacing:1px;}
+  .diff-table td, .symbols-table td{padding:12px 20px; border-bottom:1px solid var(--paper-line); color:#1B2A42;}
+  .diff-table tr:last-child td, .symbols-table tr:last-child td{border-bottom:none;}
+
+  .keyterms{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;}
+  .keyterms span{font-family:'JetBrains Mono',monospace; font-size:12px; background:#DCF3F6; color:var(--cyan-deep); padding:5px 12px; border-radius:16px;}
+
+  .actor-examples{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:26px;}
+  @media (max-width:820px){.actor-examples{grid-template-columns:1fr;}}
+  .actor-examples .ae{background:var(--white); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow); text-align:center;}
+  .actor-examples .ae h4{font-size:14px; color:var(--navy); margin-bottom:8px;}
+  .actor-examples .ae p{font-size:13px; color:#5A6E88; margin:2px 0;}
+
+  .glossary{margin-top:34px; background:var(--paper); border-radius:16px; box-shadow:var(--shadow); padding:6px 0; overflow:hidden;}
+  .glossary table{width:100%; border-collapse:collapse; font-family:'JetBrains Mono',monospace; font-size:13px;}
+  .glossary th{text-align:left; padding:16px 24px 10px; color:var(--navy); border-bottom:1px dashed var(--paper-line); font-size:12px; text-transform:uppercase; letter-spacing:1px;}
+  .glossary td{padding:10px 24px; border-bottom:1px dashed var(--paper-line); color:#1B2A42;}
+  .glossary tr:last-child td{border-bottom:none;}
+
+  .recap{background:linear-gradient(160deg,var(--navy-deep),#0e2b4d); color:#F4FAFF; border-radius:24px; padding:50px 34px; margin:70px auto; max-width:1000px; text-align:center;}
+  .recap h2{color:#fff;}
+  .recap .chain{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:26px;}
+  .recap .chain span{font-family:'JetBrains Mono',monospace; font-size:13px; background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.2); padding:8px 14px; border-radius:30px;}
+  .recap .chain .arrow{background:none; border:none; opacity:.5; padding:8px 0;}
+
+  .golden{margin:70px auto; max-width:920px; text-align:center; background:var(--amber); color:var(--navy-deep); border-radius:20px; padding:36px 30px; box-shadow:var(--shadow); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:clamp(17px,2.6vw,22px);}
+
+  .next-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:30px;}
+  @media (max-width:820px){.next-grid{grid-template-columns:1fr;}}
+  .next-grid .nc{background:var(--white); border-radius:14px; padding:18px 20px; box-shadow:var(--shadow); border-top:4px solid var(--cyan);}
+  .next-grid .nc h4{font-size:15px; color:var(--navy); margin-bottom:6px;}
+  .next-grid .nc p{font-size:13px; color:#5A6E88; margin:0;}
+
+  footer{text-align:center; padding:40px 24px 60px; font-size:13px; color:#7488A2;}
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.show{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<nav class="stage-nav">
+  <a href="#intro">Intro</a>
+  <a href="#modeling">Modeling</a>
+  <a href="#scenario-based">Scenario-Based</a>
+  <a href="#scenario">Scenario</a>
+  <a href="#actor">Actor</a>
+  <a href="#usecase">Use Case</a>
+  <a href="#ucdiagram">UC Diagram</a>
+  <a href="#preliminary">Preliminary UC</a>
+  <a href="#formal">Formal UC</a>
+  <a href="#activity">Activity Diagram</a>
+  <a href="#swimlane">Swimlane</a>
+  <a href="#recap">Recap</a>
+  <a href="#glossary">Glossary</a>
+</nav>
+
+<header class="hero" id="intro">
+  <div class="tag">Prepared by A.KIRUTHIKA , AP/CSE , KEC</div>
+  <h1>Scenario-Based Modeling,<br>through the <em>College Canteen App</em></h1>
+  <p class="sub">Every single day, the canteen queue eats into the next class's first ten minutes. The Principal has finally decided: build a Canteen Ordering App. But before anyone opens a code editor, that idea has to be turned into pictures everyone can agree on.</p>
+  <div class="queue-row">
+    <span>🍔 Long canteen queues</span>
+    <span>⏰ Missing the next class</span>
+    <span>📱 "Build a Canteen App"</span>
+    <span>❓ Who uses it, and how?</span>
+  </div>
+</header>
+
+<section id="modeling">
+  <div class="eyebrow"><span class="num">1</span> Starting Question</div>
+  <h2 class="title">"Can the developer directly start coding?"</h2>
+  <p class="lede">Every requirement modeling lesson can begin with this one question — and the canteen app is a perfect place to ask it.</p>
+  <div class="duo">
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p>The app should let students view the menu, order food, pay online, and collect food without standing in a queue. Simple enough to say out loud in one breath.</p>
+      <p class="ask">"Can the developer directly start coding?"</p>
+      <p class="say">No.</p>
+      <p>Why not? Because the developer still doesn't know: who uses the system, what functions are actually needed, and how users will interact with it. To answer these three questions, one specific technique is used:</p>
+      <p style="text-align:center; font-weight:700; color:var(--navy); font-size:16px; margin-top:14px;">Scenario-Based Modeling</p>
+    </div>
+    <div class="blueprint">
+      <div class="bp-head"><span>SPEC-00</span><b>REQUIREMENT MODELING</b></div>
+      <div class="bp-body">
+        <dl>
+          <dt>PPT Definition</dt>
+          <dd>The process of identifying requirements that the software solution must meet, in order to be successful.</dd>
+          <dt>Easy Meaning</dt>
+          <dd>Before coding, requirements are converted into pictures, diagrams, and models — so that everyone understands the system the same way.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top:36px;">Requirement Modeling branches into four types. This guide covers the first one, in full detail.</p>
+  <div class="stage4">
+    <div class="sc active"><span class="tick">Today's topic</span><h4>Scenario-Based Modeling</h4><p>Looking through the user's eyes</p></div>
+    <div class="sc"><span class="tick">Comes next</span><h4>Flow-Oriented Modeling</h4><p>Tracking data as it moves</p></div>
+    <div class="sc"><span class="tick">Later</span><h4>Class-Based Modeling</h4><p>The objects the system is built from</p></div>
+    <div class="sc"><span class="tick">Later</span><h4>Behavioral Modeling</h4><p>How states change over time</p></div>
+  </div>
+</section>
+
+<section id="scenario-based" class="wide">
+  <div class="eyebrow"><span class="num">2</span> Today's Topic, In Full</div>
+  <h2 class="title">What is Scenario-Based Modeling?</h2>
+  <p class="lede">One simple question sits underneath this entire topic.</p>
+  <div class="duo">
+    <div class="blueprint">
+      <div class="bp-head"><span>SPEC-01</span><b>SCENARIO-BASED MODELING</b></div>
+      <div class="bp-body">
+        <dl>
+          <dt>PPT Definition</dt>
+          <dd>A scenario that describes a thread of usage for a system.</dd>
+          <dt>Book Meaning</dt>
+          <dd>Represents the system from the user's point of view.</dd>
+          <dt>Easy Meaning</dt>
+          <dd>"Looking at the software through the user's eyes."</dd>
+        </dl>
+      </div>
+    </div>
+    <div class="story-card">
+      <span class="label">Ask Yourself</span>
+      <p class="ask">"If I am the user, how will I use this software?"</p>
+      <p>That single question is the entire mindset behind Scenario-Based Modeling. Everything in this chapter — the scenario, the actor, the use case, and every diagram — exists purely to answer it, piece by piece.</p>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top:36px;">Scenario-Based Modeling itself is built from five components — each is its own part of this lesson.</p>
+  <div class="components5">
+    <div class="cc"><div class="ic">🎬</div><h4>Scenario</h4></div>
+    <div class="cc"><div class="ic">🧑</div><h4>Actor</h4></div>
+    <div class="cc"><div class="ic">✅</div><h4>Use Case</h4></div>
+    <div class="cc"><div class="ic">🖼️</div><h4>Use Case Diagram</h4></div>
+    <div class="cc"><div class="ic">🏊</div><h4>Activity &amp; Swimlane Diagram</h4></div>
+  </div>
+</section>
+
+<section id="scenario">
+  <div class="eyebrow"><span class="num">3</span> Part 1</div>
+  <h2 class="title">Scenario — the complete story of using the app</h2>
+  <p class="lede">A scenario is simply the full journey of one user, told from beginning to end.</p>
+  <div class="duo">
+    <div class="blueprint">
+      <div class="bp-head"><span>SPEC-02</span><b>SCENARIO</b></div>
+      <div class="bp-body">
+        <dl>
+          <dt>PPT Definition</dt>
+          <dd>A scenario describes a thread of usage for a system.</dd>
+          <dt>Exam Definition</dt>
+          <dd class="exam">A Scenario is a specific sequence of actions that describes how users interact with the system.</dd>
+        </dl>
+        <div class="keyterms"><span>Sequence of actions</span><span>User interaction</span><span>Workflow</span><span>Story of using the software</span></div>
+      </div>
+    </div>
+    <div class="story-card">
+      <span class="label">The Story — Raj is Hungry</span>
+      <p class="say">Raj is hungry → opens the app → logs in → views the menu → orders a dosa → pays ₹40 → gets confirmation → collects food.</p>
+      <p>This entire journey — start to finish — is called a <b>Scenario</b>.</p>
+      <p style="margin-top:14px;"><b>Real-life analogy:</b> a movie has a beginning, a middle, and an ending. A scenario has exactly the same shape.</p>
+    </div>
+  </div>
+  <div class="diagram-frame">
+    <svg viewBox="0 0 760 130" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; max-width:760px; margin:0 auto; display:block;">
+      <g font-family="Inter, sans-serif" font-size="12.5" fill="#0B1F3A">
+        <rect x="10" y="42" width="110" height="46" rx="20" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/><text x="65" y="70" text-anchor="middle">Open App</text>
+        <line x1="120" y1="65" x2="150" y2="65" stroke="#0B1F3A" stroke-width="2" marker-end="url(#a1)"/>
+        <rect x="150" y="42" width="90" height="46" rx="20" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/><text x="195" y="70" text-anchor="middle">Login</text>
+        <line x1="240" y1="65" x2="270" y2="65" stroke="#0B1F3A" stroke-width="2" marker-end="url(#a1)"/>
+        <rect x="270" y="42" width="110" height="46" rx="20" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/><text x="325" y="70" text-anchor="middle">View Menu</text>
+        <line x1="380" y1="65" x2="410" y2="65" stroke="#0B1F3A" stroke-width="2" marker-end="url(#a1)"/>
+        <rect x="410" y="42" width="120" height="46" rx="20" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/><text x="470" y="70" text-anchor="middle">Select Food</text>
+        <line x1="530" y1="65" x2="560" y2="65" stroke="#0B1F3A" stroke-width="2" marker-end="url(#a1)"/>
+        <rect x="560" y="42" width="100" height="46" rx="20" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/><text x="610" y="70" text-anchor="middle">Payment</text>
+        <line x1="660" y1="65" x2="690" y2="65" stroke="#0B1F3A" stroke-width="2" marker-end="url(#a1)"/>
+      </g>
+      <rect x="690" y="42" width="70" height="46" rx="20" fill="#FFF3E0" stroke="#E4572E" stroke-width="2"/>
+      <text x="725" y="70" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#0B1F3A">Confirm</text>
+      <defs><marker id="a1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#0B1F3A"/></marker></defs>
+    </svg>
+    <div class="cap">Raj's Scenario — the complete thread of usage, start to finish</div>
+  </div>
+</section>
+
+<section id="actor">
+  <div class="eyebrow"><span class="num">4</span> Part 2</div>
+  <h2 class="title">Actor — WHO uses the system?</h2>
+  <p class="lede">Once the scenario is clear, the next question is: which roles actually show up inside that story?</p>
+  <div class="duo">
+    <div class="blueprint">
+      <div class="bp-head"><span>SPEC-03</span><b>ACTOR</b></div>
+      <div class="bp-body">
+        <dl>
+          <dt>PPT Definition</dt>
+          <dd>Actor represents roles of people or devices in system functions.</dd>
+          <dt>Easy Meaning</dt>
+          <dd>Actor means: WHO uses the system?</dd>
+          <dt>Important Point</dt>
+          <dd>An actor is always <b>outside the system</b>.</dd>
+          <dt>Exam Definition</dt>
+          <dd class="exam">An Actor is anyone or anything that communicates with the system.</dd>
+        </dl>
+        <div class="keyterms"><span>User</span><span>External Entity</span><span>Role</span><span>Outside System Boundary</span></div>
+      </div>
+    </div>
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p class="ask">"Who uses our canteen app?"</p>
+      <p class="say">Student · Canteen Staff · Principal · Payment Gateway</p>
+      <p>All four of these are <b>Actors</b>. Notice that "Payment Gateway" isn't a person — it's still an actor, because an actor is any role, person, or device that talks to the system.</p>
+      <p class="mono" style="margin-top:10px; color:var(--navy);">Student ------&gt; Canteen App</p>
+    </div>
+  </div>
+
+  <p class="lede" style="margin-top:34px;">The same idea shows up in almost every system you've ever used:</p>
+  <div class="actor-examples">
+    <div class="ae"><h4>Canteen App</h4><p>Student</p><p>Canteen Staff</p><p>Principal</p><p>Payment Gateway</p></div>
+    <div class="ae"><h4>ATM System</h4><p>Customer</p><p>Bank Server</p></div>
+    <div class="ae"><h4>Instagram</h4><p>User</p><p>Admin</p></div>
+  </div>
+</section>
+
+<section id="usecase">
+  <div class="eyebrow"><span class="num">5</span> Part 3</div>
+  <h2 class="title">Use Case — WHAT does the system do?</h2>
+  <p class="lede">If Actor answers "who," Use Case answers the other half of the question: "what."</p>
+  <div class="duo">
+    <div class="blueprint">
+      <div class="bp-head"><span>SPEC-04</span><b>USE CASE</b></div>
+      <div class="bp-body">
+        <dl>
+          <dt>PPT Definition</dt>
+          <dd>Use cases define what should be performed by the system.</dd>
+          <dt>Easy Meaning</dt>
+          <dd>Use Case means: WHAT does the system do?</dd>
+          <dt>Exam Definition</dt>
+          <dd class="exam">A Use Case describes how an actor uses the system to achieve a specific goal.</dd>
+        </dl>
+        <div class="keyterms"><span>Function</span><span>Service</span><span>Goal</span><span>System Functionality</span></div>
+      </div>
+    </div>
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p>The student wants to:</p>
+      <p class="say">Login · View Menu · Order Food · Pay · Track Order</p>
+      <p>Each one of these is a separate <b>Use Case</b> — a distinct thing the system lets an actor do.</p>
+    </div>
+  </div>
+
+  <div class="diff-table">
+    <table>
+      <tr><th>Actor</th><th>Use Case</th></tr>
+      <tr><td>WHO</td><td>WHAT</td></tr>
+      <tr><td>Student</td><td>Order Food</td></tr>
+      <tr><td>Customer (ATM)</td><td>Withdraw Cash</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="ucdiagram" class="wide">
+  <div class="eyebrow"><span class="num">6</span> Part 4</div>
+  <h2 class="title">Use Case Diagram — putting Actor and Use Case in one picture</h2>
+  <p class="lede">Once actors and use cases are both known, they get drawn together — a single picture showing who uses the system and what each of them does.</p>
+  <div class="blueprint">
+    <div class="bp-head"><span>SPEC-05</span><b>USE CASE DIAGRAM</b></div>
+    <div class="bp-body">
+      <dl>
+        <dt>PPT Definition</dt>
+        <dd>It identifies possible use cases for the system and produces use case diagrams.</dd>
+        <dt>Easy Meaning</dt>
+        <dd>A picture showing WHO uses the system and WHAT they do.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="symbols-table">
+    <table>
+      <tr><th>Symbol</th><th>Meaning</th></tr>
+      <tr><td>Stick figure</td><td>Actor</td></tr>
+      <tr><td>Oval, e.g. (Login)</td><td>Use Case</td></tr>
+      <tr><td>Straight line</td><td>Association</td></tr>
+      <tr><td>Rectangle</td><td>System Boundary</td></tr>
+    </table>
+  </div>
+
+  <div class="diagram-frame">
+    <svg viewBox="0 0 780 400" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; max-width:780px; margin:0 auto; display:block;">
+      <rect x="230" y="20" width="330" height="290" rx="14" fill="#EAF3FB" stroke="#0B1F3A" stroke-width="2"/>
+      <text x="395" y="12" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#0B1F3A" font-weight="700">CANTEEN APP</text>
+
+      <g transform="translate(60,150)">
+        <circle cx="0" cy="0" r="12" fill="none" stroke="#0B1F3A" stroke-width="2.5"/>
+        <line x1="0" y1="12" x2="0" y2="50" stroke="#0B1F3A" stroke-width="2.5"/>
+        <line x1="-22" y1="26" x2="22" y2="26" stroke="#0B1F3A" stroke-width="2.5"/>
+        <line x1="0" y1="50" x2="-18" y2="82" stroke="#0B1F3A" stroke-width="2.5"/>
+        <line x1="0" y1="50" x2="18" y2="82" stroke="#0B1F3A" stroke-width="2.5"/>
+        <text x="0" y="102" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#0B1F3A" font-weight="600">Student</text>
+      </g>
+
+      <g transform="translate(710,90)">
+        <circle cx="0" cy="0" r="11" fill="none" stroke="#0B1F3A" stroke-width="2.3"/>
+        <line x1="0" y1="11" x2="0" y2="44" stroke="#0B1F3A" stroke-width="2.3"/>
+        <line x1="-19" y1="23" x2="19" y2="23" stroke="#0B1F3A" stroke-width="2.3"/>
+        <line x1="0" y1="44" x2="-16" y2="72" stroke="#0B1F3A" stroke-width="2.3"/>
+        <line x1="0" y1="44" x2="16" y2="72" stroke="#0B1F3A" stroke-width="2.3"/>
+        <text x="0" y="92" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#0B1F3A" font-weight="600">Canteen</text>
+        <text x="0" y="105" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#0B1F3A" font-weight="600">Staff</text>
+      </g>
+
+      <g transform="translate(710,280)">
+        <circle cx="0" cy="0" r="11" fill="none" stroke="#0B1F3A" stroke-width="2.3"/>
+        <line x1="0" y1="11" x2="0" y2="44" stroke="#0B1F3A" stroke-width="2.3"/>
+        <line x1="-19" y1="23" x2="19" y2="23" stroke="#0B1F3A" stroke-width="2.3"/>
+        <line x1="0" y1="44" x2="-16" y2="72" stroke="#0B1F3A" stroke-width="2.3"/>
+        <line x1="0" y1="44" x2="16" y2="72" stroke="#0B1F3A" stroke-width="2.3"/>
+        <text x="0" y="92" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#0B1F3A" font-weight="600">Principal</text>
+      </g>
+
+      <ellipse cx="330" cy="55" rx="78" ry="24" fill="#FFFFFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="330" y="60" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#0B1F3A">Login</text>
+
+      <ellipse cx="470" cy="55" rx="78" ry="24" fill="#FFFFFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="470" y="60" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#0B1F3A">View Menu</text>
+
+      <ellipse cx="330" cy="120" rx="78" ry="24" fill="#FFFFFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="330" y="125" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#0B1F3A">Order Food</text>
+
+      <ellipse cx="470" cy="120" rx="78" ry="24" fill="#FFFFFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="470" y="125" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#0B1F3A">Payment</text>
+
+      <ellipse cx="470" cy="185" rx="80" ry="24" fill="#FFF3E0" stroke="#E4572E" stroke-width="2"/>
+      <text x="470" y="190" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#0B1F3A">Update Menu</text>
+
+      <ellipse cx="330" cy="240" rx="80" ry="24" fill="#FFF3E0" stroke="#E4572E" stroke-width="2"/>
+      <text x="330" y="245" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#0B1F3A">View Orders</text>
+
+      <ellipse cx="470" cy="270" rx="82" ry="24" fill="#EAF7F1" stroke="#3FA796" stroke-width="2"/>
+      <text x="470" y="275" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#0B1F3A">View Reports</text>
+
+      <line x1="88" y1="150" x2="252" y2="62" stroke="#0B1F3A" stroke-width="1.5"/>
+      <line x1="88" y1="158" x2="252" y2="118" stroke="#0B1F3A" stroke-width="1.5"/>
+      <line x1="88" y1="166" x2="392" y2="60" stroke="#0B1F3A" stroke-width="1.5"/>
+      <line x1="88" y1="174" x2="392" y2="122" stroke="#0B1F3A" stroke-width="1.5"/>
+
+      <line x1="695" y1="95" x2="550" y2="185" stroke="#0B1F3A" stroke-width="1.5"/>
+      <line x1="695" y1="105" x2="410" y2="240" stroke="#0B1F3A" stroke-width="1.5"/>
+
+      <line x1="695" y1="282" x2="552" y2="270" stroke="#0B1F3A" stroke-width="1.5"/>
+    </svg>
+    <div class="cap">Use Case Diagram — Canteen App (Student, Canteen Staff, Principal as actors)</div>
+  </div>
+
+  <div class="story-card" style="margin-top:26px;">
+    <span class="label">Reading the picture</span>
+    <p><b>Student uses:</b> Login → View Menu → Order Food → Payment. <b>Canteen Staff uses:</b> Update Menu, View Orders. <b>Principal uses:</b> View Reports.</p>
+  </div>
+  <div class="keyterms" style="margin-top:16px;"><span>Actor</span><span>Use Case</span><span>Association</span><span>System Boundary</span></div>
+</section>
+
+<section id="preliminary">
+  <div class="eyebrow"><span class="num">7</span> Part 5</div>
+  <h2 class="title">Preliminary Use Case — the first rough draft</h2>
+  <p class="lede">Before writing anything formal, every use case starts life as a quick, rough sketch.</p>
+  <div class="blueprint" style="margin-top:10px;">
+    <div class="bp-head"><span>SPEC-06</span><b>PRELIMINARY USE CASE</b></div>
+    <div class="bp-body">
+      <dl><dt>Guiding Questions</dt>
+        <dd>What to write? · How much to write? · How detailed should it be? · How should it be organized?</dd>
+        <dt>Easy Meaning</dt>
+        <dd>The first rough description — nothing fancy yet.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="story-card" style="margin-top:26px;">
+    <span class="label">Example — Order Food, rough draft</span>
+    <p class="say">1. Login → 2. Select Food → 3. Pay</p>
+    <p>Simple. Just enough to capture the idea — the detail comes later.</p>
+  </div>
+</section>
+
+<section id="formal">
+  <div class="eyebrow"><span class="num">8</span> Part 6</div>
+  <h2 class="title">Formal Use Case — writing it up properly</h2>
+  <p class="lede">The rough draft now gets expanded into the full, structured format the whole team will build from.</p>
+  <div class="blueprint">
+    <div class="bp-head"><span>SPEC-07</span><b>FORMAL USE CASE — ORDER FOOD</b></div>
+    <div class="bp-body">
+      <dl>
+        <dt>Use Case Name</dt><dd>Order Food</dd>
+        <dt>Actor</dt><dd>Student</dd>
+        <dt>Precondition</dt><dd>Student should be logged in.</dd>
+        <dt>Main Flow</dt>
+        <dd>1. Student selects food.<br>2. System displays price.<br>3. Student confirms.<br>4. Student pays.<br>5. System generates order.</dd>
+        <dt>Alternative Flow</dt>
+        <dd>Payment fails → Retry payment.</dd>
+        <dt>Postcondition</dt><dd>Order successfully placed.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="keyterms"><span>Precondition</span><span>Main Flow</span><span>Alternative Flow</span><span>Postcondition</span></div>
+  <div class="flow" style="margin-top:10px;">
+    <div class="step"><div class="dot">1</div><h4>Precondition</h4><p>Logged in</p></div>
+    <div class="step"><div class="dot">2</div><h4>Main Flow</h4><p>Select → Confirm → Pay</p></div>
+    <div class="step"><div class="dot">3</div><h4>Alternative Flow</h4><p>Retry on failure</p></div>
+    <div class="step"><div class="dot">4</div><h4>Postcondition</h4><p>Order placed</p></div>
+  </div>
+</section>
+
+<section id="activity" class="wide">
+  <div class="eyebrow"><span class="num">9</span> Part 7</div>
+  <h2 class="title">Activity Diagram — a flowchart of the scenario</h2>
+  <p class="lede">A use case diagram shows who and what. An activity diagram shows the actual order things happen in — including decisions.</p>
+  <div class="blueprint">
+    <div class="bp-head"><span>SPEC-08</span><b>ACTIVITY DIAGRAM</b></div>
+    <div class="bp-body">
+      <dl>
+        <dt>PPT Definition</dt>
+        <dd>Graphical representation of the flow of interaction within a specific scenario.</dd>
+        <dt>Easy Meaning</dt>
+        <dd>A flowchart of the scenario.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="symbols-table">
+    <table>
+      <tr><th>Symbol</th><th>Meaning</th></tr>
+      <tr><td>Rounded Rectangle</td><td>Activity</td></tr>
+      <tr><td>Arrow</td><td>Flow</td></tr>
+      <tr><td>Diamond</td><td>Decision</td></tr>
+      <tr><td>Horizontal Bar</td><td>Parallel Activities</td></tr>
+    </table>
+  </div>
+
+  <div class="diagram-frame">
+    <svg viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:420px; height:auto; margin:0 auto; display:block;">
+      <circle cx="240" cy="18" r="11" fill="#0B1F3A"/>
+      <line x1="240" y1="29" x2="240" y2="52" stroke="#0B1F3A" stroke-width="2"/>
+
+      <rect x="160" y="52" width="160" height="42" rx="20" fill="#FFFFFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="240" y="78" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#0B1F3A">Login</text>
+      <line x1="240" y1="94" x2="240" y2="116" stroke="#0B1F3A" stroke-width="2"/>
+
+      <rect x="150" y="116" width="180" height="42" rx="20" fill="#FFFFFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="240" y="142" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#0B1F3A">View Menu</text>
+      <line x1="240" y1="158" x2="240" y2="180" stroke="#0B1F3A" stroke-width="2"/>
+
+      <rect x="140" y="180" width="200" height="42" rx="20" fill="#FFFFFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="240" y="206" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#0B1F3A">Select Food</text>
+      <line x1="240" y1="222" x2="240" y2="246" stroke="#0B1F3A" stroke-width="2"/>
+
+      <polygon points="240,246 300,288 240,330 180,288" fill="#FFF3E0" stroke="#E4572E" stroke-width="2"/>
+      <text x="240" y="282" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#0B1F3A">Payment</text>
+      <text x="240" y="296" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#0B1F3A">Successful?</text>
+
+      <line x1="180" y1="288" x2="80" y2="288" stroke="#0B1F3A" stroke-width="2"/>
+      <text x="130" y="278" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#E4572E">no</text>
+      <line x1="80" y1="288" x2="80" y2="340" stroke="#0B1F3A" stroke-width="2"/>
+      <rect x="0" y="340" width="160" height="42" rx="20" fill="#FFFFFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="80" y="366" text-anchor="middle" font-family="Inter, sans-serif" font-size="12" fill="#0B1F3A">Retry Payment</text>
+      <path d="M80,340 C80,260 160,246 178,262" fill="none" stroke="#0B1F3A" stroke-width="2" marker-end="url(#a2)"/>
+
+      <line x1="240" y1="330" x2="240" y2="354" stroke="#0B1F3A" stroke-width="2"/>
+      <text x="262" y="344" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#3FA796">yes</text>
+      <rect x="160" y="354" width="160" height="42" rx="20" fill="#FFFFFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="240" y="380" text-anchor="middle" font-family="Inter, sans-serif" font-size="12.5" fill="#0B1F3A">Confirm Order</text>
+      <line x1="240" y1="396" x2="240" y2="424" stroke="#0B1F3A" stroke-width="2"/>
+
+      <circle cx="240" cy="440" r="12" fill="none" stroke="#0B1F3A" stroke-width="2.5"/>
+      <circle cx="240" cy="440" r="6" fill="#0B1F3A"/>
+
+      <defs><marker id="a2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#0B1F3A"/></marker></defs>
+    </svg>
+    <div class="cap">Activity Diagram — Ordering Food (decision diamond checks if payment succeeded)</div>
+  </div>
+</section>
+
+<section id="swimlane" class="wide">
+  <div class="eyebrow"><span class="num">10</span> Part 8</div>
+  <h2 class="title">Swimlane Diagram — WHO does WHAT</h2>
+  <p class="lede">The activity diagram shows the flow. The swimlane diagram adds one more layer — which actor owns each step.</p>
+  <div class="blueprint">
+    <div class="bp-head"><span>SPEC-09</span><b>SWIMLANE DIAGRAM</b></div>
+    <div class="bp-body">
+      <dl>
+        <dt>PPT Definition</dt>
+        <dd>Shows activity flow and indicates which actor is responsible for each activity.</dd>
+        <dt>Easy Meaning</dt>
+        <dd>Shows WHO does WHAT.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="diagram-frame">
+    <svg viewBox="0 0 780 340" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; max-width:780px; margin:0 auto; display:block;">
+      <rect x="10" y="10" width="240" height="320" fill="#EAF3FB" stroke="#0B1F3A" stroke-width="1.5"/>
+      <rect x="250" y="10" width="280" height="320" fill="#FFFFFF" stroke="#0B1F3A" stroke-width="1.5"/>
+      <rect x="530" y="10" width="240" height="320" fill="#EAF3FB" stroke="#0B1F3A" stroke-width="1.5"/>
+      <text x="130" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12.5" font-weight="700" fill="#0B1F3A">STUDENT</text>
+      <text x="390" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12.5" font-weight="700" fill="#0B1F3A">SYSTEM</text>
+      <text x="650" y="34" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="12.5" font-weight="700" fill="#0B1F3A">STAFF</text>
+
+      <rect x="60" y="60" width="140" height="42" rx="18" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="130" y="86" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#0B1F3A">Login</text>
+      <line x1="130" y1="102" x2="130" y2="118" stroke="#0B1F3A" stroke-width="2"/>
+      <line x1="130" y1="118" x2="330" y2="118" stroke="#0B1F3A" stroke-width="2" marker-end="url(#a3)"/>
+
+      <rect x="320" y="98" width="140" height="42" rx="18" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="390" y="124" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#0B1F3A">Verify Login</text>
+
+      <rect x="60" y="150" width="140" height="42" rx="18" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="130" y="176" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#0B1F3A">Select Food</text>
+      <line x1="130" y1="192" x2="130" y2="208" stroke="#0B1F3A" stroke-width="2"/>
+      <line x1="130" y1="208" x2="330" y2="208" stroke="#0B1F3A" stroke-width="2" marker-end="url(#a3)"/>
+
+      <rect x="320" y="188" width="140" height="42" rx="18" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="390" y="214" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#0B1F3A">Calculate Bill</text>
+
+      <rect x="60" y="240" width="140" height="42" rx="18" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="130" y="266" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#0B1F3A">Pay</text>
+      <line x1="200" y1="261" x2="330" y2="261" stroke="#0B1F3A" stroke-width="2" marker-end="url(#a3)"/>
+
+      <rect x="320" y="240" width="140" height="42" rx="18" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="390" y="266" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#0B1F3A">Generate Order</text>
+      <line x1="460" y1="261" x2="600" y2="261" stroke="#0B1F3A" stroke-width="2" marker-end="url(#a3)"/>
+
+      <rect x="580" y="240" width="150" height="42" rx="18" fill="#FFF" stroke="#1C9DAF" stroke-width="2"/>
+      <text x="655" y="266" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#0B1F3A">Prepare Food</text>
+
+      <defs><marker id="a3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#0B1F3A"/></marker></defs>
+    </svg>
+    <div class="cap">Swimlane Diagram — Ordering Food, split across Student / System / Staff lanes</div>
+  </div>
+  <div class="keyterms"><span>Responsibility</span><span>Actor</span><span>Activity</span><span>Workflow</span></div>
+</section>
+
+<div class="golden">"Scenario-Based Modeling means understanding the software completely from the user's perspective, and representing that interaction using stories and diagrams."</div>
+
+<section id="recap" class="wide">
+  <div class="eyebrow"><span class="num">✓</span> Final Revision</div>
+  <h2 class="title">Raj's story, one more time</h2>
+  <div class="flow">
+    <div class="step"><div class="dot">😋</div><h4>Hungry</h4><p>Raj wants food</p></div>
+    <div class="step"><div class="dot">📱</div><h4>Open App</h4><p>Starts the scenario</p></div>
+    <div class="step"><div class="dot">🔑</div><h4>Login</h4><p>First use case</p></div>
+    <div class="step"><div class="dot">🍽️</div><h4>Order Food</h4><p>Core use case</p></div>
+    <div class="step"><div class="dot">💳</div><h4>Pay</h4><p>Payment use case</p></div>
+    <div class="step"><div class="dot">✅</div><h4>Receive Food</h4><p>Scenario ends</p></div>
+  </div>
+
+  <div class="diff-table" style="margin-top:40px;">
+    <table>
+      <tr><th>Concept</th><th>Example from the Story</th></tr>
+      <tr><td>Scenario</td><td>Raj's complete story, start to finish</td></tr>
+      <tr><td>Actor</td><td>Student (also Canteen Staff, Principal, Payment Gateway)</td></tr>
+      <tr><td>Use Case</td><td>Login, Order Food, Pay, Track Order</td></tr>
+      <tr><td>Use Case Diagram</td><td>The picture of actors and their use cases</td></tr>
+      <tr><td>Activity Diagram</td><td>The flowchart of the scenario</td></tr>
+      <tr><td>Swimlane Diagram</td><td>Who does what, lane by lane</td></tr>
+    </table>
+  </div>
+
+  <p class="lede" style="margin-top:40px;">And once Scenario-Based Modeling is done, Requirement Modeling keeps moving forward:</p>
+  <div class="next-grid">
+    <div class="nc"><h4>Flow-Oriented Modeling</h4><p>Maps how data itself moves and transforms through the system.</p></div>
+    <div class="nc"><h4>Class-Based Modeling</h4><p>Identifies the objects, attributes, and operations the system is built from.</p></div>
+    <div class="nc"><h4>Behavioral Modeling</h4><p>Describes how the system's states change in response to events over time.</p></div>
+  </div>
+</section>
+
+<div class="recap">
+  <div class="eyebrow" style="justify-content:center; color:var(--amber);"><span class="num" style="background:var(--amber); color:var(--navy-deep);">✓</span> If you remember Raj...</div>
+  <h2>...you remember the whole chapter</h2>
+  <div class="chain">
+    <span>Find the scenario</span><span class="arrow">→</span>
+    <span>Find the actors</span><span class="arrow">→</span>
+    <span>Find the use cases</span><span class="arrow">→</span>
+    <span>Draw the use case diagram</span><span class="arrow">→</span>
+    <span>Sketch it rough</span><span class="arrow">→</span>
+    <span>Write it formal</span><span class="arrow">→</span>
+    <span>Flowchart it</span><span class="arrow">→</span>
+    <span>Assign responsibility</span>
+  </div>
+</div>
+
+<section id="glossary">
+  <div class="eyebrow"><span class="num">✓</span> Keep for Quick Revision</div>
+  <h2 class="title">Glossary</h2>
+  <div class="glossary">
+    <table>
+      <tr><th>Term</th><th>Meaning</th></tr>
+      <tr><td>Requirement Modeling</td><td>Identifying requirements a software solution must meet to succeed</td></tr>
+      <tr><td>Scenario-Based Modeling</td><td>Representing the system from the user's point of view</td></tr>
+      <tr><td>Scenario</td><td>A specific sequence of actions describing how users interact with the system</td></tr>
+      <tr><td>Actor</td><td>Anyone or anything that communicates with the system, always outside it</td></tr>
+      <tr><td>Use Case</td><td>How an actor uses the system to achieve a specific goal</td></tr>
+      <tr><td>Use Case Diagram</td><td>A picture of actors, use cases, associations, and the system boundary</td></tr>
+      <tr><td>Preliminary Use Case</td><td>The first, rough draft of a use case</td></tr>
+      <tr><td>Formal Use Case</td><td>The structured version: precondition, main flow, alternative flow, postcondition</td></tr>
+      <tr><td>Activity Diagram</td><td>A flowchart of the scenario, including decisions</td></tr>
+      <tr><td>Swimlane Diagram</td><td>An activity diagram split into lanes, showing who is responsible for each step</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>Scenario-Based Modeling Study Guide · Prepared by A.KIRUTHIKA , AP/CSE , KEC</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('section, .recap, .golden');
+    els.forEach(el => el.classList.add('reveal'));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } });
+    }, {threshold:0.1});
+    els.forEach(el => io.observe(el));
+  });
+</script>
+
+</body>
+</html>
