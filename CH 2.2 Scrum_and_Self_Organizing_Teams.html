@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrum &amp; Self-Organizing Teams — The College ERP Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cork:#6B4A34; --cork-deep:#4A3122; --yellow:#FFE066; --yellow-deep:#E0BB2E;
+    --coral:#FF6F59; --coral-deep:#E0503C; --green:#3FA772; --green-deep:#2E8058; --sky:#3D93B8;
+    --bg:#FAF6EF; --white:#FFFFFF; --ink:#3A2A1E; --shadow:0 10px 26px rgba(58,42,30,0.18);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif; color:var(--cork-deep); margin:0;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;} svg{display:block;}
+
+  nav.stage-nav{
+    position:sticky; top:0; z-index:50; background:rgba(250,246,239,0.94); backdrop-filter:blur(6px);
+    border-bottom:1px solid #E6DBC8; overflow-x:auto; white-space:nowrap; padding:10px 18px;
+    display:flex; gap:6px; scrollbar-width:thin;
+  }
+  nav.stage-nav a{
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; text-decoration:none; color:var(--cork-deep);
+    padding:7px 11px; border-radius:20px; border:1px solid transparent; opacity:0.75; transition:all .2s;
+  }
+  nav.stage-nav a:hover{opacity:1; border-color:var(--coral); background:#FFE4DE;}
+
+  header.hero{
+    position:relative; padding:90px 24px 110px;
+    background:
+      radial-gradient(circle at 82% 12%, rgba(255,224,102,0.25), transparent 45%),
+      linear-gradient(160deg, var(--cork-deep) 0%, var(--cork) 60%, #7A5A42 100%);
+    color:#F5EBDD; text-align:center; overflow:hidden;
+  }
+  header.hero::before{
+    content:""; position:absolute; inset:0; opacity:.06; pointer-events:none;
+    background-image:radial-gradient(rgba(255,255,255,.7) 1.5px, transparent 1.5px);
+    background-size:22px 22px;
+  }
+  header.hero .tag{font-family:'JetBrains Mono',monospace; letter-spacing:3px; text-transform:uppercase; font-size:12px; color:var(--yellow); margin-bottom:18px; position:relative;}
+  header.hero h1{color:#FBF6EC; font-size:clamp(30px,5.6vw,54px); font-weight:700; max-width:940px; margin:0 auto 18px; line-height:1.15; position:relative;}
+  header.hero h1 em{color:var(--coral); font-style:italic;}
+  header.hero p.sub{max-width:680px; margin:0 auto; font-size:17px; color:#E6D8C6; position:relative;}
+  .queue-row{margin-top:46px; display:flex; justify-content:center; gap:14px; flex-wrap:wrap; position:relative;}
+  .queue-row span{
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.25); padding:8px 14px; border-radius:30px; color:#FBF6EC;
+  }
+
+  section{max-width:1020px; margin:0 auto; padding:64px 24px;}
+  section.wide{max-width:1180px;}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:2px; text-transform:uppercase; color:var(--coral-deep); margin-bottom:10px; display:flex; align-items:center; gap:10px;}
+  .eyebrow .num{background:var(--cork-deep); color:#fff; border-radius:50%; width:26px; height:26px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; flex:none;}
+  h2.title{font-size:clamp(24px,3.8vw,36px); margin-bottom:6px;}
+  p.lede{font-size:16.5px; max-width:720px; color:#3E2E20;}
+
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:32px;}
+  @media (max-width:820px){.duo{grid-template-columns:1fr;}}
+
+  .story-card{background:var(--white); border-radius:16px; padding:24px 24px 20px; box-shadow:var(--shadow); border-left:5px solid var(--sky); position:relative;}
+  .story-card .label{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--sky); margin-bottom:10px; display:block;}
+  .story-card p, .story-card li{font-size:14.5px; color:#2E2318;}
+  .story-card .say{background:#EAF4FB; border-radius:12px 12px 12px 2px; padding:9px 13px; margin:6px 0; font-size:14px; display:inline-block;}
+
+  /* Sticky note — the signature element */
+  .sticky{
+    background:var(--yellow); border-radius:4px; box-shadow:var(--shadow); position:relative;
+    padding:20px 22px; transform:rotate(-0.6deg);
+  }
+  .sticky.tilt-r{transform:rotate(0.7deg);}
+  .sticky::before{
+    content:""; position:absolute; top:-9px; left:50%; transform:translateX(-50%) rotate(3deg);
+    width:44px; height:18px; background:rgba(255,255,255,0.55); border-radius:2px;
+  }
+  .sticky .st-head{font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:1px; color:#7A5A0C; margin-bottom:8px; display:flex; justify-content:space-between;}
+  .sticky h4{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:16px; color:#4A3308; margin-bottom:8px;}
+  .sticky p{font-size:13.5px; color:#4A3308; margin:4px 0;}
+  .sticky dt{font-family:'JetBrains Mono',monospace; font-weight:700; margin-top:10px; color:#8C5A0C; font-size:11px; text-transform:uppercase;}
+  .sticky dt:first-child{margin-top:0;}
+  .sticky dd{margin:2px 0 0; color:#4A3308; font-size:13.5px;}
+
+  .role-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:30px;}
+  @media (max-width:860px){.role-grid{grid-template-columns:1fr;}}
+
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:26px;}
+  .grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:26px;}
+  @media (max-width:860px){.grid3,.grid4{grid-template-columns:repeat(2,1fr);}}
+  @media (max-width:600px){.grid3,.grid4{grid-template-columns:1fr;}}
+
+  .concept-card{background:var(--white); border-radius:14px; padding:16px 18px; box-shadow:var(--shadow); border-top:4px solid var(--sky);}
+  .concept-card h4{font-size:14px; color:var(--cork-deep); margin-bottom:5px;}
+  .concept-card p{font-size:12.5px; color:#3E2E20; margin:2px 0;}
+
+  /* Scrum step accordion */
+  .scrumstep{background:var(--white); border-radius:14px; box-shadow:var(--shadow); margin-top:14px; overflow:hidden;}
+  .scrumstep summary{
+    list-style:none; cursor:pointer; padding:16px 20px; display:flex; align-items:center; gap:14px;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; color:var(--cork-deep);
+  }
+  .scrumstep summary::-webkit-details-marker{display:none;}
+  .scrumstep summary .pn{
+    width:32px; height:32px; border-radius:50%; background:var(--coral); color:#fff; flex:none;
+    display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700;
+  }
+  .scrumstep summary .kw{margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; color:var(--green-deep); background:#E4F5EA; padding:4px 10px; border-radius:12px; white-space:nowrap;}
+  .scrumstep summary::after{content:"+"; font-size:20px; color:var(--coral-deep); margin-left:8px;}
+  .scrumstep[open] summary::after{content:"–";}
+  .scrumstep .pbody{padding:0 22px 22px 66px; font-size:14px; color:#2E2318;}
+  .scrumstep .pbody .say{background:#F5F0E4; border-radius:10px 10px 10px 2px; padding:8px 12px; margin:6px 0; display:inline-block; font-size:13.5px;}
+  .scrumstep .pbody .mem{margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--green-deep); font-weight:700;}
+
+  .diagram-frame{background:var(--white); border-radius:16px; box-shadow:var(--shadow); padding:20px; margin-top:26px; overflow-x:auto;}
+  .diagram-frame .cap{font-family:'JetBrains Mono',monospace; font-size:11px; color:#5A4636; text-align:center; margin-top:10px;}
+
+  .revision-table{margin-top:26px; background:var(--white); border-radius:14px; box-shadow:var(--shadow); overflow:hidden;}
+  .revision-table table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  .revision-table th{background:var(--cork-deep); color:#fff; text-align:left; padding:11px 18px; font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:1px;}
+  .revision-table td{padding:11px 18px; border-bottom:1px solid #EFE6D6; color:#2E2318;}
+  .revision-table tr:last-child td{border-bottom:none;}
+
+  .pillar-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:26px;}
+  @media (max-width:820px){.pillar-grid{grid-template-columns:1fr;}}
+  .pillar{background:var(--white); border-radius:14px; box-shadow:var(--shadow); overflow:hidden;}
+  .pillar .ph{padding:14px 18px; font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:#fff;}
+  .pillar .pb{padding:16px 18px 18px;}
+  .pillar .pb p{font-size:13.5px; color:#2E2318; margin:6px 0;}
+  .pillar .pb .say{background:#F5F0E4; border-radius:10px; padding:8px 10px; font-size:13px; margin-top:8px; display:block;}
+
+  .keyterms{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+  .keyterms span{font-family:'JetBrains Mono',monospace; font-size:11.5px; background:#F5F0E4; color:var(--cork-deep); padding:5px 11px; border-radius:16px;}
+
+  .journey{display:grid; gap:10px; margin-top:30px;}
+  .journey .j{display:grid; grid-template-columns:36px 1fr; gap:14px; background:var(--white); border-radius:12px; padding:12px 16px; box-shadow:var(--shadow); align-items:center;}
+  .journey .j .n{width:28px; height:28px; border-radius:50%; background:var(--cork-deep); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12px;}
+  .journey .j p{margin:0; font-size:13.5px; color:#2E2318;}
+  .journey .j b{color:var(--cork-deep);}
+
+  .glossary{margin-top:32px; background:#F5F0E4; border-radius:16px; box-shadow:var(--shadow); padding:6px 0; overflow:hidden;}
+  .glossary table{width:100%; border-collapse:collapse; font-family:'JetBrains Mono',monospace; font-size:12.5px;}
+  .glossary th{text-align:left; padding:14px 22px 9px; color:var(--cork-deep); border-bottom:1px dashed #E0D3B0; font-size:11px; text-transform:uppercase; letter-spacing:1px;}
+  .glossary td{padding:9px 22px; border-bottom:1px dashed #E0D3B0; color:#2E2318;}
+  .glossary tr:last-child td{border-bottom:none;}
+
+  .recap{background:linear-gradient(160deg,var(--cork-deep),#2E1D12); color:#F5EBDD; border-radius:24px; padding:46px 32px; margin:64px auto; max-width:1020px; text-align:center;}
+  .recap h2{color:#fff;}
+  .recap .chain{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:24px;}
+  .recap .chain span{font-family:'JetBrains Mono',monospace; font-size:12.5px; background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.2); padding:7px 13px; border-radius:30px;}
+  .recap .chain .arrow{background:none; border:none; opacity:.5; padding:7px 0;}
+
+  .golden{margin:64px auto; max-width:920px; text-align:center; background:var(--yellow); color:#4A3308; border-radius:20px; padding:32px 28px; box-shadow:var(--shadow); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:clamp(16px,2.4vw,21px);}
+
+  footer{text-align:center; padding:38px 24px 56px; font-size:12.5px; color:#8577B8;}
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.show{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<nav class="stage-nav">
+  <a href="#intro">Intro</a>
+  <a href="#whyscrum">Why Scrum?</a>
+  <a href="#agilevsscrum">Agile vs Scrum</a>
+  <a href="#characteristics">Characteristics</a>
+  <a href="#roles">Scrum Roles</a>
+  <a href="#selforganizing">Self-Organizing Teams</a>
+  <a href="#howscrumworks">How Scrum Works</a>
+  <a href="#definedvsempirical">Defined vs Empirical</a>
+  <a href="#pillars">Pillars of Empiricism</a>
+  <a href="#journey">Full Journey</a>
+  <a href="#glossary">Glossary</a>
+</nav>
+
+<header class="hero" id="intro">
+  <div class="tag">Prepared by A.KIRUTHIKA , AP/CSE , KEC</div>
+  <h1>Scrum &amp; Self-Organizing Teams,<br>through the <em>College ERP Project</em></h1>
+  <p class="sub">Meera and Dev, two final-year students, get pulled aside by their college one afternoon: "We need a brand-new ERP system — student login, attendance, fees, results, everything. Can your team build it?" What happens next is a live walkthrough of everything Scrum actually is.</p>
+  <div class="queue-row">
+    <span>🎓 One ERP system</span>
+    <span>📋 A mountain of requirements</span>
+    <span>⏱️ A fixed deadline</span>
+    <span>🔁 One framework: Scrum</span>
+  </div>
+</header>
+
+<section id="whyscrum">
+  <div class="eyebrow"><span class="num">1</span> The Starting Question</div>
+  <h2 class="title">Why Scrum?</h2>
+  <div class="duo">
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p>Meera and Dev are handed the ERP requirements list and told: "Show us something in a month." They have two options.</p>
+      <p><b>Option 1 (Traditional):</b> disappear for a month, show everything only on the last day. If the faculty says "change everything," they redo it all.</p>
+      <p><b>Option 2 (Scrum):</b> show progress every week, take feedback, keep improving.</p>
+      <p class="say">Which is easier to recover from if something's wrong? Option 2 — every time.</p>
+    </div>
+    <div class="sticky">
+      <div class="st-head"><span>NOTE-01</span><span>Definition</span></div>
+      <h4>Scrum</h4>
+      <dl>
+        <dt>Definition</dt>
+        <dd>A lightweight Agile framework that helps teams develop software in small increments, deliver value quickly, and continuously improve based on customer feedback.</dd>
+        <dt>Why It's Needed</dt>
+        <dd>Traditional development struggles when requirements change often, customers want early progress, teams need better coordination, and projects run late. Scrum solves this with small, manageable Sprints.</dd>
+        <dt>Memory</dt>
+        <dd>Build Small → Get Feedback → Improve</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section id="agilevsscrum">
+  <div class="eyebrow"><span class="num">2</span> Don't Confuse These</div>
+  <h2 class="title">Agile vs. Scrum</h2>
+  <p class="lede">Agile gives the values and principles — but it never specifies exactly how a team should work day to day. That gap is exactly what Scrum fills.</p>
+  <div class="story-card">
+    <span class="label">The Analogy</span>
+    <p>A teacher says, "Study well and score above 90." Good advice — but which subject first? How many hours a day? That's left unanswered. Agile is that advice. Scrum is the actual daily schedule that makes it real.</p>
+    <p class="say">Agile tells WHAT. Scrum tells HOW.</p>
+  </div>
+  <div class="revision-table">
+    <table>
+      <tr><th>Agile</th><th>Scrum</th></tr>
+      <tr><td>A philosophy (mindset)</td><td>A framework (working method)</td></tr>
+      <tr><td>Defines values and principles</td><td>Defines roles, events, and artifacts</td></tr>
+      <tr><td>Tells WHAT to achieve</td><td>Tells HOW to achieve it</td></tr>
+    </table>
+  </div>
+  <p class="lede" style="margin-top:18px; font-size:14.5px;">Important: Scrum and Agile are <em>not</em> the same thing. Scrum is simply one of several Agile frameworks — Kanban, XP, and Lean are others.</p>
+</section>
+
+<section id="characteristics" class="wide">
+  <div class="eyebrow"><span class="num">3</span> What Makes Scrum, Scrum</div>
+  <h2 class="title">Scrum Characteristics — LITCCI</h2>
+  <div class="revision-table">
+    <table>
+      <tr><th>Characteristic</th><th>Meaning</th><th>Quick Example</th></tr>
+      <tr><td><b>L</b>ightweight</td><td>Simple and easy to follow</td><td>A bicycle is simpler to use than a heavy truck</td></tr>
+      <tr><td><b>I</b>terative</td><td>Work is repeated in cycles</td><td>Study → Test → Improve → Repeat</td></tr>
+      <tr><td><b>I</b>ncremental</td><td>Build the product piece by piece</td><td>Login → Payment → Tracking</td></tr>
+      <tr><td><b>T</b>ime-boxed</td><td>Work is completed within a fixed time</td><td>Finish an assignment in one week</td></tr>
+      <tr><td><b>C</b>ustomer Feedback</td><td>Customer reviews work regularly</td><td>A teacher checking your project every week</td></tr>
+      <tr><td><b>C</b>ollaboration</td><td>Team members work together</td><td>Organizing a college symposium as a team</td></tr>
+      <tr><td><b>I</b>mprovement</td><td>Learn and improve after each cycle</td><td>Fixing mistakes after every exam</td></tr>
+    </table>
+  </div>
+  <div class="keyterms"><span>Memory: LITCCI</span></div>
+</section>
+
+<section id="roles" class="wide">
+  <div class="eyebrow"><span class="num">4</span> Who's on the Team</div>
+  <h2 class="title">The Three Scrum Roles</h2>
+  <p class="lede">A Scrum Team has exactly three roles — no more, no less — and every one of them shows up in Meera and Dev's ERP project.</p>
+  <div class="role-grid">
+    <div class="sticky">
+      <div class="st-head"><span>ROLE 1</span><span>Owns the What</span></div>
+      <h4>Product Owner</h4>
+      <p>Owns the backlog, prioritizes it, and makes the key product decisions — turning raw user requirements into actionable work for the team.</p>
+      <p><b>ERP Story:</b> the college's IT coordinator plays this role, deciding that Login and Attendance matter more than Parent Portal for now.</p>
+    </div>
+    <div class="sticky tilt-r">
+      <div class="st-head"><span>ROLE 2</span><span>Builds the What</span></div>
+      <h4>Development Team</h4>
+      <p>A cross-functional team of developers, testers, designers, and other technical members needed to actually build the product.</p>
+      <p><b>ERP Story:</b> Meera (backend), Dev (frontend), plus a tester and a UI designer — together they can deliver a feature start to finish.</p>
+    </div>
+    <div class="sticky">
+      <div class="st-head"><span>ROLE 3</span><span>Protects the How</span></div>
+      <h4>Scrum Master</h4>
+      <p>Ensures the team has everything it needs to ship work on time, communicates progress, and clears roadblocks — without commanding the team's technical decisions.</p>
+      <p><b>ERP Story:</b> when Dev gets stuck waiting for server access for three days, the Scrum Master steps in and gets it unblocked by end of day.</p>
+    </div>
+  </div>
+</section>
+
+<section id="selforganizing">
+  <div class="eyebrow"><span class="num">5</span> Who Decides "How"</div>
+  <h2 class="title">Self-Organizing &amp; Cross-Functional Teams</h2>
+  <div class="duo">
+    <div class="sticky">
+      <div class="st-head"><span>NOTE-02</span><span>Definition</span></div>
+      <h4>Self-Organizing Team</h4>
+      <dl>
+        <dt>Definition</dt>
+        <dd>A team that decides for itself how best to turn Product Backlog items into a working increment, rather than being told exactly what to do by someone outside the team.</dd>
+        <dt>Cross-Functional</dt>
+        <dd>The team holds every skill needed to deliver — coding, testing, design — without depending on people outside the team.</dd>
+        <dt>Memory</dt>
+        <dd>Trust Team → Team Thinks → Best Solution</dd>
+      </dl>
+    </div>
+    <div class="story-card">
+      <span class="label">The Story</span>
+      <p>College IT wants to dictate: "Use Database A." Meera and Dev know Database B performs better for this workload. Because the team is trusted to self-organize, they choose Database B — and performance doubles.</p>
+      <p>Nobody assigned Dev to the frontend and Meera to the backend either — they split the work themselves, based on their own strengths.</p>
+    </div>
+  </div>
+  <div class="keyterms"><span>Cross-functional</span><span>Self-managing</span><span>No external micromanagement</span><span>Collectively accountable</span></div>
+</section>
+
+<section id="howscrumworks" class="wide">
+  <div class="eyebrow"><span class="num">6</span> The Actual Process</div>
+  <h2 class="title">How Scrum Works — Building the College ERP</h2>
+  <p class="lede">Scrum divides a large project into small, manageable Sprints. In each Sprint, the team plans, builds, reviews, and improves — until the whole system is done. Watch it happen, one requirement at a time.</p>
+  <div class="story-card">
+    <span class="label">The Full Requirement List</span>
+    <p>Student Login · Attendance · Internal Marks · Fee Payment · Timetable · Hall Ticket · Result · Parent Login</p>
+    <p class="say">Can all of this be built in one month? No. So Scrum says: build one small part at a time.</p>
+  </div>
+
+  <details class="scrumstep" open>
+    <summary><span class="pn">1</span>Product Backlog<span class="kw">Complete To-Do List</span></summary>
+    <div class="pbody">
+      <p><b>Definition:</b> a prioritized list of all features, bug fixes, enhancements, and work required to complete the product — owned and prioritized by the Product Owner.</p>
+      <p><b>ERP Example:</b> <span class="say">Login · Attendance · Fee Payment · Timetable · Hall Ticket · Results · Notifications · Parent Portal</span> — the complete list.</p>
+      <p>Think of it exactly like a shopping list: rice, milk, sugar, oil, vegetables, soap — the complete list is the Product Backlog.</p>
+      <div class="mem">Memory: Product Backlog = Complete To-Do List</div>
+    </div>
+  </details>
+
+  <details class="scrumstep">
+    <summary><span class="pn">2</span>Sprint Planning<span class="kw">Decide What to Build Now</span></summary>
+    <div class="pbody">
+      <p><b>Definition:</b> a meeting where the Scrum Team selects the highest-priority Product Backlog items and creates the Sprint Backlog for the upcoming Sprint.</p>
+      <p><b>ERP Example:</b> with only 2 weeks available, the team can't build everything — so they pick <span class="say">Login · Attendance · Student Profile</span> as this Sprint's work.</p>
+      <p>It's just like planning study before exams: 10 units, only 3 days — Day 1 covers Unit 1, Day 2 covers Unit 2, and so on.</p>
+      <div class="mem">Memory: Sprint Planning = Decide What to Build Now</div>
+    </div>
+  </details>
+
+  <details class="scrumstep">
+    <summary><span class="pn">3</span>Sprint<span class="kw">Small Development Cycle</span></summary>
+    <div class="pbody">
+      <p><b>Definition:</b> a fixed, time-boxed iteration (usually 2–4 weeks) during which the Scrum Team develops a usable product increment.</p>
+      <p><b>ERP Example:</b> Sprint 1 builds Login, Registration, and Forgot Password. Sprint 2 builds Attendance and Timetable. Sprint 3 builds Fee Payment.</p>
+      <p>Like eating a large pizza — you don't eat it all at once, you go slice by slice. Software gets built Sprint by Sprint.</p>
+      <div class="mem">Memory: Sprint = Small Development Cycle</div>
+    </div>
+  </details>
+
+  <details class="scrumstep">
+    <summary><span class="pn">4</span>Daily Scrum<span class="kw">Daily Progress Meeting</span></summary>
+    <div class="pbody">
+      <p><b>Definition:</b> a short (15-minute) meeting where team members discuss progress, plans, and obstacles — answering three questions:</p>
+      <p class="say">1. What did I complete yesterday? &nbsp; 2. What will I do today? &nbsp; 3. Is anything blocking me?</p>
+      <p><b>ERP Example:</b> every morning, Dev says "Login page done." Meera says "Starting the database next." Someone else says "I'm stuck" — and help arrives immediately.</p>
+      <div class="mem">Memory: Daily Scrum = Daily Progress Meeting</div>
+    </div>
+  </details>
+
+  <details class="scrumstep">
+    <summary><span class="pn">5</span>Increment<span class="kw">Working Software</span></summary>
+    <div class="pbody">
+      <p><b>Definition:</b> the working part of the software completed during a Sprint.</p>
+      <p><b>ERP Example:</b> after Sprint 1, students can already log in and register — even though Fee Payment isn't ready yet. That's still real, working software.</p>
+      <p>Like building a house: Week 1 finishes the foundation, Week 2 finishes the walls — each completed portion is an Increment.</p>
+      <div class="mem">Memory: Increment = Working Software</div>
+    </div>
+  </details>
+
+  <details class="scrumstep">
+    <summary><span class="pn">6</span>Sprint Review<span class="kw">Show the Product &amp; Get Feedback</span></summary>
+    <div class="pbody">
+      <p><b>Definition:</b> the meeting where the completed Increment is demonstrated to the Product Owner and stakeholders to collect feedback.</p>
+      <p><b>ERP Example:</b> <span class="say">"Sir, Login is completed." "Excellent — now add Google Login too."</span> That feedback flows straight back into the Product Backlog.</p>
+      <p>Exactly like submitting your project to your guide, who says "Good — but improve the UI."</p>
+      <div class="mem">Memory: Sprint Review = Show the Product &amp; Get Feedback</div>
+    </div>
+  </details>
+
+  <details class="scrumstep">
+    <summary><span class="pn">7</span>Sprint Retrospective<span class="kw">Learn and Improve</span></summary>
+    <div class="pbody">
+      <p><b>Definition:</b> a meeting where the Scrum Team reflects on the completed Sprint and identifies improvements for the next one.</p>
+      <p><b>ERP Example:</b> <span class="say">"What went well?" — Communication. "What went wrong?" — Testing was slow. "What should improve?" — Start testing earlier next Sprint.</span></p>
+      <p>Just like the thought after a semester exam: "I should have started earlier" — that reflection is a Retrospective.</p>
+      <div class="mem">Memory: Retrospective = Learn and Improve</div>
+    </div>
+  </details>
+
+  <div class="diagram-frame">
+    <svg viewBox="0 0 320 560" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:320px; height:auto; margin:0 auto; display:block;">
+      <g font-family="Inter, sans-serif" font-size="12.5" fill="#3A2A1E">
+        <rect x="30" y="10" width="260" height="40" rx="10" fill="#FFE066" stroke="#6B4A34" stroke-width="1.6"/>
+        <text x="160" y="35" text-anchor="middle" font-weight="600">Customer Requirements</text>
+        <line x1="160" y1="50" x2="160" y2="70" stroke="#6B4A34" stroke-width="2" marker-end="url(#jf)"/>
+
+        <rect x="30" y="70" width="260" height="40" rx="10" fill="#fff" stroke="#3D93B8" stroke-width="1.6"/>
+        <text x="160" y="95" text-anchor="middle">Product Backlog</text>
+        <line x1="160" y1="110" x2="160" y2="130" stroke="#6B4A34" stroke-width="2" marker-end="url(#jf)"/>
+
+        <rect x="30" y="130" width="260" height="40" rx="10" fill="#fff" stroke="#3D93B8" stroke-width="1.6"/>
+        <text x="160" y="155" text-anchor="middle">Sprint Planning</text>
+        <line x1="160" y1="170" x2="160" y2="190" stroke="#6B4A34" stroke-width="2" marker-end="url(#jf)"/>
+
+        <rect x="30" y="190" width="260" height="40" rx="10" fill="#FFE4DE" stroke="#FF6F59" stroke-width="1.6"/>
+        <text x="160" y="215" text-anchor="middle">Sprint (2–4 Weeks)</text>
+        <line x1="160" y1="230" x2="160" y2="250" stroke="#6B4A34" stroke-width="2" marker-end="url(#jf)"/>
+        <text x="235" y="245" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8C5A0C">+ Daily Scrum</text>
+
+        <rect x="30" y="250" width="260" height="40" rx="10" fill="#E4F5EA" stroke="#3FA772" stroke-width="1.6"/>
+        <text x="160" y="275" text-anchor="middle">Working Increment</text>
+        <line x1="160" y1="290" x2="160" y2="310" stroke="#6B4A34" stroke-width="2" marker-end="url(#jf)"/>
+
+        <rect x="30" y="310" width="260" height="40" rx="10" fill="#fff" stroke="#3D93B8" stroke-width="1.6"/>
+        <text x="160" y="335" text-anchor="middle">Sprint Review</text>
+        <line x1="160" y1="350" x2="160" y2="370" stroke="#6B4A34" stroke-width="2" marker-end="url(#jf)"/>
+
+        <rect x="30" y="370" width="260" height="40" rx="10" fill="#fff" stroke="#3D93B8" stroke-width="1.6"/>
+        <text x="160" y="395" text-anchor="middle">Sprint Retrospective</text>
+        <line x1="160" y1="410" x2="160" y2="430" stroke="#6B4A34" stroke-width="2" marker-end="url(#jf)"/>
+
+        <rect x="30" y="430" width="260" height="40" rx="10" fill="#FFE066" stroke="#6B4A34" stroke-width="1.6"/>
+        <text x="160" y="455" text-anchor="middle" font-weight="600">Next Sprint</text>
+      </g>
+      <defs><marker id="jf" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#6B4A34"/></marker></defs>
+    </svg>
+    <div class="cap">The Complete Scrum Flow — from raw requirements to the next Sprint</div>
+  </div>
+</section>
+
+<section id="definedvsempirical" class="wide">
+  <div class="eyebrow"><span class="num">7</span> Two Kinds of Process</div>
+  <h2 class="title">Defined Process vs. Empirical Process</h2>
+  <p class="lede">Before understanding why Scrum works the way it does, it helps to see the one big decision underneath it: can a process be planned exactly in advance, or must it be learned as you go?</p>
+  <div class="duo">
+    <div class="sticky">
+      <div class="st-head"><span>NOTE-03</span><span>Definition</span></div>
+      <h4>Defined Process</h4>
+      <dl>
+        <dt>Definition</dt>
+        <dd>A process where all steps, inputs, and outputs are clearly known and fixed before work begins. Everything is predictable — the same process produces the same result.</dd>
+        <dt>Formula</dt>
+        <dd>Known Inputs → Fixed Process → Predictable Output</dd>
+        <dt>Examples</dt>
+        <dd>Manufacturing bricks (same clay, same machine, same mould, every time). A cake-mix packet (add 200 ml milk, bake at 180°C for 30 minutes — same result every time).</dd>
+      </dl>
+    </div>
+    <div class="sticky tilt-r">
+      <div class="st-head"><span>NOTE-04</span><span>Definition</span></div>
+      <h4>Empirical Process</h4>
+      <dl>
+        <dt>Definition</dt>
+        <dd>A process where knowledge comes from experience, and decisions are made based on observation, inspection, and feedback.</dd>
+        <dt>Formula</dt>
+        <dd>Observe → Learn → Improve → Observe Again</dd>
+        <dt>Example</dt>
+        <dd>Cooking biryani — you don't wait until the end; you keep tasting and adjusting salt, water, and spice as you go.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="revision-table">
+    <table>
+      <tr><th>Defined Process</th><th>Empirical Process</th></tr>
+      <tr><td>Everything planned before starting</td><td>Learn while doing</td></tr>
+      <tr><td>Fixed steps</td><td>Flexible steps</td></tr>
+      <tr><td>Predictable results</td><td>Results improve through feedback</td></tr>
+      <tr><td>Changes are rare</td><td>Changes are expected</td></tr>
+      <tr><td>Example: Brick manufacturing</td><td>Example: Software development</td></tr>
+    </table>
+  </div>
+
+  <div class="story-card" style="margin-top:22px;">
+    <span class="label">Why Scrum Chooses Empirical</span>
+    <p>Can every ERP requirement be known before development starts? No. Can the college change its mind? Yes. Can developers make mistakes along the way? Also yes. A Defined Process assumes everything is knowable in advance — software almost never works that way. So instead of "let's build everything first," Scrum says: build a small part, show it, get feedback, improve, repeat.</p>
+  </div>
+  <div class="keyterms"><span>Defined: Plan → Execute → Finish</span><span>Empirical: Observe → Learn → Improve → Repeat</span></div>
+</section>
+
+<section id="pillars" class="wide">
+  <div class="eyebrow"><span class="num">8</span> How Empirical Actually Works</div>
+  <h2 class="title">The Three Pillars of Empiricism</h2>
+  <p class="lede">Scrum's empirical process rests on exactly three pillars — remove any one of them, and the whole idea collapses.</p>
+  <div class="pillar-grid">
+    <div class="pillar">
+      <div class="ph" style="background:var(--sky);">Pillar 1 — Transparency</div>
+      <div class="pb">
+        <p><b>Definition:</b> everyone involved has a clear, shared understanding of the work, progress, goals, and problems. Nothing is hidden.</p>
+        <p><b>ERP Example:</b> if Dev finishes a module but doesn't tell anyone, Meera might start coding the same thing again — duplicated work. Daily updates prevent that.</p>
+        <span class="say">In Scrum: the Product Backlog, Sprint Backlog, and Task Board are all visible to everyone.</span>
+        <p style="margin-top:8px; font-weight:700;">Memory: Transparency = Everyone Sees Everything</p>
+      </div>
+    </div>
+    <div class="pillar">
+      <div class="ph" style="background:var(--coral);">Pillar 2 — Inspection</div>
+      <div class="pb">
+        <p><b>Definition:</b> regularly checking the product and the process to catch problems early, instead of waiting until the very end.</p>
+        <p><b>ERP Example:</b> a student who studies Unit 1, tests themselves, finds mistakes, and then improves before Unit 2 usually performs better than one who never checks their own work.</p>
+        <span class="say">In Scrum: after every Sprint, the working software is demonstrated and checked against expectations.</span>
+        <p style="margin-top:8px; font-weight:700;">Memory: Inspection = Check Frequently</p>
+      </div>
+    </div>
+    <div class="pillar">
+      <div class="ph" style="background:var(--green);">Pillar 3 — Adaptation</div>
+      <div class="pb">
+        <p><b>Definition:</b> making necessary changes based on what inspection revealed, to improve the product or the way the team works.</p>
+        <p><b>ERP Example:</b> a cricket coach who notices a batsman keeps getting out on the same shot says "change your technique" — the player adapts.</p>
+        <span class="say">In Scrum: if students find the Login page confusing, the team redesigns it in the very next Sprint.</span>
+        <p style="margin-top:8px; font-weight:700;">Memory: Adaptation = Change for the Better</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="diagram-frame">
+    <svg viewBox="0 0 700 140" xmlns="http://www.w3.org/2000/svg" style="width:100%; max-width:640px; height:auto; margin:0 auto; display:block;">
+      <g font-family="Inter, sans-serif" font-size="12.5" fill="#3A2A1E">
+        <rect x="10" y="40" width="150" height="50" rx="12" fill="#EAF4FB" stroke="#3D93B8" stroke-width="1.8"/>
+        <text x="85" y="70" text-anchor="middle">Transparency</text>
+        <line x1="160" y1="65" x2="200" y2="65" stroke="#6B4A34" stroke-width="2" marker-end="url(#pf)"/>
+
+        <rect x="200" y="40" width="150" height="50" rx="12" fill="#FFE4DE" stroke="#FF6F59" stroke-width="1.8"/>
+        <text x="275" y="70" text-anchor="middle">Inspection</text>
+        <line x1="350" y1="65" x2="390" y2="65" stroke="#6B4A34" stroke-width="2" marker-end="url(#pf)"/>
+
+        <rect x="390" y="40" width="150" height="50" rx="12" fill="#E4F5EA" stroke="#3FA772" stroke-width="1.8"/>
+        <text x="465" y="70" text-anchor="middle">Adaptation</text>
+        <line x1="540" y1="65" x2="580" y2="65" stroke="#6B4A34" stroke-width="2" marker-end="url(#pf)"/>
+
+        <rect x="580" y="40" width="110" height="50" rx="12" fill="#FFE066" stroke="#6B4A34" stroke-width="1.8"/>
+        <text x="635" y="70" text-anchor="middle" font-size="11.5">Better Product</text>
+      </g>
+      <defs><marker id="pf" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#6B4A34"/></marker></defs>
+    </svg>
+    <div class="cap">If work is transparent, it can be inspected. Once inspected, the team can adapt — that's the whole chain.</div>
+  </div>
+
+  <div class="revision-table">
+    <table>
+      <tr><th>Scrum Event</th><th>Pillar Supported</th><th>Why</th></tr>
+      <tr><td>Daily Scrum</td><td>Transparency</td><td>Team shares daily progress</td></tr>
+      <tr><td>Sprint Review</td><td>Inspection</td><td>Customer inspects the product</td></tr>
+      <tr><td>Sprint Retrospective</td><td>Adaptation</td><td>Team improves its way of working</td></tr>
+    </table>
+  </div>
+  <div class="keyterms"><span>Memory: T → I → A (Tell everyone → Inspect everything → Adjust and improve)</span></div>
+</section>
+
+<div class="golden">"Scrum doesn't try to predict the future perfectly. It builds a small piece, shows it, listens, and improves — again and again — because that's the only honest way to build something as unpredictable as software."</div>
+
+<section id="journey" class="wide">
+  <div class="eyebrow"><span class="num">✓</span> One Story, Every Concept</div>
+  <h2 class="title">Meera &amp; Dev's ERP Journey, Start to Finish</h2>
+  <div class="journey">
+    <div class="j"><div class="n">1</div><p><b>Product Backlog</b> — every ERP requirement gets listed and prioritized</p></div>
+    <div class="j"><div class="n">2</div><p><b>Sprint Planning</b> — Login, Attendance, and Student Profile chosen for Sprint 1</p></div>
+    <div class="j"><div class="n">3</div><p><b>Sprint</b> — two weeks of focused, time-boxed building</p></div>
+    <div class="j"><div class="n">4</div><p><b>Daily Scrum</b> — three quick questions, every single morning</p></div>
+    <div class="j"><div class="n">5</div><p><b>Increment</b> — working Login and Registration, ready to use</p></div>
+    <div class="j"><div class="n">6</div><p><b>Sprint Review</b> — the IT coordinator sees it, asks for Google Login</p></div>
+    <div class="j"><div class="n">7</div><p><b>Sprint Retrospective</b> — the team agrees to start testing earlier</p></div>
+    <div class="j"><div class="n">8</div><p><b>Self-Organizing Team</b> — Meera and Dev choose their own tools and split their own work</p></div>
+    <div class="j"><div class="n">9</div><p><b>Transparency → Inspection → Adaptation</b> — the cycle that makes every Sprint better than the last</p></div>
+  </div>
+</section>
+
+<div class="recap">
+  <div class="eyebrow" style="justify-content:center; color:var(--yellow);"><span class="num" style="background:var(--yellow); color:#4A3308;">✓</span> If you remember the ERP project...</div>
+  <h2>...you remember all of Scrum</h2>
+  <div class="chain">
+    <span>List it</span><span class="arrow">→</span>
+    <span>Plan it</span><span class="arrow">→</span>
+    <span>Build it</span><span class="arrow">→</span>
+    <span>Talk daily</span><span class="arrow">→</span>
+    <span>Show it</span><span class="arrow">→</span>
+    <span>Reflect</span><span class="arrow">→</span>
+    <span>Repeat</span>
+  </div>
+</div>
+
+<section id="glossary">
+  <div class="eyebrow"><span class="num">✓</span> Keep for Quick Revision</div>
+  <h2 class="title">Glossary — Every Key Term</h2>
+  <div class="glossary">
+    <table>
+      <tr><th>Term</th><th>Detailed Meaning</th></tr>
+      <tr><td>Scrum</td><td>A lightweight Agile framework for developing software in small increments, delivering value quickly and improving continuously</td></tr>
+      <tr><td>Agile</td><td>A philosophy/mindset defining values and principles — tells WHAT to prioritize, not HOW to work</td></tr>
+      <tr><td>Product Owner</td><td>Owns and prioritizes the Product Backlog and makes key product decisions</td></tr>
+      <tr><td>Development Team</td><td>A cross-functional group of developers, testers, and designers who build the product</td></tr>
+      <tr><td>Scrum Master</td><td>Ensures the team has what it needs, removes roadblocks, and communicates progress</td></tr>
+      <tr><td>Self-Organizing Team</td><td>A team that decides for itself how to turn backlog items into a working increment</td></tr>
+      <tr><td>Cross-Functional Team</td><td>A team holding every skill needed to deliver, without depending on outsiders</td></tr>
+      <tr><td>Product Backlog</td><td>The complete, prioritized list of all features, fixes, and work needed for the product</td></tr>
+      <tr><td>Sprint Backlog</td><td>The subset of Product Backlog items selected for the current Sprint</td></tr>
+      <tr><td>Sprint Planning</td><td>The meeting where the team selects backlog items and forms the Sprint Backlog</td></tr>
+      <tr><td>Sprint</td><td>A fixed, time-boxed iteration (2–4 weeks) in which a usable increment is built</td></tr>
+      <tr><td>Daily Scrum</td><td>A short daily meeting covering what was done, what's next, and any blockers</td></tr>
+      <tr><td>Increment</td><td>The working, usable part of the software completed during a Sprint</td></tr>
+      <tr><td>Sprint Review</td><td>The meeting where the increment is demonstrated to gather stakeholder feedback</td></tr>
+      <tr><td>Sprint Retrospective</td><td>The meeting where the team reflects on the Sprint and plans improvements</td></tr>
+      <tr><td>Defined Process</td><td>A process with fixed, known steps and predictable outputs, decided before work begins</td></tr>
+      <tr><td>Empirical Process</td><td>A process where knowledge comes from experience, observation, and feedback</td></tr>
+      <tr><td>Transparency</td><td>Making work, progress, and goals visible so everyone shares the same understanding</td></tr>
+      <tr><td>Inspection</td><td>Regularly examining the product and process to catch issues early</td></tr>
+      <tr><td>Adaptation</td><td>Changing the product or process based on inspection results to improve outcomes</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>Prepared by A.KIRUTHIKA , AP/CSE , KEC</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('section, .recap, .golden');
+    els.forEach(el => el.classList.add('reveal'));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } });
+    }, {threshold:0.1});
+    els.forEach(el => io.observe(el));
+  });
+</script>
+
+</body>
+</html>

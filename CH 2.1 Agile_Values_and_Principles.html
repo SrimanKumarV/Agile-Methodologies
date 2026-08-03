@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agile Values &amp; Principles — The FoodExpress Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo:#2D1B69; --indigo-deep:#1C1044; --coral:#FF6B4A; --coral-deep:#E5502F;
+    --lime:#4CAF50; --lime-deep:#3B8C3F; --amber:#FFC145; --amber-deep:#DB9F2E;
+    --paper:#F3EEFF; --paper-line:#DCD0F5; --bg:#FAF8FF; --white:#FFFFFF; --ink:#1C1044;
+    --shadow:0 10px 30px rgba(28,16,68,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:'Inter',sans-serif; line-height:1.6; -webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif; color:var(--indigo-deep); margin:0;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;} svg{display:block;}
+
+  nav.stage-nav{
+    position:sticky; top:0; z-index:50; background:rgba(243,238,255,0.94); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--paper-line); overflow-x:auto; white-space:nowrap; padding:10px 18px;
+    display:flex; gap:6px; scrollbar-width:thin;
+  }
+  nav.stage-nav a{
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; text-decoration:none; color:var(--indigo-deep);
+    padding:7px 11px; border-radius:20px; border:1px solid transparent; opacity:0.75; transition:all .2s;
+  }
+  nav.stage-nav a:hover{opacity:1; border-color:var(--coral); background:#FFE4DB;}
+
+  header.hero{
+    position:relative; padding:90px 24px 110px;
+    background:
+      radial-gradient(circle at 82% 12%, rgba(255,107,74,0.28), transparent 45%),
+      linear-gradient(160deg, var(--indigo-deep) 0%, var(--indigo) 60%, #3A2480 100%);
+    color:#EDE8FA; text-align:center; overflow:hidden;
+  }
+  header.hero::before{
+    content:""; position:absolute; inset:0; opacity:.08; pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.4) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,.4) 1px, transparent 1px);
+    background-size:34px 34px;
+  }
+  header.hero .tag{font-family:'JetBrains Mono',monospace; letter-spacing:3px; text-transform:uppercase; font-size:12px; color:var(--amber); margin-bottom:18px; position:relative;}
+  header.hero h1{color:#FAF8FF; font-size:clamp(30px,5.6vw,54px); font-weight:700; max-width:940px; margin:0 auto 18px; line-height:1.15; position:relative;}
+  header.hero h1 em{color:var(--coral); font-style:italic;}
+  header.hero p.sub{max-width:680px; margin:0 auto; font-size:17px; color:#D3C9F0; position:relative;}
+  .queue-row{margin-top:46px; display:flex; justify-content:center; gap:14px; flex-wrap:wrap; position:relative;}
+  .queue-row span{
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.25); padding:8px 14px; border-radius:30px; color:#FAF8FF;
+  }
+
+  section{max-width:1020px; margin:0 auto; padding:66px 24px;}
+  section.wide{max-width:1180px;}
+  .eyebrow{font-family:'JetBrains Mono',monospace; font-size:11.5px; letter-spacing:2px; text-transform:uppercase; color:var(--coral-deep); margin-bottom:10px; display:flex; align-items:center; gap:10px;}
+  .eyebrow .num{background:var(--indigo-deep); color:#fff; border-radius:50%; width:26px; height:26px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; flex:none;}
+  h2.title{font-size:clamp(24px,3.8vw,36px); margin-bottom:6px;}
+  p.lede{font-size:16.5px; max-width:720px; color:#332358;}
+
+  .duo{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:32px;}
+  @media (max-width:820px){.duo{grid-template-columns:1fr;}}
+
+  .story-card{background:var(--white); border-radius:18px; padding:24px 24px 20px; box-shadow:var(--shadow); border-left:5px solid var(--amber); position:relative;}
+  .story-card .label{font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:1.5px; text-transform:uppercase; color:var(--amber-deep); margin-bottom:10px; display:block;}
+  .story-card p, .story-card li{font-size:14.5px; color:#2A2050;}
+  .story-card .say{background:#F3EEFF; border-radius:12px 12px 12px 2px; padding:9px 13px; margin:6px 0; font-size:14px; display:inline-block;}
+
+  .blueprint{background:var(--paper); border-radius:14px; box-shadow:var(--shadow); position:relative; padding:0; border:1px solid var(--paper-line); overflow:hidden;}
+  .blueprint .bp-head{background:var(--indigo-deep); color:#fff; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:1px; text-transform:uppercase;}
+  .blueprint .bp-head b{font-size:13px; letter-spacing:.5px;}
+  .blueprint .bp-body{padding:18px 22px 22px; font-size:13.5px; color:#241A44;}
+  .blueprint .bp-body dt{font-family:'JetBrains Mono',monospace; font-weight:700; margin-top:11px; color:var(--coral-deep); font-size:11px; text-transform:uppercase; letter-spacing:.5px;}
+  .blueprint .bp-body dt:first-child{margin-top:0;}
+  .blueprint .bp-body dd{margin:3px 0 0; color:#241A44;}
+
+  .stage4{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:34px;}
+  @media (max-width:860px){.stage4{grid-template-columns:repeat(2,1fr);}}
+  .stage4 .sc{background:var(--white); border-radius:14px; padding:16px 14px; box-shadow:var(--shadow); text-align:center; border-top:4px solid var(--coral);}
+  .stage4 .sc h4{font-size:14px; margin-bottom:4px; color:var(--indigo-deep);}
+  .stage4 .sc p{font-size:12px; color:#5A4E80; margin:0;}
+
+  /* Value "VS" card — signature element */
+  .vs-card{background:var(--white); border-radius:18px; box-shadow:var(--shadow); overflow:hidden; margin-top:26px;}
+  .vs-card .vs-head{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; background:var(--indigo-deep); color:#fff; padding:18px 20px;}
+  .vs-card .vs-head .left{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:16px; text-align:right; color:var(--amber);}
+  .vs-card .vs-head .right{font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:14px; text-align:left; color:#B8AEDE; opacity:.8;}
+  .vs-card .vs-head .over{font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; padding:0 14px; color:#8577B8;}
+  .vs-card .vs-body{padding:20px 22px;}
+  .vs-card .vs-body p{font-size:14.5px; color:#2A2050; margin:6px 0;}
+  .vs-card .memline{margin-top:12px; background:#F3EEFF; border-left:4px solid var(--coral); border-radius:10px; padding:10px 14px; font-weight:700; color:var(--indigo-deep); font-size:14.5px;}
+
+  .example-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px;}
+  @media (max-width:700px){.example-grid{grid-template-columns:1fr;}}
+  .example-grid .ex{border-radius:12px; padding:14px 16px;}
+  .example-grid .fail{background:#FDECE8; border-left:4px solid var(--coral-deep);}
+  .example-grid .win{background:#EAF6EC; border-left:4px solid var(--lime-deep);}
+  .example-grid h5{font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; margin-bottom:6px;}
+  .example-grid .fail h5{color:var(--coral-deep);}
+  .example-grid .win h5{color:var(--lime-deep);}
+  .example-grid ul{margin:0; padding-left:16px; font-size:13.5px;}
+
+  .keyterms{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+  .keyterms span{font-family:'JetBrains Mono',monospace; font-size:11.5px; background:#F3EEFF; color:var(--indigo-deep); padding:5px 11px; border-radius:16px;}
+
+  .revision-table{margin-top:26px; background:var(--white); border-radius:14px; box-shadow:var(--shadow); overflow:hidden;}
+  .revision-table table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  .revision-table th{background:var(--indigo-deep); color:#fff; text-align:left; padding:11px 18px; font-family:'JetBrains Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:1px;}
+  .revision-table td{padding:11px 18px; border-bottom:1px solid var(--paper-line); color:#241A44;}
+  .revision-table tr:last-child td{border-bottom:none;}
+
+  /* principle accordion */
+  .principle{background:var(--white); border-radius:14px; box-shadow:var(--shadow); margin-top:14px; overflow:hidden;}
+  .principle summary{
+    list-style:none; cursor:pointer; padding:16px 20px; display:flex; align-items:center; gap:14px;
+    font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:15px; color:var(--indigo-deep);
+  }
+  .principle summary::-webkit-details-marker{display:none;}
+  .principle summary .pn{
+    width:32px; height:32px; border-radius:50%; background:var(--coral); color:#fff; flex:none;
+    display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700;
+  }
+  .principle summary .kw{margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; color:var(--coral-deep); background:#FFE4DB; padding:4px 10px; border-radius:12px; white-space:nowrap;}
+  .principle summary::after{content:"+"; font-size:20px; color:var(--coral-deep); margin-left:8px;}
+  .principle[open] summary::after{content:"–";}
+  .principle .pbody{padding:0 22px 22px 66px; font-size:14px; color:#2A2050;}
+  .principle .pbody .quote{font-style:italic; color:var(--indigo); background:var(--paper); border-radius:10px; padding:10px 14px; margin-bottom:10px; font-size:13.5px;}
+  .principle .pbody .say{background:#F3EEFF; border-radius:10px 10px 10px 2px; padding:8px 12px; margin:6px 0; display:inline-block; font-size:13.5px;}
+  .principle .pbody .mem{margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--lime-deep); font-weight:700;}
+
+  .diagram-frame{background:var(--white); border-radius:16px; box-shadow:var(--shadow); padding:20px; margin-top:28px; overflow-x:auto;}
+  .diagram-frame .cap{font-family:'JetBrains Mono',monospace; font-size:11px; color:#5A4E80; text-align:center; margin-top:10px;}
+
+  .journey{display:grid; gap:10px; margin-top:30px;}
+  .journey .j{display:grid; grid-template-columns:36px 1fr; gap:14px; background:var(--white); border-radius:12px; padding:12px 16px; box-shadow:var(--shadow); align-items:center;}
+  .journey .j .n{width:28px; height:28px; border-radius:50%; background:var(--indigo-deep); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12px;}
+  .journey .j p{margin:0; font-size:13.5px; color:#2A2050;}
+  .journey .j b{color:var(--indigo-deep);}
+
+  .emoji-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:26px;}
+  @media (max-width:820px){.emoji-grid{grid-template-columns:repeat(2,1fr);}}
+  .emoji-grid .e{background:var(--white); border-radius:12px; padding:14px; text-align:center; box-shadow:var(--shadow);}
+  .emoji-grid .e .em{font-size:26px;}
+  .emoji-grid .e .n{font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--coral-deep); margin-top:4px;}
+  .emoji-grid .e p{font-size:12px; margin:4px 0 0; color:#2A2050; font-weight:600;}
+
+  .glossary{margin-top:32px; background:var(--paper); border-radius:16px; box-shadow:var(--shadow); padding:6px 0; overflow:hidden;}
+  .glossary table{width:100%; border-collapse:collapse; font-family:'JetBrains Mono',monospace; font-size:12.5px;}
+  .glossary th{text-align:left; padding:14px 22px 9px; color:var(--indigo-deep); border-bottom:1px dashed var(--paper-line); font-size:11px; text-transform:uppercase; letter-spacing:1px;}
+  .glossary td{padding:9px 22px; border-bottom:1px dashed var(--paper-line); color:#241A44;}
+  .glossary tr:last-child td{border-bottom:none;}
+
+  .recap{background:linear-gradient(160deg,var(--indigo-deep),#120A33); color:#EDE8FA; border-radius:24px; padding:46px 32px; margin:64px auto; max-width:1020px; text-align:center;}
+  .recap h2{color:#fff;}
+  .recap .chain{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:24px;}
+  .recap .chain span{font-family:'JetBrains Mono',monospace; font-size:12.5px; background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.2); padding:7px 13px; border-radius:30px;}
+  .recap .chain .arrow{background:none; border:none; opacity:.5; padding:7px 0;}
+
+  .golden{margin:64px auto; max-width:920px; text-align:center; background:var(--amber); color:var(--indigo-deep); border-radius:20px; padding:32px 28px; box-shadow:var(--shadow); font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:clamp(16px,2.4vw,21px);}
+
+  footer{text-align:center; padding:38px 24px 56px; font-size:12.5px; color:#8577B8;}
+  .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.show{opacity:1; transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<nav class="stage-nav">
+  <a href="#intro">Intro</a>
+  <a href="#whatis">What is Agile?</a>
+  <a href="#values">4 Values</a>
+  <a href="#v1">Value 1</a>
+  <a href="#v2">Value 2</a>
+  <a href="#v3">Value 3</a>
+  <a href="#v4">Value 4</a>
+  <a href="#principles">12 Principles</a>
+  <a href="#journey">Full Journey</a>
+  <a href="#memorytrick">Memory Trick</a>
+  <a href="#glossary">Glossary</a>
+</nav>
+
+<header class="hero" id="intro">
+  <div class="tag">Prepared by Ms.A.KIRUTHIKA , AP/CSE , KEC</div>
+  <h1>Agile Values &amp; Principles,<br>through <em>FoodExpress</em></h1>
+  <p class="sub">Mr. Kumar owns a restaurant and wants an app like Swiggy. How his development team chooses to build it — what they prioritize, what they refuse to do, how they treat each other — is a live demonstration of everything the Agile Manifesto stands for.</p>
+  <div class="queue-row">
+    <span>🍽️ Mr. Kumar wants an app</span>
+    <span>🧭 4 core values</span>
+    <span>🧱 12 guiding principles</span>
+    <span>🚀 One growing app</span>
+  </div>
+</header>
+
+<section id="whatis">
+  <div class="eyebrow"><span class="num">1</span> Before the Values</div>
+  <h2 class="title">What Is Agile, Really?</h2>
+  <p class="lede">Before the four values and twelve principles make sense individually, it helps to know what "Agile" is actually naming.</p>
+  <div class="blueprint">
+    <div class="bp-head"><span>SPEC-00</span><b>AGILE</b></div>
+    <div class="bp-body">
+      <dl>
+        <dt>Definition</dt>
+        <dd>A set of methods and methodologies that help a team think more effectively, work more efficiently, and make better decisions — covering project management, software design, and process improvement.</dd>
+        <dt>Also a Mindset</dt>
+        <dd>The right mindset is what makes any of these practices actually work well.</dd>
+        <dt>Common Methodologies</dt>
+        <dd>Scrum · Kanban · Extreme Programming (XP) · Lean.</dd>
+        <dt>Origin</dt>
+        <dd>The Agile Manifesto was written in 2001 by 17 software experts, opening with: <em>"We are uncovering better ways of developing software by doing it and helping others do it."</em> It introduced four values and twelve principles.</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<section id="values">
+  <div class="eyebrow"><span class="num">2</span> The Heart of Agile</div>
+  <h2 class="title">The Four Agile Values</h2>
+  <p class="lede">Each value has the same shape: something on the left, something on the right, and the word "over" between them. That word matters — it never says the right side is worthless, only that the left side matters more.</p>
+  <div class="stage4">
+    <div class="sc"><h4>People</h4><p>Individuals &amp; Interactions</p></div>
+    <div class="sc"><h4>Software</h4><p>Working Software</p></div>
+    <div class="sc"><h4>Customer</h4><p>Customer Collaboration</p></div>
+    <div class="sc"><h4>Change</h4><p>Responding to Change</p></div>
+  </div>
+</section>
+
+<section id="v1">
+  <div class="eyebrow"><span class="num">3</span> Value 1</div>
+  <h2 class="title">Individuals &amp; Interactions — over — Processes &amp; Tools</h2>
+  <div class="vs-card">
+    <div class="vs-head"><span class="left">Individuals &amp; Interactions</span><span class="over">over</span><span class="right">Processes &amp; Tools</span></div>
+    <div class="vs-body">
+      <p>People are more important than processes and tools. Processes and software are useful, but they can't replace real communication, teamwork, and collaboration. A skilled team with simple tools can succeed; a team with the best tools but poor communication is likely to fail.</p>
+      <div class="memline">People build software — not tools.</div>
+    </div>
+  </div>
+  <div class="example-grid">
+    <div class="ex fail"><h5>Team A — Fails</h5><ul><li>Expensive software</li><li>Latest laptops</li><li>Many management tools</li><li>Never communicates</li></ul></div>
+    <div class="ex win"><h5>Team B — Succeeds</h5><ul><li>Ordinary laptops</li><li>Free software</li><li>Meets every day</li><li>Discusses problems, helps each other</li></ul></div>
+  </div>
+  <div class="story-card" style="margin-top:16px;">
+    <span class="label">FoodExpress Moment</span>
+    <p>A tester finds a bug in FoodExpress. Instead of two days of back-and-forth email, they simply walk over and say <span class="say">"The Login button isn't working."</span> The developer fixes it in five minutes. Quick, direct communication beat any tool.</p>
+  </div>
+</section>
+
+<section id="v2">
+  <div class="eyebrow"><span class="num">4</span> Value 2</div>
+  <h2 class="title">Working Software — over — Comprehensive Documentation</h2>
+  <div class="vs-card">
+    <div class="vs-head"><span class="left">Working Software</span><span class="over">over</span><span class="right">Comprehensive Documentation</span></div>
+    <div class="vs-body">
+      <p>Documentation is necessary, but the main goal of software development is working software. A project with hundreds of pages of documents and no working application has little value to the customer — Agile teams document only what's needed while continuously delivering something that runs.</p>
+      <div class="memline">Customers pay for software — not documents.</div>
+    </div>
+  </div>
+  <div class="story-card">
+    <span class="label">The Restaurant Analogy</span>
+    <p>Imagine a waiter hands you a menu, a recipe book, and cooking instructions — but no food. Are you satisfied? No — you came for the food. In the same way, a customer who receives 500 pages of specifications but no working FoodExpress app isn't satisfied either.</p>
+  </div>
+</section>
+
+<section id="v3">
+  <div class="eyebrow"><span class="num">5</span> Value 3</div>
+  <h2 class="title">Customer Collaboration — over — Contract Negotiation</h2>
+  <div class="vs-card">
+    <div class="vs-head"><span class="left">Customer Collaboration</span><span class="over">over</span><span class="right">Contract Negotiation</span></div>
+    <div class="vs-body">
+      <p>Traditional projects focus heavily on the signed contract, with little interaction afterward. Agile instead keeps the conversation going continuously between customer and developers — feedback along the way ensures the software actually fits real needs, not just what was written down at the start.</p>
+      <div class="memline">Work with the customer, not just the contract.</div>
+    </div>
+  </div>
+  <div class="story-card">
+    <span class="label">The Birthday Cake</span>
+    <p>You order a birthday cake. Midway through, the baker asks: <span class="say">"Would you like chocolate decoration?"</span> You say yes — and the design updates. Without that small collaboration, the cake might not match what you actually wanted.</p>
+    <p style="margin-top:10px;"><b>FoodExpress:</b> Week 1, Mr. Kumar asks for a login system. Week 2, he asks for Google Login too. The team discusses it and adds it — customer satisfaction goes up, not down.</p>
+  </div>
+</section>
+
+<section id="v4">
+  <div class="eyebrow"><span class="num">6</span> Value 4</div>
+  <h2 class="title">Responding to Change — over — Following a Plan</h2>
+  <div class="vs-card">
+    <div class="vs-head"><span class="left">Responding to Change</span><span class="over">over</span><span class="right">Following a Plan</span></div>
+    <div class="vs-body">
+      <p>There's an old saying: "plan the work, work the plan." But if you work the wrong plan, you build the wrong product. Requirements change because of new business needs, feedback, competition, or new technology — Agile teams watch for that change and adapt, rather than rigidly sticking to an outdated plan.</p>
+      <div class="memline">Adapt to change instead of resisting it.</div>
+    </div>
+  </div>
+  <div class="story-card">
+    <span class="label">The Rained-Out College Tour</span>
+    <p>A college tour is planned outdoors. Heavy rain suddenly begins. Do you stick to the original plan anyway? No — you move everything indoors.</p>
+    <p style="margin-top:10px;"><b>FoodExpress:</b> the app initially supports only Cash on Delivery. When customers start asking for UPI, the Agile team accepts the change, adds the feature, and releases an update — instead of saying "requirement closed."</p>
+  </div>
+
+  <div class="revision-table">
+    <table>
+      <tr><th>Agile Value</th><th>What It Means</th><th>Keyword</th></tr>
+      <tr><td>Individuals and Interactions over Processes and Tools</td><td>People and communication matter more than tools</td><td>People</td></tr>
+      <tr><td>Working Software over Comprehensive Documentation</td><td>Deliver usable software, not excessive documents</td><td>Software</td></tr>
+      <tr><td>Customer Collaboration over Contract Negotiation</td><td>Work closely with customers throughout development</td><td>Customer</td></tr>
+      <tr><td>Responding to Change over Following a Plan</td><td>Accept and adapt to changing requirements</td><td>Change</td></tr>
+    </table>
+  </div>
+  <div class="memline" style="margin-top:16px; text-align:center; max-width:400px; margin-left:auto; margin-right:auto;">Memory Trick — P S C C: People → Software → Customer → Change</div>
+</section>
+
+<section id="principles" class="wide">
+  <div class="eyebrow"><span class="num">7</span> Putting the Values Into Practice</div>
+  <h2 class="title">The 12 Agile Principles</h2>
+  <p class="lede">If the four values are the "heart" of Agile, the twelve principles are how that heart actually beats, day to day. Every one of them plays out inside the same FoodExpress project — tap each one open.</p>
+
+  <details class="principle" open>
+    <summary><span class="pn">1</span>Customer Satisfaction Through Early &amp; Continuous Delivery<span class="kw">😊 Satisfaction</span></summary>
+    <div class="pbody">
+      <div class="quote">"Our highest priority is to satisfy the customer through early and continuous delivery of valuable software."</div>
+      <p>Rather than waiting until the whole project is finished, Agile teams split the work into small, usable increments — each one delivers real value and gathers feedback for what comes next.</p>
+      <p><b>FoodExpress:</b> instead of promising everything after one year, the team delivers Login and Food Ordering within two weeks. Mr. Kumar starts earning money almost immediately, while Payment, Live Tracking, and Coupons follow in later sprints.</p>
+      <div class="mem">Memory: Deliver → Feedback → Improve → Happy Customer</div>
+    </div>
+  </details>
+
+  <details class="principle">
+    <summary><span class="pn">2</span>Welcome Changing Requirements<span class="kw">🔄 Change</span></summary>
+    <div class="pbody">
+      <div class="quote">"Welcome changing requirements, even late in development. Agile processes harness change for the customer's competitive advantage."</div>
+      <p>Customer needs, business conditions, and technology keep evolving — Agile treats change as an opportunity for better software, not a problem to reject.</p>
+      <p><b>FoodExpress:</b> three months in, Mr. Kumar says "everyone pays with UPI now." A traditional team would say "requirements frozen." The Agile team instead says "excellent idea" and adds it next sprint — the restaurant gains more customers.</p>
+      <div class="mem">Memory: Change → Improve → Compete</div>
+    </div>
+  </details>
+
+  <details class="principle">
+    <summary><span class="pn">3</span>Deliver Working Software Frequently<span class="kw">🚀 Frequency</span></summary>
+    <div class="pbody">
+      <div class="quote">"Deliver working software frequently, from a couple of weeks to a couple of months, with a preference to the shorter timescale."</div>
+      <p>Regular, short releases mean customers keep seeing improvements instead of waiting for one giant release at the very end.</p>
+      <p><b>FoodExpress:</b> Sprint 1 delivers Ordering, Sprint 2 Payment, Sprint 3 Tracking, Sprint 4 Reviews — every month brings a visible improvement, similar to how Chrome updates regularly instead of once every five years.</p>
+      <div class="mem">Memory: Small → Fast → Frequent → Better</div>
+    </div>
+  </details>
+
+  <details class="principle">
+    <summary><span class="pn">4</span>Business People &amp; Developers Work Together Daily<span class="kw">🤝 Collaboration</span></summary>
+    <div class="pbody">
+      <div class="quote">"Business people and developers must work together daily throughout the project."</div>
+      <p>Daily communication clarifies requirements, resolves issues quickly, and keeps the product aligned with what the business actually needs.</p>
+      <p><b>FoodExpress:</b> Mr. Kumar asks for "today's menu," but the developer builds a weekly menu instead — a misunderstanding. Once daily discussions start, that gap disappears entirely.</p>
+      <div class="mem">Memory: Talk → Understand → Build Correctly</div>
+    </div>
+  </details>
+
+  <details class="principle">
+    <summary><span class="pn">5</span>Build Projects Around Motivated Individuals<span class="kw">💪 Motivation</span></summary>
+    <div class="pbody">
+      <div class="quote">"Build projects around motivated individuals. Give them the environment and support they need, and trust them to get the job done."</div>
+      <p>Instead of controlling every small task, Agile trusts that motivated people — given the right environment and support — naturally produce better software.</p>
+      <p><b>FoodExpress:</b> Manager Ravi used to check every developer every 10 minutes; progress was slow. After learning to say "I trust you, tell me if you need help," the team completes Payment, Coupons, and Notifications faster than ever.</p>
+      <div class="mem">Memory: Trust → Motivation → Success</div>
+    </div>
+  </details>
+
+  <details class="principle">
+    <summary><span class="pn">6</span>Face-to-Face Conversation Is Most Effective<span class="kw">💬 Communication</span></summary>
+    <div class="pbody">
+      <div class="quote">"The most efficient and effective method of conveying information to and within a development team is face-to-face conversation."</div>
+      <p>Direct conversation clears up confusion far faster than long email chains — though video calls count too, when meeting in person isn't possible.</p>
+      <p><b>FoodExpress:</b> weeks were wasted exchanging emails about festival offers. A single ten-minute sit-down between customer and developer cleared up the requirement instantly.</p>
+      <div class="mem">Memory: Talk → Understand → Build</div>
+    </div>
+  </details>
+
+  <details class="principle">
+    <summary><span class="pn">7</span>Working Software Is the Primary Measure of Progress<span class="kw">💻 Progress</span></summary>
+    <div class="pbody">
+      <div class="quote">"Working software is the primary measure of progress."</div>
+      <p>Reports, meetings, and page counts don't prove progress — only software that actually runs and delivers value does.</p>
+      <p><b>FoodExpress:</b> Team A reports "300 pages of documentation written." Team B reports "500 food orders already placed by customers." Team B is the one that actually made progress.</p>
+      <div class="mem">Memory: Software → Customer → Progress</div>
+    </div>
+  </details>
+
+  <details class="principle">
+    <summary><span class="pn">8</span>Agile Promotes Sustainable Development<span class="kw">⚖️ Sustainability</span></summary>
+    <div class="pbody">
+      <div class="quote">"Agile processes promote sustainable development. The sponsors, developers, and users should be able to maintain a constant pace indefinitely."</div>
+      <p>A steady, healthy pace beats short bursts of overtime — like a marathon runner pacing themselves instead of sprinting the first mile and collapsing later.</p>
+      <p><b>FoodExpress:</b> forcing ten new features in one week exhausts the team and increases bugs. The Scrum Master instead spreads the work across multiple sprints — quality goes back up.</p>
+      <div class="mem">Memory: Steady Pace → Healthy Team → Quality Software</div>
+    </div>
+  </details>
+
+  <details class="principle">
+    <summary><span class="pn">9</span>Technical Excellence &amp; Good Design Enhance Agility<span class="kw">🏗️ Excellence</span></summary>
+    <div class="pbody">
+      <div class="quote">"Continuous attention to technical excellence and good design enhances agility."</div>
+      <p>Clean, well-designed code is easier to modify, test, and extend — exactly like a well-built house lasts for years, while a cheaply built one starts cracking within one.</p>
+      <p><b>FoodExpress:</b> messy code means one new feature breaks five others. After the team schedules time to refactor and clean up the architecture, adding Loyalty Points, Gift Cards, and a Referral System becomes easy.</p>
+      <div class="mem">Memory: Good Design → Easy Change → Agility</div>
+    </div>
+  </details>
+
+  <details class="principle">
+    <summary><span class="pn">10</span>Simplicity — Maximizing Work Not Done<span class="kw">✂️ Simplicity</span></summary>
+    <div class="pbody">
+      <div class="quote">"Simplicity — the art of maximizing the amount of work not done — is essential."</div>
+      <p>Build only what's actually needed now, not everything that might possibly be useful someday — extra, unrequested work wastes both time and money.</p>
+      <p><b>FoodExpress:</b> Mr. Kumar asks only for Login. A developer who also adds an AI chatbot, VR menu, and blockchain payments wastes months on things nobody asked for. The Agile team builds exactly Login, Ordering, and Payment — nothing more.</p>
+      <div class="mem">Memory: Need → Build → Deliver</div>
+    </div>
+  </details>
+
+  <details class="principle">
+    <summary><span class="pn">11</span>Best Designs Emerge From Self-Organizing Teams<span class="kw">👥 Self-Organizing</span></summary>
+    <div class="pbody">
+      <div class="quote">"The best architectures, requirements, and designs emerge from self-organizing teams."</div>
+      <p>Teams perform better when trusted to make their own technical decisions, instead of being directed at every single step by a manager who may not know the technical details best.</p>
+      <p><b>FoodExpress:</b> a manager insists on "Database A," ignoring the team's suggestion of a faster option. Once he lets the team decide, they choose the better database and performance doubles.</p>
+      <div class="mem">Memory: Trust Team → Team Thinks → Best Solution</div>
+    </div>
+  </details>
+
+  <details class="principle">
+    <summary><span class="pn">12</span>Regular Reflection to Become More Effective<span class="kw">📈 Improvement</span></summary>
+    <div class="pbody">
+      <div class="quote">"At regular intervals, the team reflects on how to become more effective, then tunes and adjusts its behavior accordingly."</div>
+      <p>Without reflection, the same mistakes repeat sprint after sprint — Agile teams instead pause regularly to ask what worked, what didn't, and what to change next.</p>
+      <p><b>FoodExpress:</b> after one sprint, the team notices testing started too late, causing bugs. Next sprint, testing starts from day one — and bugs drop noticeably.</p>
+      <div class="mem">Memory: Review → Learn → Improve → Repeat</div>
+    </div>
+  </details>
+</section>
+
+<div class="golden">"Working software over documents. People over tools. Customers as partners, not signatures on a contract. And change welcomed, not feared — that's the whole spirit of Agile, in one sentence."</div>
+
+<section id="journey" class="wide">
+  <div class="eyebrow"><span class="num">✓</span> One Story, All 12 Principles</div>
+  <h2 class="title">The Complete FoodExpress Journey</h2>
+  <p class="lede">Every principle above is really one continuous story. Read top to bottom and the whole chapter falls into place.</p>
+  <div class="journey">
+    <div class="j"><div class="n">1</div><p><b>Deliver Early</b> — Login &amp; Ordering ship first</p></div>
+    <div class="j"><div class="n">2</div><p><b>Accept Changes</b> — UPI gets added without resistance</p></div>
+    <div class="j"><div class="n">3</div><p><b>Deliver Frequently</b> — a new sprint every two weeks</p></div>
+    <div class="j"><div class="n">4</div><p><b>Daily Communication</b> — customer and developers stay in sync</p></div>
+    <div class="j"><div class="n">5</div><p><b>Manager Trusts the Team</b> — micromanagement stops</p></div>
+    <div class="j"><div class="n">6</div><p><b>Face-to-Face Discussion</b> — problems get solved in minutes, not days</p></div>
+    <div class="j"><div class="n">7</div><p><b>Progress = Working Software</b> — not reports or page counts</p></div>
+    <div class="j"><div class="n">8</div><p><b>Sustainable Pace</b> — the team avoids burnout</p></div>
+    <div class="j"><div class="n">9</div><p><b>Clean Code</b> — new features become easy to add</p></div>
+    <div class="j"><div class="n">10</div><p><b>Only Needed Features</b> — no wasted effort on the unrequested</p></div>
+    <div class="j"><div class="n">11</div><p><b>Team Chooses the Tech</b> — the best solution wins, not the loudest opinion</p></div>
+    <div class="j"><div class="n">12</div><p><b>Sprint Retrospective</b> — reflect, learn, improve, repeat</p></div>
+  </div>
+  <p class="lede" style="text-align:center; margin:24px auto 0; font-weight:700; color:var(--indigo-deep);">Result: Happy Customer + High-Quality Software.</p>
+</section>
+
+<section id="memorytrick">
+  <div class="eyebrow"><span class="num">✓</span> Exam-Ready</div>
+  <h2 class="title">Complete Memory Trick — 12 Keywords</h2>
+  <p class="lede">Instead of memorizing twelve full statements, remember twelve keywords.</p>
+  <div class="emoji-grid">
+    <div class="e"><div class="em">😊</div><div class="n">P1</div><p>Customer Satisfaction</p></div>
+    <div class="e"><div class="em">🔄</div><div class="n">P2</div><p>Change</p></div>
+    <div class="e"><div class="em">🚀</div><div class="n">P3</div><p>Frequent Delivery</p></div>
+    <div class="e"><div class="em">🤝</div><div class="n">P4</div><p>Collaboration</p></div>
+    <div class="e"><div class="em">💪</div><div class="n">P5</div><p>Motivation</p></div>
+    <div class="e"><div class="em">💬</div><div class="n">P6</div><p>Communication</p></div>
+    <div class="e"><div class="em">💻</div><div class="n">P7</div><p>Working Software</p></div>
+    <div class="e"><div class="em">⚖️</div><div class="n">P8</div><p>Sustainable Pace</p></div>
+    <div class="e"><div class="em">🏗️</div><div class="n">P9</div><p>Technical Excellence</p></div>
+    <div class="e"><div class="em">✂️</div><div class="n">P10</div><p>Simplicity</p></div>
+    <div class="e"><div class="em">👥</div><div class="n">P11</div><p>Self-Organizing Team</p></div>
+    <div class="e"><div class="em">📈</div><div class="n">P12</div><p>Continuous Improvement</p></div>
+  </div>
+</section>
+
+<div class="recap">
+  <div class="eyebrow" style="justify-content:center; color:var(--amber);"><span class="num" style="background:var(--amber); color:var(--indigo-deep);">✓</span> The Biggest Lesson</div>
+  <h2>Agile Is a Mindset</h2>
+  <p style="max-width:640px; margin:14px auto 0; color:#D3C9F0;">Agile focuses on delivering customer value through collaboration, adaptability, quality, simplicity, empowered teams, and continuous improvement. Scrum is one practical framework that turns these values and principles into everyday practice — through Sprints, Reviews, and Retrospectives.</p>
+  <div class="chain">
+    <span>People</span><span class="arrow">→</span>
+    <span>Software</span><span class="arrow">→</span>
+    <span>Customer</span><span class="arrow">→</span>
+    <span>Change</span><span class="arrow">→</span>
+    <span>...12 Principles...</span><span class="arrow">→</span>
+    <span>Scrum</span>
+  </div>
+</div>
+
+<section id="glossary">
+  <div class="eyebrow"><span class="num">✓</span> Keep for Quick Revision</div>
+  <h2 class="title">Glossary</h2>
+  <div class="glossary">
+    <table>
+      <tr><th>Term</th><th>Meaning</th></tr>
+      <tr><td>Agile</td><td>A mindset and set of methodologies for working effectively and adapting to change</td></tr>
+      <tr><td>Agile Manifesto</td><td>A 2001 document by 17 software experts introducing 4 values and 12 principles</td></tr>
+      <tr><td>Agile Value</td><td>A core belief about what to prioritize — stated as "X over Y"</td></tr>
+      <tr><td>Agile Principle</td><td>A guideline that puts the Agile values into everyday practice</td></tr>
+      <tr><td>Increment</td><td>A small, usable piece of software delivered during development</td></tr>
+      <tr><td>Sprint</td><td>A short, fixed time period in which a team delivers a working increment</td></tr>
+      <tr><td>Sustainable Pace</td><td>A steady work rhythm the team can maintain indefinitely without burnout</td></tr>
+      <tr><td>Self-Organizing Team</td><td>A team trusted to make its own technical and organizational decisions</td></tr>
+      <tr><td>Sprint Retrospective</td><td>A regular meeting where the team reflects and improves its way of working</td></tr>
+      <tr><td>Scrum</td><td>A practical framework that implements Agile values and principles through Sprints, Reviews, and Retrospectives</td></tr>
+    </table>
+  </div>
+</section>
+
+<footer>Prepared by Ms.A.KIRUTHIKA , AP/CSE , KEC</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const els = document.querySelectorAll('section, .recap, .golden');
+    els.forEach(el => el.classList.add('reveal'));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } });
+    }, {threshold:0.1});
+    els.forEach(el => io.observe(el));
+  });
+</script>
+
+</body>
+</html>
