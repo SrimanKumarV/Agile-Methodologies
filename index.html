@@ -3,568 +3,718 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agile Methodologies Master Index</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Agile Methodologies — Master Study Hub</title>
+    <meta name="description" content="Interactive study hub for Agile Methodologies, Scrum, Lean, Kanban, XP, Requirements Engineering, and Software Process Models.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0b0f19;
-            --card-bg: rgba(255, 255, 255, 0.04);
-            --card-border: rgba(255, 255, 255, 0.08);
-            --card-hover-border: rgba(99, 102, 241, 0.4);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #6366f1;
-            --accent-hover: #818cf8;
-            --cyan: #06b6d4;
-            --emerald: #10b981;
-            --amber: #f59e0b;
+            --bg: #06080f;
+            --surface-1: rgba(255, 255, 255, 0.03);
+            --surface-2: rgba(255, 255, 255, 0.05);
+            --surface-hover: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(99, 102, 241, 0.4);
+            --text: #f0f2f8;
+            --text-secondary: #8892b0;
+            --text-dim: #5a6380;
+            --indigo: #6366f1;
+            --indigo-light: #818cf8;
+            --indigo-glow: rgba(99, 102, 241, 0.25);
+            --cyan: #22d3ee;
+            --emerald: #34d399;
+            --amber: #fbbf24;
+            --rose: #fb7185;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 45%),
-                radial-gradient(at 100% 30%, rgba(6, 182, 212, 0.12) 0px, transparent 40%),
-                radial-gradient(at 50% 100%, rgba(168, 85, 247, 0.12) 0px, transparent 50%);
-            background-attachment: fixed;
-            color: var(--text-main);
+            background-color: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 3.5rem 1.5rem 5rem;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        header {
+        /* ─── Animated Background ─── */
+        .bg-mesh {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background:
+                radial-gradient(ellipse 60% 50% at 10% 10%, rgba(99,102,241,0.12), transparent),
+                radial-gradient(ellipse 50% 60% at 90% 20%, rgba(34,211,238,0.08), transparent),
+                radial-gradient(ellipse 55% 45% at 50% 95%, rgba(168,85,247,0.10), transparent),
+                radial-gradient(ellipse 30% 30% at 80% 80%, rgba(251,113,133,0.06), transparent);
+        }
+
+        .grain {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.025;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            background-repeat: repeat; background-size: 180px;
+        }
+
+        /* ─── Layout ─── */
+        .page-content {
+            position: relative; z-index: 1;
+            max-width: 1200px; margin: 0 auto;
+            padding: 3rem 2rem 6rem;
+        }
+
+        /* ─── Hero ─── */
+        .hero {
             text-align: center;
-            margin-bottom: 3.5rem;
-            max-width: 720px;
+            padding: 4rem 0 3rem;
+            position: relative;
         }
 
-        .badge-header {
-            display: inline-block;
-            font-size: 0.78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            padding: 0.35rem 0.9rem;
-            border-radius: 9999px;
-            background: rgba(99, 102, 241, 0.12);
-            border: 1px solid rgba(99, 102, 241, 0.3);
+        .hero-glow {
+            position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+            width: 500px; height: 300px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+            filter: blur(60px); pointer-events: none;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 7px 16px;
+            border-radius: 100px;
+            background: rgba(99,102,241,0.08);
+            border: 1px solid rgba(99,102,241,0.2);
             color: #a5b4fc;
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.75rem;
         }
 
-        h1 {
-            font-size: 3.25rem;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            line-height: 1.15;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
+        .hero-eyebrow .dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--emerald);
+            box-shadow: 0 0 8px rgba(52,211,153,0.6);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.8rem, 6vw, 4.2rem);
+            font-weight: 900;
+            letter-spacing: -0.04em;
+            line-height: 1.08;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 40%, #94a3b8 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        p.subtitle {
-            font-size: 1.125rem;
-            line-height: 1.6;
-            color: var(--text-muted);
-            margin: 0 auto;
+        .hero p {
+            font-size: 1.1rem; line-height: 1.7;
+            color: var(--text-secondary);
+            max-width: 580px; margin: 0 auto 2.5rem;
         }
 
-        .main-wrapper {
-            width: 100%;
-            max-width: 1100px;
-            display: flex;
-            flex-direction: column;
-            gap: 3rem;
+        /* ─── Stats Row ─── */
+        .stats {
+            display: flex; justify-content: center; gap: 3rem;
+            flex-wrap: wrap;
+            padding: 1.5rem 0 0;
         }
 
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.25rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        .stat-item {
+            text-align: center;
         }
 
-        .section-tag {
-            font-size: 0.72rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
+        .stat-num {
+            font-size: 2rem; font-weight: 800; letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--indigo-light), var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--text-dim); margin-top: 2px;
+        }
+
+        /* ─── Search ─── */
+        .search-bar {
+            max-width: 480px; margin: 2.5rem auto 0; position: relative;
+        }
+
+        .search-bar input {
+            width: 100%; padding: 14px 20px 14px 48px;
+            border-radius: 14px;
+            background: var(--surface-1);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-family: inherit; font-size: 0.9rem;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .search-bar input::placeholder { color: var(--text-dim); }
+
+        .search-bar input:focus {
+            border-color: rgba(99,102,241,0.5);
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+            background: var(--surface-2);
+        }
+
+        .search-bar svg {
+            position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+            width: 18px; height: 18px; color: var(--text-dim);
+            pointer-events: none;
+        }
+
+        /* ─── Sections ─── */
+        .section {
+            margin-top: 4rem;
+            opacity: 0; transform: translateY(24px);
+            animation: fade-in-up 0.6s ease forwards;
+        }
+
+        .section:nth-child(2) { animation-delay: 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.2s; }
+        .section:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes fade-in-up {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-head {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-badge {
+            font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
             text-transform: uppercase;
-            padding: 0.25rem 0.6rem;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text-muted);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 4px 10px; border-radius: 6px;
         }
 
-        .section-title {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: #f1f5f9;
-            letter-spacing: -0.01em;
+        .section-badge.methodologies { background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2); }
+        .section-badge.requirements  { background: rgba(34,211,238,0.08); color: #67e8f9; border: 1px solid rgba(34,211,238,0.18); }
+        .section-badge.process       { background: rgba(168,85,247,0.08); color: #c4b5fd; border: 1px solid rgba(168,85,247,0.18); }
+
+        .section-name {
+            font-size: 1.3rem; font-weight: 700; letter-spacing: -0.01em;
+            color: #e2e8f0;
         }
 
-        .container {
-            width: 100%;
+        .section-count {
+            margin-left: auto;
+            font-size: 0.72rem; font-weight: 600;
+            color: var(--text-dim);
+        }
+
+        /* ─── Card Grid ─── */
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 14px;
         }
 
+        /* ─── Cards ─── */
         .card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            text-decoration: none;
-            color: var(--text-main);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
             position: relative;
+            background: var(--surface-1);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem 1.5rem 1.25rem;
+            text-decoration: none; color: inherit;
+            display: flex; flex-direction: column; justify-content: space-between;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
         }
 
         .card::before {
             content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--accent);
+            position: absolute; top: 0; left: 0;
+            width: 3px; height: 100%;
+            border-radius: 3px 0 0 3px;
             opacity: 0;
-            transition: opacity 0.25s ease;
+            transition: opacity 0.28s ease;
         }
+
+        .card.accent-indigo::before  { background: var(--indigo); }
+        .card.accent-cyan::before    { background: var(--cyan); }
+        .card.accent-emerald::before { background: var(--emerald); }
+        .card.accent-amber::before   { background: var(--amber); }
+        .card.accent-rose::before    { background: var(--rose); }
 
         .card:hover {
             transform: translateY(-4px);
-            background: rgba(255, 255, 255, 0.07);
-            border-color: var(--card-hover-border);
-            box-shadow: 0 12px 30px -8px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(99, 102, 241, 0.15);
+            background: var(--surface-hover);
+            border-color: var(--border-hover);
+            box-shadow:
+                0 14px 40px -10px rgba(0,0,0,0.5),
+                0 0 0 1px rgba(99,102,241,0.12);
         }
 
-        .card:hover::before {
-            opacity: 1;
+        .card:hover::before { opacity: 1; }
+
+        .card-meta {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 10px;
         }
 
-        .card-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.75rem;
+        .card-tag {
+            font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
 
-        .card-label {
-            font-size: 0.72rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #818cf8;
+        .card.accent-indigo  .card-tag { color: #a5b4fc; }
+        .card.accent-cyan    .card-tag { color: #67e8f9; }
+        .card.accent-emerald .card-tag { color: #6ee7b7; }
+        .card.accent-amber   .card-tag { color: #fcd34d; }
+        .card.accent-rose    .card-tag { color: #fda4af; }
+
+        .badge-new {
+            font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 3px 8px; border-radius: 100px;
+            background: rgba(52,211,153,0.12); color: #34d399;
+            border: 1px solid rgba(52,211,153,0.25);
         }
 
-        .card h2 {
-            font-size: 1.15rem;
-            font-weight: 600;
-            line-height: 1.4;
+        .card h3 {
+            font-size: 1.05rem; font-weight: 700; line-height: 1.35;
             color: #f1f5f9;
+            margin-bottom: 6px;
             transition: color 0.2s ease;
         }
 
-        .card:hover h2 {
-            color: #ffffff;
-        }
+        .card:hover h3 { color: #fff; }
 
         .card-desc {
-            font-size: 0.85rem;
-            line-height: 1.5;
-            color: var(--text-muted);
-            margin-top: 0.4rem;
+            font-size: 0.82rem; line-height: 1.55;
+            color: var(--text-secondary);
         }
-        
-        .card .icon {
-            margin-top: 1.25rem;
-            display: flex;
-            align-items: center;
-            font-size: 0.825rem;
-            color: #94a3b8;
-            font-weight: 600;
+
+        .card-action {
+            display: flex; align-items: center; gap: 6px;
+            margin-top: 1.15rem;
+            font-size: 0.78rem; font-weight: 600;
+            color: var(--text-dim);
             transition: color 0.2s ease;
         }
-        
-        .card .icon svg {
-            width: 15px;
-            height: 15px;
-            margin-left: 0.4rem;
+
+        .card-action svg {
+            width: 14px; height: 14px;
             transition: transform 0.25s ease;
         }
 
-        .card:hover .icon {
-            color: var(--accent-hover);
+        .card:hover .card-action { color: var(--indigo-light); }
+        .card:hover .card-action svg { transform: translateX(4px); }
+
+        /* ─── Hidden by search ─── */
+        .card.hidden-search { display: none; }
+        .section.hidden-search { display: none; }
+        .no-results {
+            display: none; text-align: center; padding: 4rem 2rem;
+            color: var(--text-dim); font-size: 1rem;
+        }
+        .no-results.visible { display: block; }
+
+        /* ─── Footer ─── */
+        footer {
+            text-align: center; padding: 3rem 2rem 1rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 0.78rem;
         }
 
-        .card:hover .icon svg {
-            transform: translateX(4px);
-            color: var(--accent-hover);
+        footer a { color: var(--indigo-light); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 768px) {
+            .page-content { padding: 2rem 1rem 4rem; }
+            .hero { padding: 2.5rem 0 2rem; }
+            .stats { gap: 1.5rem; }
+            .grid { grid-template-columns: 1fr; }
+            .section { margin-top: 3rem; }
         }
 
-        .badge-new {
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 0.2rem 0.5rem;
-            border-radius: 9999px;
-            background: rgba(16, 185, 129, 0.15);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-
-        @media (max-width: 640px) {
-            h1 {
-                font-size: 2.25rem;
-            }
-            body {
-                padding: 2.5rem 1rem 4rem;
-            }
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 2.2rem; }
+            .hero p { font-size: 0.95rem; }
+            .section-head { flex-wrap: wrap; gap: 8px; }
+            .section-count { margin-left: 0; }
         }
     </style>
 </head>
 <body>
-    <header>
-        <span class="badge-header">Academic &amp; Professional Reference</span>
+
+<div class="bg-mesh"></div>
+<div class="grain"></div>
+
+<div class="page-content">
+
+    <!-- ─── Hero ─── -->
+    <header class="hero">
+        <div class="hero-glow"></div>
+        <div class="hero-eyebrow">
+            <span class="dot"></span>
+            Study Hub &bull; Software Engineering
+        </div>
         <h1>Agile Methodologies</h1>
-        <p class="subtitle">A master directory of interactive study guides, software process models, engineering tasks, and Agile frameworks.</p>
+        <p>Your master directory of interactive study guides — from process frameworks and requirements engineering to Scrum, Lean, Kanban, and Extreme Programming.</p>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-num">20</div>
+                <div class="stat-label">Study Guides</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">3</div>
+                <div class="stat-label">Major Units</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">7</div>
+                <div class="stat-label">Agile Frameworks</div>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" id="searchInput" placeholder="Search topics… e.g. Scrum, DFD, Spiral" autocomplete="off">
+        </div>
     </header>
 
-    <main class="main-wrapper">
+    <!-- ─── Section 1: Agile Frameworks ─── -->
+    <section class="section" data-section>
+        <div class="section-head">
+            <span class="section-badge methodologies">Methodologies</span>
+            <span class="section-name">Agile, Scrum, Lean, Kanban &amp; XP</span>
+            <span class="section-count">8 topics</span>
+        </div>
+        <div class="grid">
 
-        <!-- SECTION 1: AGILE FRAMEWORKS & PRACTICES -->
-        <section>
-            <div class="section-header">
-                <span class="section-tag">Methodologies</span>
-                <h2 class="section-title">Agile, Scrum, Lean, Kanban &amp; XP</h2>
-            </div>
-            <div class="container">
-                <a href="CH 2.1 Agile_Values_and_Principles.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Foundations</span>
-                        </div>
-                        <h2>Agile Values &amp; Principles</h2>
-                        <p class="card-desc">The Agile Manifesto, 4 core values, and the 12 principles guiding modern development.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+            <a href="CH 2.1 Agile_Values_and_Principles.html" class="card accent-indigo" data-search="agile values principles manifesto foundations">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Foundations</span></div>
+                    <h3>Agile Values &amp; Principles</h3>
+                    <p class="card-desc">The Agile Manifesto, 4 core values, and the 12 guiding principles of modern iterative development.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="CH 2.2 Scrum_and_Self_Organizing_Teams.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Scrum Teams</span>
-                        </div>
-                        <h2>Scrum &amp; Self-Organizing Teams</h2>
-                        <p class="card-desc">Team dynamics, self-organization, and collaboration structures in Scrum environments.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+            <a href="CH 2.2 Scrum_and_Self_Organizing_Teams.html" class="card accent-indigo" data-search="scrum self organizing teams collaboration">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Scrum Teams</span></div>
+                    <h3>Scrum &amp; Self-Organizing Teams</h3>
+                    <p class="card-desc">Team dynamics, autonomy, cross-functional collaboration, and self-organization in Scrum.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="CH 2.3 Scrum -its Values, Roles, Artifacts, and Events.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Deep Dive</span>
-                            <span class="badge-new">New</span>
-                        </div>
-                        <h2>Scrum Values, Roles, Artifacts &amp; Events</h2>
-                        <p class="card-desc">Comprehensive breakdown of ceremonies, roles (PO, SM, Devs), artifacts, explained through a campus app.</p>
+            <a href="CH 2.3 Scrum -its Values, Roles, Artifacts, and Events.html" class="card accent-cyan" data-search="scrum values roles artifacts events ceremonies sprint product owner master">
+                <div>
+                    <div class="card-meta">
+                        <span class="card-tag">Deep Dive</span>
+                        <span class="badge-new">New</span>
                     </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+                    <h3>Scrum: Values, Roles, Artifacts &amp; Events</h3>
+                    <p class="card-desc">PO, Scrum Master, Dev Team roles, Sprint ceremonies, product/sprint backlogs via a campus app case.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="CH 2.4 User Stories, Story Points, Velocity, Burndown Charts & Sprint Planning.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Planning &amp; Metrics</span>
-                            <span class="badge-new">New</span>
-                        </div>
-                        <h2>User Stories, Story Points &amp; Velocity</h2>
-                        <p class="card-desc">Estimation, burndown charts, INVEST criteria, and sprint planning execution.</p>
+            <a href="CH 2.4 User Stories, Story Points, Velocity, Burndown Charts & Sprint Planning.html" class="card accent-cyan" data-search="user stories story points velocity burndown charts sprint planning invest estimation">
+                <div>
+                    <div class="card-meta">
+                        <span class="card-tag">Planning &amp; Metrics</span>
+                        <span class="badge-new">New</span>
                     </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+                    <h3>User Stories, Story Points &amp; Velocity</h3>
+                    <p class="card-desc">INVEST criteria, estimation techniques, burndown tracking, and sprint planning mechanics.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="LEAN FRAMEWORK.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Lean Systems</span>
-                            <span class="badge-new">New</span>
-                        </div>
-                        <h2>Lean Software Development Framework</h2>
-                        <p class="card-desc">7 Lean principles, waste elimination (Muda), value stream mapping, and continuous flow.</p>
+            <a href="LEAN FRAMEWORK.html" class="card accent-emerald" data-search="lean software development 7 principles waste elimination muda value stream mapping">
+                <div>
+                    <div class="card-meta">
+                        <span class="card-tag">Lean Systems</span>
+                        <span class="badge-new">New</span>
                     </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+                    <h3>Lean Software Development</h3>
+                    <p class="card-desc">7 Lean principles, Muda elimination, value stream mapping, JIT delivery, and continuous improvement.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="kanban-CAMS-study-guide.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Kanban</span>
-                            <span class="badge-new">New</span>
-                        </div>
-                        <h2>Kanban Complete Guide (CAMS Edition)</h2>
-                        <p class="card-desc">WIP limits, pull systems, cumulative flow diagrams, and workflow bottleneck management.</p>
+            <a href="kanban-CAMS-study-guide.html" class="card accent-emerald" data-search="kanban wip limits pull system cumulative flow diagram bottleneck cams">
+                <div>
+                    <div class="card-meta">
+                        <span class="card-tag">Kanban</span>
+                        <span class="badge-new">New</span>
                     </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+                    <h3>Kanban Complete Guide (CAMS)</h3>
+                    <p class="card-desc">Pull-based workflow, WIP limits, cumulative flow diagrams, lead/cycle time, and bottleneck analysis.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="xp process.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Extreme Programming</span>
-                            <span class="badge-new">New</span>
-                        </div>
-                        <h2>XP Process &amp; Engineering Practices</h2>
-                        <p class="card-desc">Pair programming, TDD, continuous integration, simple design, and refactoring techniques.</p>
+            <a href="xp process.html" class="card accent-rose" data-search="extreme programming xp tdd test driven development pair programming continuous integration refactoring">
+                <div>
+                    <div class="card-meta">
+                        <span class="card-tag">Extreme Programming</span>
+                        <span class="badge-new">New</span>
                     </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+                    <h3>XP Process &amp; Engineering Practices</h3>
+                    <p class="card-desc">TDD, pair programming, continuous integration, simple design, collective ownership, and refactoring.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="agile_grocery_management.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Case Study</span>
-                        </div>
-                        <h2>Agile Grocery Management Project</h2>
-                        <p class="card-desc">End-to-end practical project application illustrating Agile practices in retail/grocery systems.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
-            </div>
-        </section>
+            <a href="agile_grocery_management.html" class="card accent-amber" data-search="agile grocery management case study practical application project retail">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Case Study</span></div>
+                    <h3>Agile Grocery Management Project</h3>
+                    <p class="card-desc">End-to-end practical application of Agile in a retail grocery system with sprints and retrospectives.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-        <!-- SECTION 2: REQUIREMENTS ENGINEERING & MODELING -->
-        <section>
-            <div class="section-header">
-                <span class="section-tag">Unit II</span>
-                <h2 class="section-title">Requirements Engineering &amp; Modeling</h2>
-            </div>
-            <div class="container">
-                <a href="6 Requirement_Engineering.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Foundations</span>
-                        </div>
-                        <h2>Requirement Engineering Fundamentals</h2>
-                        <p class="card-desc">Core definitions, functional vs non-functional requirements, and stakeholder analysis.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+        </div>
+    </section>
 
-                <a href="7 Requirement Engineering Tasks.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Processes</span>
-                        </div>
-                        <h2>Requirement Engineering Tasks</h2>
-                        <p class="card-desc">Inception, elicitation, elaboration, negotiation, specification, validation, and management.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+    <!-- ─── Section 2: Requirements Engineering ─── -->
+    <section class="section" data-section>
+        <div class="section-head">
+            <span class="section-badge requirements">Unit II</span>
+            <span class="section-name">Requirements Engineering &amp; Modeling</span>
+            <span class="section-count">7 topics</span>
+        </div>
+        <div class="grid">
 
-                <a href="8 Requirement_Modeling_Scenario_Based_Study_Guide.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Scenarios</span>
-                        </div>
-                        <h2>Scenario-Based Requirement Modeling Guide</h2>
-                        <p class="card-desc">Actors, use case diagrams, user stories, and narrative-driven behavioral specs.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+            <a href="6 Requirement_Engineering.html" class="card accent-cyan" data-search="requirement engineering fundamentals functional non-functional stakeholder">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Foundations</span></div>
+                    <h3>Requirement Engineering Fundamentals</h3>
+                    <p class="card-desc">Core definitions, functional vs. non-functional requirements, stakeholder identification, and the RE process.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="9.1 Scenario-Based Modeling.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Use Cases</span>
-                        </div>
-                        <h2>Scenario-Based Modeling (Deep Dive)</h2>
-                        <p class="card-desc">Detailed use case templates, swimlane diagrams, and user scenario walkthroughs.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+            <a href="7 Requirement Engineering Tasks.html" class="card accent-cyan" data-search="requirement engineering tasks inception elicitation elaboration negotiation specification validation management">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Processes</span></div>
+                    <h3>Requirement Engineering Tasks</h3>
+                    <p class="card-desc">Seven key tasks: inception, elicitation, elaboration, negotiation, specification, validation, management.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="10.1 flow_oriented_modeling_dfd_.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Flow Modeling</span>
-                        </div>
-                        <h2>Flow Oriented Modeling &amp; DFD</h2>
-                        <p class="card-desc">Data Flow Diagrams (Level 0, 1, 2), data transforms, data stores, and external entities.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+            <a href="8 Requirement_Modeling_Scenario_Based_Study_Guide.html" class="card accent-indigo" data-search="scenario based requirement modeling use case actors user stories">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Scenarios</span></div>
+                    <h3>Scenario-Based Modeling Guide</h3>
+                    <p class="card-desc">Actors, use case diagrams, user stories, and narrative-driven behavioral specification techniques.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="10.2flow_oriented_modeling.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">DFD Architecture</span>
-                        </div>
-                        <h2>Flow-Oriented Analysis &amp; Data Dict</h2>
-                        <p class="card-desc">Process specifications (PSPEC), control flow, and data dictionary syntax.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+            <a href="9.1 Scenario-Based Modeling.html" class="card accent-indigo" data-search="scenario based modeling use case templates swimlane activity diagrams deep dive">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Use Cases</span></div>
+                    <h3>Scenario-Based Modeling (Deep Dive)</h3>
+                    <p class="card-desc">Detailed use case templates, swimlane activity diagrams, and structured scenario walkthroughs.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="flow_oriented_modeling_dfd_study_guide.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Exam Prep</span>
-                        </div>
-                        <h2>DFD Flow Modeling Study Guide</h2>
-                        <p class="card-desc">Quick revision guide, standard conventions, diagramming rules, and sample problems.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
-            </div>
-        </section>
+            <a href="10.1 flow_oriented_modeling_dfd_.html" class="card accent-emerald" data-search="flow oriented modeling data flow diagram dfd level 0 1 2 transforms stores entities">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Flow Modeling</span></div>
+                    <h3>Flow-Oriented Modeling &amp; DFD</h3>
+                    <p class="card-desc">DFD (Level 0, 1, 2), data transforms, data stores, external entities, and process decomposition.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-        <!-- SECTION 3: CLASSICAL & EVOLUTIONARY PROCESS MODELS -->
-        <section>
-            <div class="section-header">
-                <span class="section-tag">Unit I</span>
-                <h2 class="section-title">Process Models &amp; Evolutionary Lifecycle</h2>
-            </div>
-            <div class="container">
-                <a href="1 GENERIC PROCESS MODEL (2).html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Process Framework</span>
-                        </div>
-                        <h2>Generic Process Model</h2>
-                        <p class="card-desc">5 core framework activities, umbrella activities, and software process flow types.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+            <a href="10.2flow_oriented_modeling.html" class="card accent-emerald" data-search="flow analysis data dictionary pspec control flow process specification">
+                <div>
+                    <div class="card-meta"><span class="card-tag">DFD Architecture</span></div>
+                    <h3>Flow Analysis &amp; Data Dictionary</h3>
+                    <p class="card-desc">Process specifications (PSPEC), control flow modeling, and data dictionary notation &amp; syntax.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="2 Topic1_Evolutionary_Models.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Lifecycle</span>
-                        </div>
-                        <h2>Evolutionary Process Models</h2>
-                        <p class="card-desc">Principles of iterative and incremental evolution in modern software projects.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+            <a href="flow_oriented_modeling_dfd_study_guide.html" class="card accent-amber" data-search="dfd study guide exam revision conventions diagramming rules sample problems">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Exam Prep</span></div>
+                    <h3>DFD Flow Modeling Study Guide</h3>
+                    <p class="card-desc">Quick-revision guide with standard conventions, diagramming rules, and sample exam problems.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-                <a href="3 Topic2_Prototyping_Model.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Exploration</span>
-                        </div>
-                        <h2>Prototyping Model</h2>
-                        <p class="card-desc">Quick design, prototype construction, customer evaluation, and refinement cycles.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+        </div>
+    </section>
 
-                <a href="4 Topic3_Spiral_Model.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">Risk Driven</span>
-                        </div>
-                        <h2>Spiral Model (Boehm)</h2>
-                        <p class="card-desc">Risk-driven iterative process spanning planning, risk analysis, engineering, and evaluation.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
+    <!-- ─── Section 3: Process Models ─── -->
+    <section class="section" data-section>
+        <div class="section-head">
+            <span class="section-badge process">Unit I</span>
+            <span class="section-name">Process Models &amp; Evolutionary Lifecycle</span>
+            <span class="section-count">5 topics</span>
+        </div>
+        <div class="grid">
 
-                <a href="5 CONCURRENT DEVELOPMENT MODEL AK.html" class="card">
-                    <div>
-                        <div class="card-top">
-                            <span class="card-label">State-Driven</span>
-                        </div>
-                        <h2>Concurrent Development Model</h2>
-                        <p class="card-desc">State transition modeling and concurrent engineering of software components.</p>
-                    </div>
-                    <div class="icon">
-                        <span>Explore Topic</span>
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                    </div>
-                </a>
-            </div>
-        </section>
+            <a href="1 GENERIC PROCESS MODEL (2).html" class="card accent-indigo" data-search="generic process model framework activities umbrella communication planning modeling construction deployment">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Process Framework</span></div>
+                    <h3>Generic Process Model</h3>
+                    <p class="card-desc">Five framework activities, umbrella activities, and process flow types (linear, iterative, parallel).</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
 
-    </main>
+            <a href="2 Topic1_Evolutionary_Models.html" class="card accent-indigo" data-search="evolutionary models iterative incremental evolution lifecycle paradigms">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Lifecycle</span></div>
+                    <h3>Evolutionary Process Models</h3>
+                    <p class="card-desc">Principles of iterative and incremental software evolution in modern project environments.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
+
+            <a href="3 Topic2_Prototyping_Model.html" class="card accent-amber" data-search="prototyping model quick design prototype construction customer evaluation refinement">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Exploration</span></div>
+                    <h3>Prototyping Model</h3>
+                    <p class="card-desc">Quick design, prototype construction, customer evaluation, and iterative refinement cycles.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
+
+            <a href="4 Topic3_Spiral_Model.html" class="card accent-rose" data-search="spiral model boehm risk driven iterative planning risk analysis engineering evaluation">
+                <div>
+                    <div class="card-meta"><span class="card-tag">Risk-Driven</span></div>
+                    <h3>Spiral Model (Boehm)</h3>
+                    <p class="card-desc">Risk-driven iterative process through planning, risk analysis, engineering, and customer evaluation.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
+
+            <a href="5 CONCURRENT DEVELOPMENT MODEL AK.html" class="card accent-rose" data-search="concurrent development model state transition concurrent engineering parallel activities">
+                <div>
+                    <div class="card-meta"><span class="card-tag">State-Driven</span></div>
+                    <h3>Concurrent Development Model</h3>
+                    <p class="card-desc">State-transition modeling and concurrent engineering of parallel software component development.</p>
+                </div>
+                <div class="card-action">
+                    <span>Explore</span>
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </div>
+            </a>
+
+        </div>
+    </section>
+
+    <div class="no-results" id="noResults">
+        <p>😕 No topics found matching your search.</p>
+    </div>
+
+    <footer>
+        <p>Agile Methodologies Study Hub &bull; Built for learning &bull; <a href="https://github.com/SrimanKumarV/Agile-Methodologies" target="_blank" rel="noopener">GitHub</a></p>
+    </footer>
+
+</div>
+
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const cards = document.querySelectorAll('.card');
+    const sections = document.querySelectorAll('[data-section]');
+    const noResults = document.getElementById('noResults');
+
+    searchInput.addEventListener('input', () => {
+        const q = searchInput.value.toLowerCase().trim();
+        let totalVisible = 0;
+
+        cards.forEach(card => {
+            const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+            const desc = card.querySelector('.card-desc')?.textContent.toLowerCase() || '';
+            const tags = card.dataset.search || '';
+            const match = !q || title.includes(q) || desc.includes(q) || tags.includes(q);
+            card.classList.toggle('hidden-search', !match);
+            if (match) totalVisible++;
+        });
+
+        sections.forEach(section => {
+            const visibleCards = section.querySelectorAll('.card:not(.hidden-search)');
+            section.classList.toggle('hidden-search', visibleCards.length === 0);
+        });
+
+        noResults.classList.toggle('visible', totalVisible === 0 && q.length > 0);
+    });
+</script>
+
 </body>
 </html>
