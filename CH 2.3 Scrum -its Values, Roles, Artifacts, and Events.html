@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scrum, Explained Through a College Food-Delivery App</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+  --ink:#0F1426;
+  --board:#171E38;
+  --board-2:#1D2648;
+  --line:#2D3760;
+  --fog:#C7D0EE;
+  --fog-dim:#8C97C4;
+  --orange:#FF6B35;
+  --orange-dim:#7A3A24;
+  --teal:#22C3A6;
+  --teal-dim:#134B41;
+  --yellow:#FFD166;
+  --yellow-dim:#5C4A1E;
+  --coral:#FF5D73;
+  --coral-dim:#5A2530;
+  --white:#F5F7FF;
+  --disp:'Space Grotesk',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--ink);
+  color:var(--fog);
+  font-family:var(--body);
+  line-height:1.65;
+  font-size:16px;
+  background-image:
+    radial-gradient(circle at 10% 5%, rgba(255,107,53,0.07), transparent 40%),
+    radial-gradient(circle at 90% 15%, rgba(34,195,166,0.07), transparent 40%);
+}
+h1,h2,h3,h4{font-family:var(--disp); color:var(--white); font-weight:700; letter-spacing:-0.01em;}
+p{color:var(--fog);}
+.wrap{max-width:1100px; margin:0 auto; padding:0 28px;}
+::selection{background:var(--orange); color:var(--ink);}
+
+/* ---------- NAV ---------- */
+nav{
+  position:sticky; top:0; z-index:100;
+  background:rgba(15,20,38,0.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav-inner{
+  max-width:1100px; margin:0 auto; padding:0 28px;
+  display:flex; align-items:center; gap:6px;
+  height:56px; overflow-x:auto; scrollbar-width:none;
+}
+.nav-inner::-webkit-scrollbar{display:none;}
+.nav-brand{font-family:var(--mono); font-size:13px; color:var(--orange); font-weight:600; white-space:nowrap; margin-right:14px; letter-spacing:0.03em;}
+.nav-link{
+  font-family:var(--mono); font-size:12.5px; color:var(--fog-dim);
+  text-decoration:none; white-space:nowrap; padding:7px 12px; border-radius:20px;
+  transition:all 0.15s; border:1px solid transparent;
+}
+.nav-link:hover{color:var(--white); border-color:var(--line);}
+.nav-link.active{color:var(--ink); background:var(--orange); font-weight:600;}
+
+/* ---------- HERO ---------- */
+header.hero{
+  padding:90px 0 70px;
+  border-bottom:1px solid var(--line);
+  position:relative; overflow:hidden;
+}
+.tag-row{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:22px;}
+.tag{
+  font-family:var(--mono); font-size:12px; color:var(--teal);
+  border:1px solid var(--teal-dim); background:rgba(34,195,166,0.08);
+  padding:4px 11px; border-radius:20px; letter-spacing:0.03em;
+}
+.hero h1{font-size:46px; line-height:1.12; max-width:820px; margin-bottom:20px;}
+.hero h1 span{color:var(--orange);}
+.hero .sub{font-size:18px; color:var(--fog-dim); max-width:680px; margin-bottom:34px;}
+.hero-board{
+  display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-top:10px;
+}
+.hero-chip{
+  background:var(--board); border:1px solid var(--line); border-radius:10px;
+  padding:12px 10px; text-align:center;
+}
+.hero-chip .letter{font-family:var(--disp); font-size:22px; font-weight:700; color:var(--orange);}
+.hero-chip .word{display:block; font-size:11px; color:var(--fog-dim); margin-top:4px; font-family:var(--mono);}
+
+/* ---------- SECTION SCAFFOLD ---------- */
+section{padding:64px 0; border-bottom:1px solid var(--line);}
+.eyebrow{font-family:var(--mono); font-size:12.5px; color:var(--orange); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px; display:block;}
+.sec-title{font-size:32px; margin-bottom:14px;}
+.sec-intro{font-size:16.5px; color:var(--fog-dim); max-width:720px; margin-bottom:36px;}
+
+/* Story callout */
+.story{
+  background:linear-gradient(135deg, rgba(255,107,53,0.10), rgba(34,195,166,0.06));
+  border:1px solid var(--orange-dim); border-radius:14px;
+  padding:26px 28px; margin:26px 0;
+}
+.story .k{font-family:var(--mono); font-size:12px; color:var(--orange); text-transform:uppercase; letter-spacing:0.06em; display:block; margin-bottom:8px;}
+.story p{color:var(--white); font-size:16px;}
+
+/* why box */
+.why{
+  border-left:3px solid var(--teal); background:rgba(34,195,166,0.07);
+  border-radius:0 10px 10px 0; padding:16px 20px; margin:22px 0;
+}
+.why .k{font-family:var(--mono); font-size:12px; color:var(--teal); text-transform:uppercase; letter-spacing:0.06em; display:block; margin-bottom:6px;}
+
+/* ---------- VALUE CARDS ---------- */
+.value-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px;}
+.vcard{
+  background:var(--board); border:1px solid var(--line); border-radius:14px;
+  padding:22px; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden;
+}
+.vcard:hover{border-color:var(--orange); transform:translateY(-2px);}
+.vcard .num{font-family:var(--mono); font-size:12px; color:var(--fog-dim);}
+.vcard h3{font-size:21px; margin:8px 0 10px; color:var(--white);}
+.vcard .def{font-size:14.5px; color:var(--fog); margin-bottom:12px;}
+.vcard .hint{font-family:var(--mono); font-size:11.5px; color:var(--teal); letter-spacing:0.03em;}
+.vcard .more{
+  max-height:0; overflow:hidden; transition:max-height 0.3s ease;
+}
+.vcard.open .more{max-height:600px; margin-top:14px; padding-top:14px; border-top:1px dashed var(--line);}
+.vcard .more .lbl{font-family:var(--mono); font-size:11px; color:var(--orange); text-transform:uppercase; letter-spacing:0.05em; margin-top:12px; display:block;}
+.vcard .more .lbl:first-child{margin-top:0;}
+.vcard .more p{font-size:14px; margin-top:4px;}
+.vcard .remember{
+  margin-top:12px; background:rgba(255,209,102,0.1); border:1px solid var(--yellow-dim);
+  border-radius:8px; padding:8px 12px; font-size:13px; color:var(--yellow); font-weight:600;
+}
+
+/* mnemonic strip */
+.mnemonic{
+  display:flex; gap:10px; flex-wrap:wrap; margin:30px 0 8px; justify-content:center;
+}
+.mnemonic .letter-box{
+  background:var(--board-2); border:1px solid var(--orange); border-radius:12px;
+  width:110px; padding:14px 8px; text-align:center;
+}
+.mnemonic .letter-box .l{font-family:var(--disp); font-size:30px; color:var(--orange); font-weight:700;}
+.mnemonic .letter-box .w{font-family:var(--mono); font-size:11px; color:var(--fog-dim); margin-top:4px; display:block;}
+
+/* ---------- ROLE / ARTIFACT CARDS ---------- */
+.role-grid, .artifact-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px; margin-top:32px;}
+.rcard{
+  background:var(--board); border:1px solid var(--line); border-radius:14px; padding:24px;
+}
+.rcard .icon-wrap{
+  width:46px; height:46px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+  margin-bottom:14px;
+}
+.rcard h3{font-size:19px; margin-bottom:8px;}
+.rcard .def{font-size:14px; color:var(--fog); margin-bottom:12px;}
+.rcard .ex-lbl{font-family:var(--mono); font-size:11px; color:var(--fog-dim); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px; display:block;}
+.rcard .ex{background:var(--board-2); border-radius:8px; padding:10px 12px; font-size:13.5px;}
+.rcard .tagline{
+  margin-top:14px; font-family:var(--mono); font-size:12.5px; font-weight:600; padding:6px 0;
+}
+
+/* ---------- EVENTS TABLE ---------- */
+.compare-table{width:100%; border-collapse:collapse; margin-top:10px; font-size:14.5px;}
+.compare-table th{
+  background:var(--board-2); color:var(--white); text-align:left; padding:12px 16px;
+  font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.04em;
+  border-bottom:1px solid var(--line);
+}
+.compare-table th:first-child{color:var(--orange);}
+.compare-table th:last-child{color:var(--teal);}
+.compare-table td{padding:12px 16px; border-bottom:1px solid var(--line); color:var(--fog);}
+.compare-table tr:last-child td{border-bottom:none;}
+.compare-table td:first-child{border-right:1px dashed var(--line);}
+
+/* daily scrum simulator */
+.dss{
+  background:var(--board); border:1px solid var(--line); border-radius:16px; padding:26px; margin-top:26px;
+}
+.dss-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:10px;}
+.dss-head h4{font-size:16px;}
+.dss-timer{font-family:var(--mono); font-size:12.5px; color:var(--coral); border:1px solid var(--coral-dim); background:rgba(255,93,115,0.08); padding:4px 12px; border-radius:20px;}
+.dss-chat{min-height:150px; display:flex; flex-direction:column; gap:10px; margin-bottom:18px;}
+.bubble{
+  max-width:80%; padding:12px 16px; border-radius:12px; font-size:14px; opacity:0; transform:translateY(6px);
+  animation:pop 0.35s forwards;
+}
+@keyframes pop{to{opacity:1; transform:translateY(0);}}
+.bubble.q{background:var(--board-2); color:var(--teal); align-self:flex-start; border:1px solid var(--teal-dim); font-family:var(--mono); font-size:13px;}
+.bubble.a{background:rgba(255,107,53,0.09); color:var(--white); align-self:flex-end; border:1px solid var(--orange-dim);}
+.dss-btns{display:flex; gap:10px; flex-wrap:wrap;}
+.btn{
+  font-family:var(--mono); font-size:13px; background:var(--orange); color:var(--ink); border:none;
+  padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600; transition:all 0.15s;
+}
+.btn:hover{background:#ff8256;}
+.btn.ghost{background:transparent; border:1px solid var(--line); color:var(--fog);}
+.btn.ghost:hover{border-color:var(--fog-dim); color:var(--white);}
+.btn:disabled{opacity:0.4; cursor:not-allowed;}
+
+/* ---------- DIAGRAM WRAP ---------- */
+.diagram-card{
+  background:var(--board); border:1px solid var(--line); border-radius:16px; padding:20px;
+  margin:28px 0; overflow-x:auto;
+}
+.diagram-card svg{display:block; margin:0 auto; max-width:100%; height:auto;}
+
+/* ---------- FLASHCARDS ---------- */
+.deck-wrap{display:flex; flex-direction:column; align-items:center; margin-top:30px;}
+.deck-progress{font-family:var(--mono); font-size:12.5px; color:var(--fog-dim); margin-bottom:14px;}
+.flash{
+  width:100%; max-width:560px; height:250px; perspective:1400px; cursor:pointer;
+}
+.flash-inner{
+  position:relative; width:100%; height:100%; transition:transform 0.5s; transform-style:preserve-3d;
+}
+.flash.flipped .flash-inner{transform:rotateY(180deg);}
+.flash-face{
+  position:absolute; width:100%; height:100%; backface-visibility:hidden;
+  border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:30px; text-align:center; border:1px solid var(--line);
+}
+.flash-front{background:var(--board-2);}
+.flash-front .lbl{font-family:var(--mono); font-size:11px; color:var(--orange); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px;}
+.flash-front h3{font-size:26px;}
+.flash-back{background:linear-gradient(135deg, rgba(255,107,53,0.14), rgba(34,195,166,0.10)); transform:rotateY(180deg);}
+.flash-back p{color:var(--white); font-size:15.5px;}
+.flash-hint{font-family:var(--mono); font-size:11.5px; color:var(--fog-dim); margin-top:16px;}
+.deck-btns{display:flex; gap:12px; margin-top:20px;}
+
+/* ---------- GLOSSARY ---------- */
+.gloss-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:2px; background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden; margin-top:26px;}
+.gloss-item{background:var(--board); padding:18px 20px;}
+.gloss-item dt{font-family:var(--mono); font-size:13.5px; color:var(--orange); font-weight:600; margin-bottom:6px;}
+.gloss-item dd{font-size:13.5px; color:var(--fog);}
+
+/* footer */
+footer{padding:40px 0 60px; text-align:center;}
+footer .m{font-family:var(--mono); font-size:12.5px; color:var(--fog-dim);}
+footer .brand{font-family:var(--disp); color:var(--orange); font-weight:700; margin-top:6px;}
+
+@media(max-width:640px){
+  .hero h1{font-size:32px;}
+  .hero-board{grid-template-columns:repeat(2,1fr);}
+  .sec-title{font-size:26px;}
+  .mnemonic .letter-box{width:80px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner" id="navInner">
+    <span class="nav-brand">◆ SCRUM</span>
+    <a class="nav-link" href="#story">The Challenge</a>
+    <a class="nav-link" href="#values">Values</a>
+    <a class="nav-link" href="#roles">Roles</a>
+    <a class="nav-link" href="#artifacts">Artifacts</a>
+    <a class="nav-link" href="#events">Events</a>
+    <a class="nav-link" href="#bigpicture">Big Picture</a>
+    <a class="nav-link" href="#quiz">Test Yourself</a>
+    <a class="nav-link" href="#glossary">Glossary</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="tag-row">
+      <span class="tag">Prepared By</span>
+      <span class="tag">MS.A.KIRUTHIKA , AP/CSE</span>
+      <span class="tag">KEC</span>
+    </div>
+    <h1>SCRUM - Values , Roles , Artifacts , Event
+    <h1>How five students with <span>no manager</span> ship a working app, one Sprint at a time.</h1>
+    <p class="sub">A complete walk-through of Scrum — its <strong>Values</strong>, <strong>Roles</strong>, <strong>Artifacts</strong>, and <strong>Events</strong> — told through one running story: a team of college students building a Food Delivery App for their campus. Every term you need is here, explained the way you'd explain it to a friend, not a textbook.</p>
+    <div class="hero-board">
+      <div class="hero-chip"><span class="letter">C</span><span class="word">Commitment</span></div>
+      <div class="hero-chip"><span class="letter">F</span><span class="word">Focus</span></div>
+      <div class="hero-chip"><span class="letter">O</span><span class="word">Openness</span></div>
+      <div class="hero-chip"><span class="letter">R</span><span class="word">Respect</span></div>
+      <div class="hero-chip"><span class="letter">C</span><span class="word">Courage</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ THE STORY / SETUP ============ -->
+<section id="story">
+  <div class="wrap">
+    <span class="eyebrow">Setting the scene</span>
+    <h2 class="sec-title">Meet the team behind the app</h2>
+    <p class="sec-intro">Before any definitions, picture the situation. This is the story we'll return to in every section below.</p>
+
+    <div class="story">
+      <span class="k">The Scenario</span>
+      <p>Five second-year students — a developer, a designer, a tester, a database person, and one more all-rounder — decide to build a <strong>College Food Delivery App</strong> so students can order from campus canteens without standing in line. Nobody is "the boss." There's no project manager assigning tasks every morning. The team has to organize <em>itself</em>.</p>
+    </div>
+
+    <p style="margin-top:8px; font-size:16px;">That single constraint — <strong style="color:var(--white)">no manager micromanaging every task</strong> — is exactly the problem Scrum was designed to solve. Scrum is a lightweight framework that helps small, self-organizing teams build a product in short, repeatable cycles, while staying honest about progress at every step.</p>
+
+    <div class="why">
+      <span class="k">Ask yourself first</span>
+      <p style="color:var(--fog);">If you were on this team with no one assigning your day, what qualities would <em>you</em> need to actually get things done without chaos? Keep that question in mind — the answer is the next section.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VALUES ============ -->
+<section id="values">
+  <div class="wrap">
+    <span class="eyebrow">Part 1 of 4</span>
+    <h2 class="sec-title">Scrum Values — how the team behaves</h2>
+    <p class="sec-intro"><strong>Scrum Value:</strong> a principle that guides how Scrum Team members behave and work together, without needing someone to enforce it. There are five of them. Tap any card to see the full explanation and how it plays out in the Food Delivery App team.</p>
+
+    <div class="value-grid" id="valueGrid">
+
+      <div class="vcard" data-i="1">
+        <span class="num">01 / 05</span>
+        <h3>🤝 Commitment</h3>
+        <p class="def">Each team member is dedicated to achieving the goals of the project and the Sprint.</p>
+        <span class="hint">tap to expand ↓</span>
+        <div class="more">
+          <span class="lbl">In plain words</span>
+          <p>It's not "I finished my task, so I don't care about the rest." It's "we agreed on a goal together, and I'm responsible for helping the <em>whole team</em> reach it."</p>
+          <span class="lbl">In the food delivery app</span>
+          <p>The team agrees: <em>"By the end of this Sprint, students should be able to log in and view the menu."</em> The developer builds Login, the designer builds the UI, the tester tests it — but everyone stays invested until the whole goal is met, not just their own slice.</p>
+          <div class="remember">⭐ Remember: Commitment = dedication toward the project goal.</div>
+        </div>
+      </div>
+
+      <div class="vcard" data-i="2">
+        <span class="num">02 / 05</span>
+        <h3>🎯 Focus</h3>
+        <p class="def">Concentrating on the work and goals of the current Sprint, instead of chasing unrelated ideas.</p>
+        <span class="hint">tap to expand ↓</span>
+        <div class="more">
+          <span class="lbl">In plain words</span>
+          <p>New ideas will always show up mid-project. Focus means finishing what you committed to before chasing the next shiny thing.</p>
+          <span class="lbl">In the food delivery app</span>
+          <p>The current Sprint is <em>Login + Menu</em>. Midway through, someone gets excited: "Let's also add an AI chatbot, coupons, dark mode, and voice ordering!" A focused team says: great ideas — for a future Sprint. Right now, we finish Login + Menu.</p>
+          <div class="remember">⭐ Remember: Focus = concentrate on the current goal, not every good idea that shows up.</div>
+        </div>
+      </div>
+
+      <div class="vcard" data-i="3">
+        <span class="num">03 / 05</span>
+        <h3>👁️ Openness</h3>
+        <p class="def">Team members openly share their progress, problems, and the real state of the project — nothing is hidden.</p>
+        <span class="hint">tap to expand ↓</span>
+        <div class="more">
+          <span class="lbl">In plain words</span>
+          <p>Everyone should know what everyone else is working on, what's blocked, and what's done — no surprises at the last moment.</p>
+          <span class="lbl">In the food delivery app</span>
+          <p>The developer hits a wall: "The payment API is failing." Hiding it helps no one. Saying it out loud — <em>"I'm blocked by the payment API"</em> — lets the team respond. A shared <strong>task board</strong> (To Do / In Progress / Done) makes this visible to everyone at a glance.</p>
+          <div class="remember">⭐ Remember: Openness = make your work and your problems visible.</div>
+        </div>
+      </div>
+
+      <div class="vcard" data-i="4">
+        <span class="num">04 / 05</span>
+        <h3>🙌 Respect</h3>
+        <p class="def">Team members value one another's skills, contributions, responsibilities, and opinions.</p>
+        <span class="hint">tap to expand ↓</span>
+        <div class="more">
+          <span class="lbl">In plain words</span>
+          <p>Mutual respect is what lets people trust each other to do their part well — even when they work very differently.</p>
+          <span class="lbl">In the food delivery app</span>
+          <p>The tester reports: "There's a serious bug in Login." A disrespectful developer says "you don't understand coding." A respectful one says: <em>"let's investigate this together."</em> Both are working toward the same goal — the bug isn't a personal attack.</p>
+          <div class="remember">⭐ Remember: Respect = trust and value your teammates' work.</div>
+        </div>
+      </div>
+
+      <div class="vcard" data-i="5">
+        <span class="num">05 / 05</span>
+        <h3>🦁 Courage</h3>
+        <p class="def">The willingness to stand up for the project, raise hard truths, and follow Agile principles even under pressure.</p>
+        <span class="hint">tap to expand ↓</span>
+        <div class="more">
+          <span class="lbl">In plain words</span>
+          <p>Courage is what makes the other four values real when it's uncomfortable to be honest.</p>
+          <span class="lbl">In the food delivery app</span>
+          <p>A manager pressures the team: "The feature is only 50% done — demo it as finished." A courageous team says: <em>"we can't present unfinished work as complete."</em> Or a developer realizes a requirement is technically impossible in this Sprint — courage means saying so early, not staying quiet.</p>
+          <div class="remember">⭐ Remember: Courage = speak up and do what's right for the project.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mnemonic">
+      <div class="letter-box"><span class="l">C</span><span class="w">Courage</span></div>
+      <div class="letter-box"><span class="l">O</span><span class="w">Openness</span></div>
+      <div class="letter-box"><span class="l">R</span><span class="w">Respect</span></div>
+      <div class="letter-box"><span class="l">F</span><span class="w">Focus</span></div>
+      <div class="letter-box"><span class="l">C</span><span class="w">Commitment</span></div>
+    </div>
+    <p style="text-align:center; margin-top:10px; font-family:var(--mono); font-size:12.5px; color:var(--fog-dim);">C-O-R-F-C — five letters, five values, no memorizing lists needed.</p>
+  </div>
+</section>
+
+<!-- ============ ROLES ============ -->
+<section id="roles">
+  <div class="wrap">
+    <span class="eyebrow">Part 2 of 4</span>
+    <h2 class="sec-title">Scrum Roles — who owns what</h2>
+    <p class="sec-intro">Values tell us <strong>how</strong> the team behaves. Roles tell us <strong>who</strong> is responsible for <strong>what</strong>. Scrum keeps this deliberately small — just three roles.</p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 860 300" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowRole" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8C97C4"/></marker>
+        </defs>
+        <!-- center scrum team node -->
+        <circle cx="430" cy="150" r="62" fill="#1D2648" stroke="#FF6B35" stroke-width="2"/>
+        <text x="430" y="144" text-anchor="middle" fill="#F5F7FF" font-family="Space Grotesk, sans-serif" font-size="16" font-weight="700">SCRUM</text>
+        <text x="430" y="164" text-anchor="middle" fill="#F5F7FF" font-family="Space Grotesk, sans-serif" font-size="16" font-weight="700">TEAM</text>
+
+        <!-- Product Owner -->
+        <line x1="375" y1="112" x2="200" y2="70" stroke="#2D3760" stroke-width="2"/>
+        <rect x="60" y="30" width="230" height="80" rx="12" fill="#171E38" stroke="#FFD166" stroke-width="1.5"/>
+        <text x="175" y="58" text-anchor="middle" fill="#FFD166" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="1">PRODUCT OWNER</text>
+        <text x="175" y="80" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12.5">Decides WHAT to build,</text>
+        <text x="175" y="97" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12.5">and in what priority</text>
+
+        <!-- Development Team -->
+        <line x1="430" y1="212" x2="430" y2="235" stroke="#2D3760" stroke-width="2"/>
+        <rect x="315" y="235" width="230" height="80" rx="12" fill="#171E38" stroke="#22C3A6" stroke-width="1.5"/>
+        <text x="430" y="263" text-anchor="middle" fill="#22C3A6" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="1">DEVELOPMENT TEAM</text>
+        <text x="430" y="285" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12.5">Builds HOW —</text>
+        <text x="430" y="302" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12.5">the actual product</text>
+
+        <!-- Scrum Master -->
+        <line x1="485" y1="112" x2="660" y2="70" stroke="#2D3760" stroke-width="2"/>
+        <rect x="570" y="30" width="230" height="80" rx="12" fill="#171E38" stroke="#FF6B35" stroke-width="1.5"/>
+        <text x="685" y="58" text-anchor="middle" fill="#FF6B35" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="1">SCRUM MASTER</text>
+        <text x="685" y="80" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12.5">Helps the team work</text>
+        <text x="685" y="97" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12.5">well & clears blockers</text>
+      </svg>
+    </div>
+
+    <div class="role-grid">
+      <div class="rcard">
+        <div class="icon-wrap" style="background:rgba(255,209,102,0.12); color:#FFD166; font-size:22px;">👑</div>
+        <h3>Product Owner</h3>
+        <p class="def">Responsible for the <strong>Product Backlog</strong> — its contents, its priority, and the key product decisions. Answers the question "what should we build first?"</p>
+        <span class="ex-lbl">Food delivery app example</span>
+        <div class="ex">The backlog has Login, Menu, Search, Cart, Payment, Tracking, and Feedback. The Product Owner decides: "Login and Menu matter most right now" — so those get top priority.</div>
+        <div class="tagline" style="color:#FFD166;">Product Owner → WHAT + PRIORITY</div>
+      </div>
+
+      <div class="rcard">
+        <div class="icon-wrap" style="background:rgba(34,195,166,0.12); color:#22C3A6; font-size:22px;">🛠️</div>
+        <h3>Development Team</h3>
+        <p class="def">The cross-functional group of technical members — developers, testers, designers, and specialists — who work together to actually build the product.</p>
+        <span class="ex-lbl">Food delivery app example</span>
+        <div class="ex">Developer writes code, Tester checks quality, UI/UX Designer shapes the screens, Database Specialist manages storage — together they have every skill needed to ship the product.</div>
+        <div class="tagline" style="color:#22C3A6;">Development Team → BUILD the product</div>
+      </div>
+
+      <div class="rcard">
+        <div class="icon-wrap" style="background:rgba(255,107,53,0.12); color:#FF6B35; font-size:22px;">🧭</div>
+        <h3>Scrum Master</h3>
+        <p class="def">Helps the team work effectively within Scrum and removes obstacles that block progress. <strong>Not</strong> a boss — a facilitator, coach, and impediment-remover.</p>
+        <span class="ex-lbl">Food delivery app example</span>
+        <div class="ex">Developer: "The testing server is down." Scrum Master: "I'll get that resolved so you're not blocked." That's the job — clearing the path, not assigning tasks.</div>
+        <div class="tagline" style="color:#FF6B35;">Scrum Master → HELP the team work effectively</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ARTIFACTS ============ -->
+<section id="artifacts">
+  <div class="wrap">
+    <span class="eyebrow">Part 3 of 4</span>
+    <h2 class="sec-title">Scrum Artifacts — where the work lives</h2>
+    <p class="sec-intro"><strong>Scrum Artifacts</strong> are the work products that give everyone transparency about the product and the team's progress. There are three, and they flow into one another.</p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowArt" markerWidth="10" markerHeight="10" refX="7" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#FF6B35"/></marker>
+        </defs>
+        <!-- box 1 -->
+        <rect x="20" y="60" width="230" height="100" rx="12" fill="#171E38" stroke="#FFD166" stroke-width="1.5"/>
+        <text x="135" y="88" text-anchor="middle" fill="#FFD166" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="0.5">PRODUCT BACKLOG</text>
+        <text x="135" y="112" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12">Login · Menu · Search</text>
+        <text x="135" y="130" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12">Cart · Payment · Tracking</text>
+        <text x="135" y="148" text-anchor="middle" fill="#8C97C4" font-family="Inter, sans-serif" font-size="11">(entire product's work)</text>
+
+        <line x1="255" y1="110" x2="325" y2="110" stroke="#FF6B35" stroke-width="2" marker-end="url(#arrowArt)"/>
+
+        <!-- box 2 -->
+        <rect x="335" y="60" width="230" height="100" rx="12" fill="#171E38" stroke="#22C3A6" stroke-width="1.5"/>
+        <text x="450" y="88" text-anchor="middle" fill="#22C3A6" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="0.5">SPRINT BACKLOG</text>
+        <text x="450" y="112" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12">Login · Menu · Search</text>
+        <text x="450" y="130" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12">(selected for THIS sprint)</text>
+        <text x="450" y="148" text-anchor="middle" fill="#8C97C4" font-family="Inter, sans-serif" font-size="11">+ the plan to build it</text>
+
+        <line x1="570" y1="110" x2="640" y2="110" stroke="#FF6B35" stroke-width="2" marker-end="url(#arrowArt)"/>
+
+        <!-- box 3 -->
+        <rect x="650" y="60" width="230" height="100" rx="12" fill="#171E38" stroke="#FF6B35" stroke-width="1.5"/>
+        <text x="765" y="88" text-anchor="middle" fill="#FF6B35" font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="0.5">INCREMENT</text>
+        <text x="765" y="112" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12">Login ✅ Menu ✅</text>
+        <text x="765" y="130" text-anchor="middle" fill="#C7D0EE" font-family="Inter, sans-serif" font-size="12">Search ✅</text>
+        <text x="765" y="148" text-anchor="middle" fill="#8C97C4" font-family="Inter, sans-serif" font-size="11">(working software, right now)</text>
+
+        <text x="135" y="195" text-anchor="middle" fill="#8C97C4" font-family="Inter, sans-serif" font-size="11.5">WHAT the product needs</text>
+        <text x="450" y="195" text-anchor="middle" fill="#8C97C4" font-family="Inter, sans-serif" font-size="11.5">WHAT we're doing now</text>
+        <text x="765" y="195" text-anchor="middle" fill="#8C97C4" font-family="Inter, sans-serif" font-size="11.5">WHAT we've actually built</text>
+      </svg>
+    </div>
+
+    <div class="artifact-grid">
+      <div class="rcard">
+        <h3 style="color:#FFD166;">📋 Product Backlog</h3>
+        <p class="def"><strong>An ordered list of all the work required for the product.</strong> It's the master to-do list — everything the app could ever need, ranked by priority.</p>
+        <span class="ex-lbl">Example</span>
+        <div class="ex">Login, Menu, Search, Cart, Payment, Tracking, Feedback — the complete wish list for the Food Delivery App, in priority order.</div>
+      </div>
+      <div class="rcard">
+        <h3 style="color:#22C3A6;">🗂️ Sprint Backlog</h3>
+        <p class="def"><strong>The work selected for the current Sprint, plus the plan for completing it.</strong> It's a small, focused slice pulled from the Product Backlog.</p>
+        <span class="ex-lbl">Example</span>
+        <div class="ex">From the full backlog, the team pulls out Login, Menu, and Search for this Sprint — and maps out how they'll get it done.</div>
+      </div>
+      <div class="rcard">
+        <h3 style="color:#FF6B35;">✅ Increment</h3>
+        <p class="def"><strong>The working product outcome produced during the Sprint</strong> — usable, tested, and demonstrable, not "almost done."</p>
+        <span class="ex-lbl">Example</span>
+        <div class="ex">After Sprint 1: Login works, Menu works, Search works. That combined, working functionality is the Increment.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EVENTS / RULES ============ -->
+<section id="events">
+  <div class="wrap">
+    <span class="eyebrow">Part 4 of 4</span>
+    <h2 class="sec-title">Scrum Events — the rhythm the team follows</h2>
+    <p class="sec-intro">Scrum Events (sometimes called Scrum Rules) are the recurring meetings that structure every Sprint. They repeat in the same order, Sprint after Sprint, forming a cycle.</p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrowCyc" markerWidth="9" markerHeight="9" refX="6.5" refY="3" orient="auto"><path d="M0,0 L6.5,3 L0,6" fill="none" stroke="#8C97C4" stroke-width="1.4"/></marker>
+        </defs>
+        <!-- center -->
+        <circle cx="350" cy="350" r="98" fill="#1D2648" stroke="#2D3760" stroke-width="1.5"/>
+        <text x="350" y="336" text-anchor="middle" fill="#F5F7FF" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="700">FOOD DELIVERY</text>
+        <text x="350" y="356" text-anchor="middle" fill="#F5F7FF" font-family="Space Grotesk, sans-serif" font-size="15" font-weight="700">APP SPRINT</text>
+        <text x="350" y="378" text-anchor="middle" fill="#8C97C4" font-family="IBM Plex Mono, monospace" font-size="11">cycle repeats ↻</text>
+
+        <!-- cycle arc arrows connecting 5 nodes around circle, radius 260, angles at -90,-18,54,126,198 -->
+        <path d="M 350 90 A 260 260 0 0 1 597 258" fill="none" stroke="#2D3760" stroke-width="2" marker-end="url(#arrowCyc)"/>
+        <path d="M 597 258 A 260 260 0 0 1 503 561" fill="none" stroke="#2D3760" stroke-width="2" marker-end="url(#arrowCyc)"/>
+        <path d="M 503 561 A 260 260 0 0 1 197 561" fill="none" stroke="#2D3760" stroke-width="2" marker-end="url(#arrowCyc)"/>
+        <path d="M 197 561 A 260 260 0 0 1 103 258" fill="none" stroke="#2D3760" stroke-width="2" marker-end="url(#arrowCyc)"/>
+        <path d="M 103 258 A 260 260 0 0 1 350 90" fill="none" stroke="#2D3760" stroke-width="2" marker-end="url(#arrowCyc)"/>
+
+        <!-- Node 1: Sprint Planning (top) -->
+        <circle cx="350" cy="70" r="58" fill="#171E38" stroke="#FFD166" stroke-width="2"/>
+        <text x="350" y="60" text-anchor="middle" fill="#FFD166" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="0.3">SPRINT</text>
+        <text x="350" y="74" text-anchor="middle" fill="#FFD166" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="0.3">PLANNING</text>
+        <text x="350" y="90" text-anchor="middle" fill="#8C97C4" font-family="Inter, sans-serif" font-size="9.5">decide what + how</text>
+
+        <!-- Node 2: Daily Scrum (upper right) -->
+        <circle cx="617" cy="258" r="58" fill="#171E38" stroke="#22C3A6" stroke-width="2"/>
+        <text x="617" y="248" text-anchor="middle" fill="#22C3A6" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="0.3">DAILY</text>
+        <text x="617" y="262" text-anchor="middle" fill="#22C3A6" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="0.3">SCRUM</text>
+        <text x="617" y="278" text-anchor="middle" fill="#8C97C4" font-family="Inter, sans-serif" font-size="9.5">15 min, daily</text>
+
+        <!-- Node 3: Sprint Review (lower right) -->
+        <circle cx="523" cy="581" r="58" fill="#171E38" stroke="#FF6B35" stroke-width="2"/>
+        <text x="523" y="571" text-anchor="middle" fill="#FF6B35" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="0.3">SPRINT</text>
+        <text x="523" y="585" text-anchor="middle" fill="#FF6B35" font-family="IBM Plex Mono, monospace" font-size="10.5" letter-spacing="0.3">REVIEW</text>
+        <text x="523" y="601" text-anchor="middle" fill="#8C97C4" font-family="Inter, sans-serif" font-size="9.5">demo to stakeholders</text>
+
+        <!-- Node 4: Sprint Retrospective (lower left) -->
+        <circle cx="177" cy="581" r="58" fill="#171E38" stroke="#FF5D73" stroke-width="2"/>
+        <text x="177" y="565" text-anchor="middle" fill="#FF5D73" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="0.2">SPRINT</text>
+        <text x="177" y="579" text-anchor="middle" fill="#FF5D73" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="0.2">RETRO-</text>
+        <text x="177" y="593" text-anchor="middle" fill="#FF5D73" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="0.2">SPECTIVE</text>
+        <text x="177" y="608" text-anchor="middle" fill="#8C97C4" font-family="Inter, sans-serif" font-size="9.5">improve the process</text>
+
+        <!-- Node 5: Sprint (upper left) -->
+        <circle cx="83" cy="258" r="58" fill="#171E38" stroke="#C7D0EE" stroke-width="2"/>
+        <text x="83" y="253" text-anchor="middle" fill="#F5F7FF" font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="0.3">SPRINT</text>
+        <text x="83" y="272" text-anchor="middle" fill="#8C97C4" font-family="Inter, sans-serif" font-size="9.5">build the work</text>
+      </svg>
+    </div>
+
+    <div class="rcard" style="margin-top:8px;">
+      <h3 style="color:#FFD166;">🗓️ Sprint Planning</h3>
+      <p class="def"><strong>The event at the start of a Sprint where the team decides what work will be done and how.</strong> It has two parts: (1) which backlog items can we deliver? (2) how will we accomplish them? Output: the Sprint Backlog.</p>
+    </div>
+
+    <div class="rcard" style="margin-top:16px;">
+      <h3 style="color:#C7D0EE;">🏃 The Sprint</h3>
+      <p class="def"><strong>A fixed-length period during which the team builds the selected backlog items into working software.</strong> Common lengths: two weeks or one month — but always fixed ("time-boxed") in advance.</p>
+    </div>
+
+    <div class="dss">
+      <div class="dss-head">
+        <h4>💬 Daily Scrum simulator — a 15-minute meeting, 3 questions</h4>
+        <span class="dss-timer" id="dssTimer">⏱ 15-min time-box</span>
+      </div>
+      <div class="dss-chat" id="dssChat"></div>
+      <div class="dss-btns">
+        <button class="btn" id="dssNext">Ask next question →</button>
+        <button class="btn ghost" id="dssReset">Restart</button>
+      </div>
+    </div>
+
+    <div class="rcard" style="margin-top:26px;">
+      <h3 style="color:#FF6B35;">🎬 Sprint Review</h3>
+      <p class="def"><strong>The meeting where the team demonstrates working software to users and stakeholders and collects feedback.</strong> Rule: only <em>completed</em> items get demonstrated. Login ✅ gets shown. Payment ❌ (not finished) does not get pretended into a demo.</p>
+    </div>
+
+    <div class="rcard" style="margin-top:16px;">
+      <h3 style="color:#FF5D73;">🔁 Sprint Retrospective</h3>
+      <p class="def"><strong>The meeting where the team reflects on how it worked, not what it built.</strong> Two questions: "What went well?" and "What can improve?" Example: "Testing started too late" → action: "start testing earlier next Sprint."</p>
+    </div>
+
+    <h3 style="margin-top:38px; margin-bottom:6px; font-size:19px;">Review vs. Retrospective — the exam favorite</h3>
+    <p style="color:var(--fog-dim); font-size:14px; margin-bottom:6px;">These two get mixed up constantly. Here's the difference in one table.</p>
+    <table class="compare-table">
+      <thead><tr><th>Sprint Review</th><th>Sprint Retrospective</th></tr></thead>
+      <tbody>
+        <tr><td>Product-focused</td><td>Process-focused</td></tr>
+        <tr><td>Demonstrates working software</td><td>Improves the way the team works</td></tr>
+        <tr><td>Stakeholders are involved</td><td>Scrum Team only, focused on improvement</td></tr>
+        <tr><td>Gets feedback on the product</td><td>Gets ideas to improve the process</td></tr>
+        <tr><td><strong>"What did we build?"</strong></td><td><strong>"How can we work better?"</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="why" style="margin-top:20px;">
+      <span class="k">Golden memory trick</span>
+      <p style="color:var(--fog);"><strong style="color:var(--white)">REVIEW → PRODUCT.</strong> &nbsp; <strong style="color:var(--white)">RETROSPECTIVE → PROCESS.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BIG PICTURE ============ -->
+<section id="bigpicture">
+  <div class="wrap">
+    <span class="eyebrow">Putting it together</span>
+    <h2 class="sec-title">The whole story, one diagram</h2>
+    <p class="sec-intro">Four pieces, one framework. Here's how Values, Roles, Artifacts, and Events all connect inside a single Sprint of the Food Delivery App.</p>
+
+    <div class="diagram-card">
+      <svg viewBox="0 0 960 460" xmlns="http://www.w3.org/2000/svg">
+        <!-- root -->
+        <rect x="410" y="10" width="140" height="46" rx="10" fill="#1D2648" stroke="#FF6B35" stroke-width="2"/>
+        <text x="480" y="38" text-anchor="middle" fill="#F5F7FF" font-family="Space Grotesk, sans-serif" font-size="16" font-weight="700">SCRUM</text>
+
+        <!-- 4 branch lines -->
+        <line x1="480" y1="56" x2="480" y2="90" stroke="#2D3760" stroke-width="2"/>
+        <line x1="130" y1="90" x2="830" y2="90" stroke="#2D3760" stroke-width="2"/>
+        <line x1="130" y1="90" x2="130" y2="110" stroke="#2D3760" stroke-width="2"/>
+        <line x1="370" y1="90" x2="370" y2="110" stroke="#2D3760" stroke-width="2"/>
+        <line x1="600" y1="90" x2="600" y2="110" stroke="#2D3760" stroke-width="2"/>
+        <line x1="830" y1="90" x2="830" y2="110" stroke="#2D3760" stroke-width="2"/>
+
+        <!-- Values column -->
+        <rect x="55" y="110" width="150" height="36" rx="8" fill="#171E38" stroke="#FFD166" stroke-width="1.5"/>
+        <text x="130" y="133" text-anchor="middle" fill="#FFD166" font-family="IBM Plex Mono, monospace" font-size="12">VALUES</text>
+        <g font-family="Inter, sans-serif" font-size="11.5" fill="#C7D0EE">
+          <text x="130" y="168" text-anchor="middle">Commitment</text>
+          <text x="130" y="188" text-anchor="middle">Focus</text>
+          <text x="130" y="208" text-anchor="middle">Openness</text>
+          <text x="130" y="228" text-anchor="middle">Respect</text>
+          <text x="130" y="248" text-anchor="middle">Courage</text>
+        </g>
+
+        <!-- Roles column -->
+        <rect x="295" y="110" width="150" height="36" rx="8" fill="#171E38" stroke="#22C3A6" stroke-width="1.5"/>
+        <text x="370" y="133" text-anchor="middle" fill="#22C3A6" font-family="IBM Plex Mono, monospace" font-size="12">ROLES</text>
+        <g font-family="Inter, sans-serif" font-size="11.5" fill="#C7D0EE">
+          <text x="370" y="170" text-anchor="middle">Product Owner</text>
+          <text x="370" y="192" text-anchor="middle">Development Team</text>
+          <text x="370" y="214" text-anchor="middle">Scrum Master</text>
+        </g>
+
+        <!-- Artifacts column -->
+        <rect x="525" y="110" width="150" height="36" rx="8" fill="#171E38" stroke="#FF6B35" stroke-width="1.5"/>
+        <text x="600" y="133" text-anchor="middle" fill="#FF6B35" font-family="IBM Plex Mono, monospace" font-size="12">ARTIFACTS</text>
+        <g font-family="Inter, sans-serif" font-size="11.5" fill="#C7D0EE">
+          <text x="600" y="170" text-anchor="middle">Product Backlog</text>
+          <text x="600" y="192" text-anchor="middle">Sprint Backlog</text>
+          <text x="600" y="214" text-anchor="middle">Increment</text>
+        </g>
+
+        <!-- Events column -->
+        <rect x="755" y="110" width="150" height="36" rx="8" fill="#171E38" stroke="#FF5D73" stroke-width="1.5"/>
+        <text x="830" y="133" text-anchor="middle" fill="#FF5D73" font-family="IBM Plex Mono, monospace" font-size="12">EVENTS</text>
+        <g font-family="Inter, sans-serif" font-size="11" fill="#C7D0EE">
+          <text x="830" y="168" text-anchor="middle">Sprint Planning</text>
+          <text x="830" y="188" text-anchor="middle">Sprint</text>
+          <text x="830" y="208" text-anchor="middle">Daily Scrum</text>
+          <text x="830" y="228" text-anchor="middle">Sprint Review</text>
+          <text x="830" y="248" text-anchor="middle">Retrospective</text>
+        </g>
+
+        <!-- bottom banner -->
+        <line x1="480" y1="290" x2="480" y2="320" stroke="#2D3760" stroke-width="2"/>
+        <rect x="230" y="320" width="500" height="110" rx="14" fill="url(#bpGrad)" stroke="#2D3760" stroke-width="1.5"/>
+        <defs>
+          <linearGradient id="bpGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#241a33"/>
+            <stop offset="100%" stop-color="#12312c"/>
+          </linearGradient>
+        </defs>
+        <text x="480" y="350" text-anchor="middle" fill="#F5F7FF" font-family="Space Grotesk, sans-serif" font-size="14" font-weight="700">RESULT, EVERY SPRINT:</text>
+        <text x="480" y="378" text-anchor="middle" fill="#FFD166" font-family="Inter, sans-serif" font-size="13">A self-organizing team, behaving well (Values),</text>
+        <text x="480" y="398" text-anchor="middle" fill="#22C3A6" font-family="Inter, sans-serif" font-size="13">with clear ownership (Roles), visible progress (Artifacts),</text>
+        <text x="480" y="418" text-anchor="middle" fill="#FF6B35" font-family="Inter, sans-serif" font-size="13">on a predictable rhythm (Events) — then it repeats.</text>
+      </svg>
+    </div>
+
+    <div class="story">
+      <span class="k">Recap the whole journey</span>
+      <p>The team starts with <strong>Commitment, Focus, Openness, Respect, and Courage</strong> as their working culture. The <strong>Product Owner</strong> decides priorities, the <strong>Development Team</strong> builds, and the <strong>Scrum Master</strong> clears blockers. Work flows from the <strong>Product Backlog</strong> → into a focused <strong>Sprint Backlog</strong> → into a working <strong>Increment</strong>. And the whole thing runs on a rhythm: <strong>Sprint Planning → Sprint → Daily Scrum → Sprint Review → Sprint Retrospective</strong> — then the next Sprint begins.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUIZ / FLASHCARDS ============ -->
+<section id="quiz">
+  <div class="wrap">
+    <span class="eyebrow">Test yourself</span>
+    <h2 class="sec-title">Flashcard check — do you know it cold?</h2>
+    <p class="sec-intro">Tap the card to flip it. Try to say the definition out loud <em>before</em> flipping — that's the whole trick to remembering it.</p>
+
+    <div class="deck-wrap">
+      <div class="deck-progress" id="deckProgress">Card 1 / 13</div>
+      <div class="flash" id="flash">
+        <div class="flash-inner" id="flashInner">
+          <div class="flash-face flash-front">
+            <span class="lbl">Key Term</span>
+            <h3 id="flashTerm">Commitment</h3>
+            <span class="flash-hint">tap to reveal definition</span>
+          </div>
+          <div class="flash-face flash-back">
+            <p id="flashDef">Dedication toward achieving the project or Sprint goals.</p>
+          </div>
+        </div>
+      </div>
+      <div class="deck-btns">
+        <button class="btn ghost" id="prevCard">← Prev</button>
+        <button class="btn" id="nextCard">Next →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GLOSSARY ============ -->
+<section id="glossary" style="border-bottom:none;">
+  <div class="wrap">
+    <span class="eyebrow">Quick reference</span>
+    <h2 class="sec-title">Exam-ready glossary</h2>
+    <p class="sec-intro">Every key term from this guide, in one scannable list — good for a last-minute revision pass.</p>
+
+    <dl class="gloss-grid">
+      <div class="gloss-item"><dt>Scrum Value</dt><dd>A principle that guides how Scrum Team members behave and work together.</dd></div>
+      <div class="gloss-item"><dt>Commitment</dt><dd>Dedication toward achieving the project or Sprint goals.</dd></div>
+      <div class="gloss-item"><dt>Focus</dt><dd>Concentrating on the work and goals of the current Sprint.</dd></div>
+      <div class="gloss-item"><dt>Openness</dt><dd>Making work, progress, and problems visible to the team.</dd></div>
+      <div class="gloss-item"><dt>Respect</dt><dd>Valuing the skills, contributions, and opinions of team members.</dd></div>
+      <div class="gloss-item"><dt>Courage</dt><dd>Willingness to address problems and stand up for what benefits the project.</dd></div>
+      <div class="gloss-item"><dt>Product Owner</dt><dd>The role responsible for the Product Backlog, its prioritization, and key product decisions.</dd></div>
+      <div class="gloss-item"><dt>Development Team</dt><dd>A cross-functional group of technical members that develops the product.</dd></div>
+      <div class="gloss-item"><dt>Scrum Master</dt><dd>A facilitator who helps the team work effectively within Scrum and removes impediments.</dd></div>
+      <div class="gloss-item"><dt>Product Backlog</dt><dd>An ordered list of all work required for the product.</dd></div>
+      <div class="gloss-item"><dt>Sprint Backlog</dt><dd>The work selected for the current Sprint, plus the plan to accomplish it.</dd></div>
+      <div class="gloss-item"><dt>Increment</dt><dd>The working product outcome produced during a Sprint.</dd></div>
+      <div class="gloss-item"><dt>Sprint Planning</dt><dd>The event where the team decides what will be built in the Sprint and how.</dd></div>
+      <div class="gloss-item"><dt>Daily Scrum</dt><dd>A 15-minute daily meeting to synchronize progress using three questions.</dd></div>
+      <div class="gloss-item"><dt>Sprint</dt><dd>A fixed-length ("time-boxed") period in which selected work becomes working software.</dd></div>
+      <div class="gloss-item"><dt>Sprint Review</dt><dd>An event for demonstrating completed working software and gathering stakeholder feedback.</dd></div>
+      <div class="gloss-item"><dt>Sprint Retrospective</dt><dd>An event for identifying ways to improve how the team works in future Sprints.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="m">C-O-R-F-C · Product Owner → Dev Team → Scrum Master · Backlog → Sprint Backlog → Increment · Plan → Sprint → Daily → Review → Retro</p>
+    <p class="brand">PREPARED BY MS.A.KIRUTHIKA , AP/CSE , KEC</p>
+  </div>
+</footer>
+
+<script>
+// ---- Value card expand/collapse ----
+document.querySelectorAll('.vcard').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    card.classList.toggle('open');
+  });
+});
+
+// ---- Active nav highlighting ----
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+const obs = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      navLinks.forEach(l=>l.classList.remove('active'));
+      const link = document.querySelector('.nav-link[href="#'+entry.target.id+'"]');
+      if(link) link.classList.add('active');
+    }
+  });
+}, {rootMargin:'-40% 0px -50% 0px', threshold:0});
+sections.forEach(s=>obs.observe(s));
+
+// ---- Daily Scrum Simulator ----
+const dssData = [
+  {q:"What have I done since the last Daily Scrum?", a:"\"Yesterday I completed the Login API and connected it to the database.\""},
+  {q:"What will I do between now and the next Daily Scrum?", a:"\"Today I'll integrate the Login API with the front-end UI.\""},
+  {q:"What obstacles or roadblocks are in my way?", a:"\"The testing server is unavailable — I'm blocked until it's back up.\""}
+];
+let dssStep = 0;
+const dssChat = document.getElementById('dssChat');
+const dssNextBtn = document.getElementById('dssNext');
+const dssResetBtn = document.getElementById('dssReset');
+
+function dssRender(){
+  if(dssStep >= dssData.length){
+    dssNextBtn.disabled = true;
+    dssNextBtn.textContent = "All 3 questions asked ✓";
+    return;
+  }
+  const item = dssData[dssStep];
+  const qBubble = document.createElement('div');
+  qBubble.className = 'bubble q';
+  qBubble.textContent = 'Scrum Master asks: ' + item.q;
+  dssChat.appendChild(qBubble);
+  setTimeout(()=>{
+    const aBubble = document.createElement('div');
+    aBubble.className = 'bubble a';
+    aBubble.textContent = 'Developer: ' + item.a;
+    dssChat.appendChild(aBubble);
+  }, 350);
+  dssStep++;
+  if(dssStep >= dssData.length){
+    dssNextBtn.disabled = true;
+    dssNextBtn.textContent = "All 3 questions asked ✓";
+  }
+}
+dssNextBtn.addEventListener('click', dssRender);
+dssResetBtn.addEventListener('click', ()=>{
+  dssStep = 0;
+  dssChat.innerHTML = '';
+  dssNextBtn.disabled = false;
+  dssNextBtn.textContent = "Ask next question →";
+});
+
+// ---- Flashcards ----
+const cards = [
+  {term:"Commitment", def:"Dedication toward achieving the project or Sprint goals."},
+  {term:"Focus", def:"Concentrating on the work and goals of the current Sprint."},
+  {term:"Openness", def:"Making work, progress, and problems visible to the team."},
+  {term:"Respect", def:"Valuing the skills, contributions, and opinions of team members."},
+  {term:"Courage", def:"Willingness to address problems and stand up for what benefits the project."},
+  {term:"Product Owner", def:"Responsible for the Product Backlog, its prioritization, and key product decisions."},
+  {term:"Development Team", def:"A cross-functional group of technical members that develops the product."},
+  {term:"Scrum Master", def:"A facilitator who helps the team work effectively within Scrum and removes impediments."},
+  {term:"Product Backlog", def:"An ordered list of all work required for the product."},
+  {term:"Sprint Backlog", def:"The work selected for the current Sprint, plus the plan to accomplish it."},
+  {term:"Increment", def:"The working product outcome produced during a Sprint."},
+  {term:"Sprint Review", def:"An event for demonstrating completed working software and gathering stakeholder feedback."},
+  {term:"Sprint Retrospective", def:"An event for identifying ways to improve how the team works in future Sprints."}
+];
+let cardIdx = 0;
+const flashEl = document.getElementById('flash');
+const flashInner = document.getElementById('flashInner');
+const flashTerm = document.getElementById('flashTerm');
+const flashDef = document.getElementById('flashDef');
+const deckProgress = document.getElementById('deckProgress');
+
+function renderCard(){
+  flashTerm.textContent = cards[cardIdx].term;
+  flashDef.textContent = cards[cardIdx].def;
+  deckProgress.textContent = 'Card ' + (cardIdx+1) + ' / ' + cards.length;
+  flashEl.classList.remove('flipped');
+}
+flashEl.addEventListener('click', ()=> flashEl.classList.toggle('flipped'));
+document.getElementById('nextCard').addEventListener('click', (e)=>{
+  e.stopPropagation();
+  cardIdx = (cardIdx+1) % cards.length;
+  renderCard();
+});
+document.getElementById('prevCard').addEventListener('click', (e)=>{
+  e.stopPropagation();
+  cardIdx = (cardIdx-1+cards.length) % cards.length;
+  renderCard();
+});
+renderCard();
+</script>
+
+</body>
+</html>

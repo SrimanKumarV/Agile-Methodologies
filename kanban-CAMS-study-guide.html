@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kanban — Complete Study &amp; Reference Guide (CAMS Edition)</title>
+<style>
+  :root{
+    --ink:#1b2430; --ink-soft:#3c4757; --paper:#faf6ec; --paper-alt:#f1ead9;
+    --panel:#fffdf7; --gold:#b8862f; --gold-deep:#8c6522; --rust:#a8453a;
+    --rust-soft:#f3e2df; --teal:#2c6b64; --teal-soft:#e0ede9; --violet:#5a4a86;
+    --violet-soft:#eeecf6; --line:#ddd0ac; --line-soft:#e9e0c8;
+    --mono:'Consolas','SF Mono','Menlo','DejaVu Sans Mono',monospace;
+    --serif:Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua',serif;
+    --sans:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:var(--serif);background:var(--paper);color:var(--ink);line-height:1.6;font-size:16.5px;}
+  a{color:var(--gold-deep);}
+  ::selection{background:var(--gold);color:#fff;}
+  u{text-decoration-thickness:1.5px;text-underline-offset:2px;}
+  .kt{font-weight:700;text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:2px;color:var(--rust);}
+  .kt.teal{color:var(--teal);}
+  .kt.gold{color:var(--gold-deep);}
+  .formula{font-family:var(--mono);font-weight:700;background:var(--paper-alt);border:1px dashed var(--line);padding:8px 12px;display:inline-block;border-radius:3px;}
+
+  header.masthead{background:var(--ink);color:#f4efe0;padding:54px 8vw 40px;border-bottom:6px solid var(--gold);}
+  header.masthead .kicker{font-family:var(--mono);text-transform:uppercase;letter-spacing:.2em;color:var(--gold);font-size:.76rem;margin-bottom:14px;}
+  header.masthead h1{font-size:2.6rem;margin:0 0 12px;line-height:1.1;max-width:20ch;color:#fff;}
+  header.masthead .sub{font-size:1.08rem;color:#cfc7ac;max-width:70ch;margin:0 0 22px;font-style:italic;}
+  header.masthead .meta-row{display:flex;gap:24px;flex-wrap:wrap;margin-top:20px;}
+  header.masthead .meta-item{font-family:var(--sans);font-size:.79rem;color:#cfc7ac;border-left:3px solid var(--gold);padding:4px 0 4px 12px;}
+  header.masthead .meta-item strong{display:block;color:#fff;font-family:var(--serif);font-size:.98rem;}
+
+  nav.quicknav{background:var(--paper-alt);border-bottom:1px solid var(--line);padding:26px 8vw;}
+  nav.quicknav .qn-title{font-family:var(--mono);text-transform:uppercase;letter-spacing:.14em;font-size:.72rem;color:var(--gold-deep);margin-bottom:12px;}
+  nav.quicknav .qn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:6px 22px;}
+  nav.quicknav a{display:block;color:var(--ink-soft);text-decoration:none;font-family:var(--sans);font-size:.85rem;padding:3px 0;border-bottom:1px dotted transparent;}
+  nav.quicknav a:hover{color:var(--rust);border-bottom-color:var(--rust);}
+  nav.quicknav a::before{content:"\2192\0020";color:var(--gold);}
+
+  main{max-width:980px;margin:0 auto;padding:10px 8vw 100px;}
+  section.block{padding:42px 0;border-bottom:1px solid var(--line-soft);}
+  section.block:last-child{border-bottom:none;}
+  .eyebrow{font-family:var(--mono);text-transform:uppercase;letter-spacing:.16em;color:var(--gold-deep);font-size:.74rem;margin-bottom:8px;}
+  h2{font-size:1.76rem;margin:0 0 6px;display:flex;align-items:baseline;gap:14px;}
+  h2 .num{font-family:var(--mono);color:var(--gold);font-size:1.02rem;font-weight:700;}
+  h3{font-size:1.2rem;margin:28px 0 8px;}
+  h3 .num{font-family:var(--mono);color:var(--teal);font-size:.94rem;margin-right:8px;}
+  h4{font-size:.97rem;color:var(--gold-deep);text-transform:uppercase;letter-spacing:.05em;margin:20px 0 8px;font-family:var(--sans);}
+  h5{font-size:.9rem;color:var(--violet);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 6px;font-family:var(--sans);}
+  p{margin:0 0 12px;color:var(--ink-soft);}
+  strong{color:var(--ink);}
+  ul,ol{margin:0 0 14px;padding-left:22px;color:var(--ink-soft);}
+  li{margin-bottom:6px;}
+  li > ul, li > ol{margin-top:6px;}
+
+  .lede{font-size:1.07rem;color:var(--ink);}
+  .lede::first-letter{font-family:var(--serif);font-size:2.85rem;float:left;line-height:.82;padding:4px 8px 0 0;color:var(--rust);font-weight:700;}
+
+  .box{border-radius:3px;padding:18px 22px;margin:18px 0;border:1px solid var(--line);}
+  .box-title{font-family:var(--sans);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.74rem;margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+  .def{background:var(--panel);border-left:5px solid var(--teal);}
+  .def .box-title{color:var(--teal);}
+  .cams{background:#fbf3e3;border-left:5px solid var(--gold);}
+  .cams .box-title{color:var(--gold-deep);}
+  .cams .box-title::before{content:"CAMS";font-family:var(--mono);background:var(--gold);color:#fff;padding:1px 7px;border-radius:2px;letter-spacing:.05em;font-size:.66rem;}
+  .ref{background:var(--violet-soft);border-left:5px solid var(--violet);}
+  .ref .box-title{color:var(--violet);}
+  .ref .box-title::before{content:"PPT REFERENCE";font-family:var(--mono);background:var(--violet);color:#fff;padding:1px 7px;border-radius:2px;letter-spacing:.05em;font-size:.62rem;}
+  .warn{background:var(--rust-soft);border-left:5px solid var(--rust);}
+  .warn .box-title{color:var(--rust);}
+  .key{background:var(--ink);color:#f4efe0;border-left:5px solid var(--gold);}
+  .key .box-title{color:var(--gold);}
+  .key p,.key li{color:#e8e2d0;}
+  .key ul{margin-bottom:0;}
+  .formula-box{background:var(--violet-soft);border-left:5px solid var(--violet);}
+  .formula-box .box-title{color:var(--violet);}
+  .interp{background:#eef5f2;border-left:5px solid var(--teal);}
+  .interp .box-title{color:var(--teal);}
+  .exam{background:#fff7e0;border-left:5px solid var(--gold-deep);}
+  .exam .box-title{color:var(--gold-deep);}
+  .box p:last-child, .box ul:last-child{margin-bottom:0;}
+  .box ul{margin-bottom:8px;}
+
+  .term-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+  .term{background:var(--panel);border:1px solid var(--line);padding:13px 16px;border-radius:3px;}
+  .term dt{font-family:var(--sans);font-weight:700;color:var(--teal);font-size:.9rem;margin-bottom:4px;}
+  .term dd{margin:0;color:var(--ink-soft);font-size:.9rem;}
+
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.9rem;background:var(--panel);}
+  caption{text-align:left;font-family:var(--sans);font-size:.76rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold-deep);margin-bottom:8px;}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top;}
+  th{background:var(--ink);color:#f4efe0;font-family:var(--sans);font-weight:600;font-size:.8rem;text-transform:uppercase;}
+  tr:nth-child(even) td{background:var(--paper-alt);}
+  .num-cell{font-family:var(--mono);}
+
+  .diagram{margin:24px 0;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:20px 16px 14px;}
+  .diagram .cap{font-family:var(--mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);text-align:center;margin-top:10px;}
+  .diagram svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:20px 0;}
+  .card{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--teal);padding:15px 16px;border-radius:3px;}
+  .card .card-num{font-family:var(--mono);color:var(--gold);font-size:.76rem;}
+  .card h5{margin:4px 0 8px;font-size:.96rem;color:var(--ink);}
+  .card p,.card ul{font-size:.87rem;margin-bottom:0;}
+  .card ul{padding-left:18px;}
+
+  .flow-inline{font-family:var(--mono);background:var(--paper-alt);border:1px dashed var(--line);padding:9px 14px;display:inline-block;margin:8px 0;font-size:.84rem;}
+  .divider{height:1px;background:linear-gradient(90deg,var(--gold),transparent);margin:32px 0;}
+
+  .subgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:16px 0;}
+  .subcard{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:14px 16px;}
+  .subcard h5{margin-top:0;}
+
+  .qa{background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:14px 18px;margin:12px 0;}
+  .qa .q{font-family:var(--sans);font-weight:700;color:var(--ink);margin-bottom:6px;}
+  .qa .a{color:var(--ink-soft);font-size:.94rem;}
+  .marks{display:inline-block;font-family:var(--mono);font-size:.68rem;background:var(--gold);color:#fff;padding:1px 8px;border-radius:10px;margin-right:8px;letter-spacing:.04em;}
+
+  .backtotop{position:fixed;bottom:22px;right:22px;background:var(--ink);color:var(--gold);width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;font-family:var(--mono);box-shadow:0 4px 14px rgba(0,0,0,.25);opacity:.85;}
+  footer{background:var(--ink);color:#cfc7ac;padding:36px 8vw;font-family:var(--sans);font-size:.8rem;}
+  footer strong{color:#fff;}
+
+  @media (max-width:880px){
+    header.masthead,nav.quicknav,main{padding-left:5vw;padding-right:5vw;}
+    .term-grid,.subgrid{grid-template-columns:1fr;}
+    header.masthead h1{font-size:2rem;}
+    nav.quicknav .qn-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media print{
+    .backtotop{display:none;}
+    section.block{break-inside:avoid;padding:12px 0;}
+    body{font-size:12px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead" id="top">
+  <div class="kicker">Agile Methodologies &middot; Process &amp; Flow Management &middot; Complete Reference</div>
+  <h1>Kanban — Complete Study &amp; Reference Guide</h1>
+  <p class="sub">A structured reference covering Kanban's history, mindset, values, principles, practices, board mechanics, WIP, pull systems, flow, throughput, the Cumulative Flow Diagram, explicit policies, Little's Law, and continuous improvement — with a College Attendance Management System (CAMS) used as the continuous running example, plus numerical examples, a Kanban–Scrum comparison, and exam-focused revision.</p>
+  <div class="meta-row">
+    <div class="meta-item"><strong>Origin</strong>Manufacturing term, adapted for software by David Anderson</div>
+    <div class="meta-item"><strong>Core Idea</strong>Visualize the work, limit WIP, improve flow continuously</div>
+    <div class="meta-item"><strong>Running Example</strong>College Attendance Management System (CAMS)</div>
+    <div class="meta-item"><strong>Use</strong>Classroom instruction &amp; examination preparation</div>
+  </div>
+</header>
+
+<nav class="quicknav" aria-label="Contents">
+  <div class="qn-title">Contents</div>
+  <div class="qn-grid">
+    <a href="#s1">1. Kanban Basics</a>
+    <a href="#s2">2. History &amp; Origin</a>
+    <a href="#s3">3. Manufacturing &amp; Software</a>
+    <a href="#s4">4. Kanban Mindset</a>
+    <a href="#s5">5. Kanban Values</a>
+    <a href="#s6">6. Kanban Principles</a>
+    <a href="#s7">7. Kanban Practices</a>
+    <a href="#s8">8. Workflow Visualization</a>
+    <a href="#s9">9. Kanban Board</a>
+    <a href="#s10">10. WIP &amp; WIP Limits</a>
+    <a href="#s11">11. Push vs. Pull System</a>
+    <a href="#s12">12. Flow &amp; Bottlenecks</a>
+    <a href="#s13">13. Throughput &amp; Lead Time</a>
+    <a href="#s14">14. Cumulative Flow Diagram (CFD)</a>
+    <a href="#s15">15. Explicit Process Policies</a>
+    <a href="#s16">16. Definition of Done</a>
+    <a href="#s17">17. Little's Law</a>
+    <a href="#s18">18. Continuous Improvement</a>
+    <a href="#s19">19. Complete Case Study — CAMS</a>
+    <a href="#s20">20. Exam &amp; Revision</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ============ SECTION 1 — KANBAN BASICS ============ -->
+  <section class="block" id="s1">
+    <div class="eyebrow">Foundations</div>
+    <h2><span class="num">01</span> Kanban Basics</h2>
+
+    <div class="box def">
+      <div class="box-title">Definition (Exam Point)</div>
+      <p><span class="kt">Kanban</span> is a <span class="kt">method for process improvement</span> used by <u>Agile teams.</u> Teams that use Kanban first understand how they currently build software, and then improve that process <strong>gradually</strong>.</p>
+    </div>
+
+    <h4>Simple Meaning</h4>
+    <div class="flow-inline">Kanban = Visualize the Work + Limit the Work in Progress + Improve the Flow Continuously</div>
+    <ul>
+      <li>Kanban does <u>not</u> necessarily tell a team to completely replace its existing process.</li>
+      <li>Instead: <strong>Start with the existing process &rarr; visualize it &rarr; identify problems &rarr; improve it continuously.</strong></li>
+    </ul>
+
+    <div class="box cams">
+      <div class="box-title">Running Example — Introducing CAMS</div>
+      <p>A software team is developing a <strong>College Attendance Management System (CAMS)</strong> — allowing faculty to mark attendance, students to view their attendance percentage, and administrators to generate reports. Their existing process is:</p>
+    </div>
+    <div class="flow-inline">Requirement &rarr; Analysis &rarr; Development &rarr; Testing &rarr; Release</div>
+    <p>Instead of immediately introducing a completely new methodology, the team places these stages on a Kanban board:</p>
+    <div class="flow-inline">BACKLOG &rarr; ANALYSIS &rarr; DEVELOPMENT &rarr; TESTING &rarr; RELEASE</div>
+    <p>Now everyone can see:</p>
+    <ul>
+      <li>What work has not started?</li>
+      <li>What is currently being developed?</li>
+      <li>What is waiting for testing?</li>
+      <li>Where is work getting stuck?</li>
+    </ul>
+    <p>That visibility allows the CAMS team to improve its process.</p>
+
+    <div class="box warn">
+      <div class="box-title">Important Distinction (Exam Point)</div>
+      <p>Kanban is <u>not simply a board.</u></p>
+      <ul>
+        <li>The <strong>board</strong> is a tool for visualizing the workflow.</li>
+        <li><strong>Kanban</strong> is a method for improving the flow of work.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 2 — HISTORY & ORIGIN ============ -->
+  <section class="block" id="s2">
+    <div class="eyebrow">Foundations</div>
+    <h2><span class="num">02</span> History &amp; Origin</h2>
+    <ul>
+      <li>Kanban is a <span class="kt">manufacturing term</span>, adapted for software development and associated with <span class="kt teal">David Anderson.</span></li>
+      <li>It is connected conceptually to the <strong>Toyota Production System</strong>, <strong>Lean Manufacturing</strong>, and <strong>Just-in-Time (JIT)</strong> production.</li>
+    </ul>
+    <div class="diagram">
+      <svg viewBox="0 0 760 100" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="a4" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#8c6522"/></marker></defs>
+        <g font-family="Segoe UI,sans-serif" font-size="11.5" font-weight="700" fill="#1b2430" text-anchor="middle">
+          <rect x="6" y="26" width="118" height="40" fill="#e0ede9" stroke="#2c6b64"/><text x="65" y="50">Toyota Prod.<tspan x="65" dy="13">System</tspan></text>
+          <line x1="124" y1="46" x2="150" y2="46" stroke="#8c6522" marker-end="url(#a4)"/>
+          <rect x="154" y="26" width="118" height="40" fill="#e0ede9" stroke="#2c6b64"/><text x="213" y="50">Lean</text>
+          <line x1="272" y1="46" x2="298" y2="46" stroke="#8c6522" marker-end="url(#a4)"/>
+          <rect x="302" y="26" width="118" height="40" fill="#fbf3e3" stroke="#b8862f"/><text x="361" y="50">JIT</text>
+          <line x1="420" y1="46" x2="446" y2="46" stroke="#8c6522" marker-end="url(#a4)"/>
+          <rect x="450" y="26" width="118" height="40" fill="#fbf3e3" stroke="#b8862f"/><text x="509" y="50">Pull System</text>
+          <line x1="568" y1="46" x2="594" y2="46" stroke="#8c6522" marker-end="url(#a4)"/>
+          <rect x="598" y="26" width="80" height="40" fill="#f3e2df" stroke="#a8453a"/><text x="638" y="50">Kanban</text>
+          <line x1="678" y1="46" x2="704" y2="46" stroke="#8c6522" marker-end="url(#a4)"/>
+          <rect x="708" y="16" width="48" height="60" fill="#1b2430"/><text x="732" y="42" fill="#f4efe0" font-size="9.5">Software</text><text x="732" y="54" fill="#f4efe0" font-size="9.5">Develop-</text><text x="732" y="66" fill="#f4efe0" font-size="9.5">ment</text>
+        </g>
+      </svg>
+      <div class="cap">Fig. 2.1 — Conceptual chain: from Toyota Production System to Kanban in software development</div>
+    </div>
+    <p>Like <strong>Scrum</strong>, Kanban requires a mindset — it is a way of thinking, not just a set of mechanical steps (§4).</p>
+  </section>
+
+  <!-- ============ SECTION 3 — MANUFACTURING & SOFTWARE ============ -->
+  <section class="block" id="s3">
+    <div class="eyebrow">Foundations</div>
+    <h2><span class="num">03</span> Kanban in Manufacturing and Software</h2>
+
+    <div class="box ref">
+      <div class="box-title">Manufacturing Example</div>
+      <p>In a car manufacturing plant, a car passes through: <em>Raw Material &rarr; Body Construction &rarr; Painting &rarr; Assembly &rarr; Quality Inspection &rarr; Delivery.</em> If the painting section can process only <strong>10 cars</strong> but assembly sends <strong>20 cars</strong>, cars accumulate between the stages. That accumulation is a <span class="kt">bottleneck.</span> Kanban helps control how much work enters each stage.</p>
+    </div>
+
+    <div class="box cams">
+      <div class="box-title">Software Equivalent — CAMS</div>
+      <p>Workflow: <em>Requirements &rarr; Development &rarr; Testing &rarr; Deployment.</em> Suppose CAMS developers complete <strong>20 features</strong> (e.g., attendance marking, percentage calculation, alerts) but testers can test only <strong>5.</strong> Then Development = 20 items, Testing = 5 items — the remaining <strong>15 items become work in progress</strong> waiting for testing. Kanban attempts to prevent such excessive accumulation.</p>
+    </div>
+
+    <div class="diagram">
+      <svg viewBox="0 0 620 170" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="Segoe UI,sans-serif" font-size="12.5" fill="#1b2430">
+          <text x="10" y="24" font-weight="700">Development (20 completed features)</text>
+          <rect x="10" y="34" width="600" height="26" fill="#e0ede9" stroke="#2c6b64"/>
+          <text x="10" y="86" font-weight="700">Testing capacity (5 features)</text>
+          <rect x="10" y="96" width="150" height="26" fill="#f3e2df" stroke="#a8453a"/>
+          <rect x="164" y="96" width="446" height="26" fill="#f8d9d4" stroke="#a8453a" stroke-dasharray="4,3"/>
+          <text x="387" y="114" text-anchor="middle" fill="#a8453a" font-weight="700" font-size="11.5">15 items waiting — WIP accumulation</text>
+        </g>
+      </svg>
+      <div class="cap">Fig. 3.1 — Development output exceeding Testing capacity produces WIP accumulation</div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 4 — MINDSET ============ -->
+  <section class="block" id="s4">
+    <div class="eyebrow">Foundations</div>
+    <h2><span class="num">04</span> Kanban Mindset</h2>
+    <ul>
+      <li>Kanban, like Scrum, <span class="kt">requires a mindset.</span></li>
+      <li>It is not just <em>"draw some columns and put sticky notes."</em></li>
+      <li>The team adopts a way of thinking based on: <strong>continuous improvement, visibility, collaboration, respect, customer focus, flow, and limiting WIP.</strong></li>
+    </ul>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>Suppose the CAMS Testing column contains <strong>15 tasks.</strong></p>
+      <ul>
+        <li><strong>Wrong mindset:</strong> "Let's add five more development tasks."</li>
+        <li><strong>Kanban mindset:</strong> "Why are so many tasks waiting for testing?" — possible causes: insufficient testers, unclear requirements, too many defects, testing environment unavailable, developers producing work faster than testing capacity.</li>
+      </ul>
+    </div>
+    <div class="box key">
+      <div class="box-title">Key Point (Exam Point)</div>
+      <p>The objective is to <span class="kt">fix the system</span>, rather than simply push more work into it.</p>
+    </div>
+    <div class="flow-inline">SEE THE WORK &rarr; UNDERSTAND THE WORK &rarr; CONTROL THE WORK &rarr; IMPROVE THE FLOW</div>
+  </section>
+
+  <!-- ============ SECTION 5 — VALUES ============ -->
+  <section class="block" id="s5">
+    <div class="eyebrow">Foundations</div>
+    <h2><span class="num">05</span> Kanban Values</h2>
+    <p class="lede">The PPT introduces <span class="kt">nine Kanban values:</span> Transparency, Balance, Collaboration, Customer Focus, Workflow (Flow), Leadership, Understanding, Agreement, and Respect.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 700 170" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="Consolas,monospace" font-size="13" font-weight="700" fill="#1b2430" text-anchor="middle">
+          <rect x="10" y="10" width="76" height="42" fill="#e0ede9" stroke="#2c6b64"/><text x="48" y="35">T</text>
+          <rect x="90" y="10" width="76" height="42" fill="#e0ede9" stroke="#2c6b64"/><text x="128" y="35">B</text>
+          <rect x="170" y="10" width="76" height="42" fill="#e0ede9" stroke="#2c6b64"/><text x="208" y="35">C</text>
+          <rect x="250" y="10" width="76" height="42" fill="#e0ede9" stroke="#2c6b64"/><text x="288" y="35">C</text>
+          <rect x="330" y="10" width="76" height="42" fill="#fbf3e3" stroke="#b8862f"/><text x="368" y="35">W</text>
+          <rect x="410" y="10" width="76" height="42" fill="#fbf3e3" stroke="#b8862f"/><text x="448" y="35">L</text>
+          <rect x="490" y="10" width="76" height="42" fill="#fbf3e3" stroke="#b8862f"/><text x="528" y="35">U</text>
+          <rect x="570" y="10" width="76" height="42" fill="#f3e2df" stroke="#a8453a"/><text x="608" y="35">A</text>
+          <rect x="650" y="10" width="46" height="42" fill="#1b2430"/><text x="673" y="35" fill="#f4efe0">R</text>
+        </g>
+        <g font-family="Segoe UI,sans-serif" font-size="10" fill="#3c4757" text-anchor="middle">
+          <text x="48" y="70">Transp-</text><text x="48" y="82">arency</text>
+          <text x="128" y="70">Balance</text>
+          <text x="208" y="70">Collab-</text><text x="208" y="82">oration</text>
+          <text x="288" y="70">Customer</text><text x="288" y="82">Focus</text>
+          <text x="368" y="70">Workflow</text>
+          <text x="448" y="70">Leader-</text><text x="448" y="82">ship</text>
+          <text x="528" y="70">Under-</text><text x="528" y="82">standing</text>
+          <text x="608" y="70">Agree-</text><text x="608" y="82">ment</text>
+          <text x="673" y="70">Respect</text>
+        </g>
+        <text x="350" y="112" text-anchor="middle" font-family="Consolas,monospace" font-weight="700" font-size="13" fill="#8c6522">Mnemonic: T B C C W L U A R</text>
+        <text x="350" y="134" text-anchor="middle" font-family="Segoe UI,sans-serif" font-style="italic" font-size="11.5" fill="#3c4757">Respect is the foundation on which the other eight values are based.</text>
+      </svg>
+      <div class="cap">Fig. 5.1 — The nine Kanban values</div>
+    </div>
+
+    <h3><span class="num">5.1</span> Transparency</h3>
+    <div class="box def">
+      <div class="box-title">Meaning</div>
+      <p>An <u>open exchange of information</u> and clear, unambiguous terminology. Everyone should understand <span class="kt">what work exists, where it is, and what is blocking it.</span></p>
+    </div>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>A CAMS card shows: <em>"Login Module &rarr; Development."</em> But the developer is actually waiting for database credentials. A transparent board makes that visible: <em>"Login Module — Status: Development — Blocked: Waiting for DB credentials."</em> Now the team can act.</p>
+    </div>
+    <div class="box exam"><div class="box-title">Exam Point</div><p><span class="kt">Transparency = making workflow status and problems visible to everyone.</span></p></div>
+
+    <h3><span class="num">5.2</span> Balance</h3>
+    <p>Balancing the different <u>requirements, views, and abilities</u> of participants against each other.</p>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>CAMS developers complete <strong>10 features/day</strong>; testers can handle only <strong>3 features/day.</strong> This is unbalanced — development continuously outpaces testing, and the testing queue grows. Kanban encourages the team to identify and correct this imbalance.</p>
+    </div>
+
+    <h3><span class="num">5.3</span> Collaboration</h3>
+    <p>The Kanban method improves how people <u>work together</u> — a key value because Kanban encourages <span class="kt">team-level responsibility for flow</span>, rather than isolated departmental responsibility.</p>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>A CAMS attendance-percentage feature is stuck in testing. Instead of "that's the testing team's problem," the developer asks "Can I help reproduce the issue?" and the tester responds "Yes — it occurs with invalid roll numbers." Both work together to move the item forward.</p>
+    </div>
+
+    <h3><span class="num">5.4</span> Customer Focus</h3>
+    <p>The customer is the natural centre of interest in Kanban.</p>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>A department needs <strong>low-attendance SMS alerts.</strong> The CAMS team should prioritize work that delivers meaningful student/faculty value, instead of spending excessive time on low-value internal features while this customer-critical functionality waits. The guiding question: <em>"Why are we developing this feature?"</em> — the answer should connect to customer/user value.</p>
+    </div>
+
+    <h3><span class="num">5.5</span> Workflow (Flow)</h3>
+    <p>Work represents a continuous or occasional <span class="kt">flow of value</span>; recognizing and maintaining that flow is one of the most important Kanban concepts.</p>
+    <div class="box ref">
+      <div class="box-title">Analogy — Water Through Pipes</div>
+      <p><em>Source &rarr; Pipe &rarr; Pipe &rarr; Pipe &rarr; Destination.</em> If one pipe is blocked, water accumulates before the blockage. Software work behaves similarly: if <strong>CAMS Testing</strong> becomes a bottleneck, work accumulates before it. Kanban tries to achieve <u>smooth flow.</u></p>
+    </div>
+
+    <h3><span class="num">5.6</span> Leadership</h3>
+    <p>Leadership is required at <u>all levels</u> to generate value and achieve an improved state — not restricted to a Project Manager, Team Leader, or Manager. A CAMS developer can identify a process problem; a tester can suggest improvement; any team member can propose a better workflow.</p>
+
+    <h3><span class="num">5.7</span> Understanding</h3>
+    <p>Understanding connects to <u>self-awareness</u> at both individual and organizational levels; before improving a process, the team must understand how it works, why it works that way, where problems occur, what constraints exist, and how people interact with the process.</p>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>If CAMS testing always takes 3 days, the team should not immediately conclude "testers are slow" — instead investigate: are requirements unclear? Are test cases difficult to prepare? Is the test environment unstable? Are developers producing too many defects?</p>
+    </div>
+    <p><span class="kt">Understanding comes before improvement.</span></p>
+
+    <h3><span class="num">5.8</span> Agreement</h3>
+    <p>All parties agree to <u>pursue goals together</u>, while respecting different opinions and approaches.</p>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>The CAMS team wants to set <strong>Development WIP Limit = 4.</strong> Developers, testers, and managers should understand and agree on why the limit exists — not "the manager told us WIP = 4," but "we agree that 4 allows us to maintain manageable work and improve flow."</p>
+    </div>
+
+    <h3><span class="num">5.9</span> Respect</h3>
+    <div class="box def">
+      <div class="box-title">Definition (Exam Point)</div>
+      <p><span class="kt">Respect</span> for people — through appreciation, understanding, and consideration — is the <u>foundation for the other Kanban values.</u></p>
+    </div>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>If a CAMS task is delayed, Kanban does not mean blaming "the developer is inefficient." Instead ask: <em>"What is preventing this work item from flowing?"</em> Kanban focuses on <u>improving the system</u>, not blaming individuals.</p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 6 — PRINCIPLES ============ -->
+  <section class="block" id="s6">
+    <div class="eyebrow">Foundations</div>
+    <h2><span class="num">06</span> Kanban Principles</h2>
+    <p class="lede">Kanban rests on <span class="kt">four principles.</span></p>
+    <div class="diagram">
+      <svg viewBox="0 0 620 280" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="a5" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#8c6522"/></marker></defs>
+        <g font-family="Segoe UI,sans-serif" font-size="12.5" fill="#1b2430" font-weight="700" text-anchor="middle">
+          <rect x="60" y="10" width="500" height="46" rx="4" fill="#e0ede9" stroke="#2c6b64"/><text x="310" y="38">1. Start With What You Do Now</text>
+          <line x1="310" y1="56" x2="310" y2="76" stroke="#8c6522" stroke-width="2" marker-end="url(#a5)"/>
+          <rect x="60" y="80" width="500" height="46" rx="4" fill="#fbf3e3" stroke="#b8862f"/><text x="310" y="100">2. Agree to Pursue Incremental,</text><text x="310" y="116">Evolutionary Change</text>
+          <line x1="310" y1="126" x2="310" y2="146" stroke="#8c6522" stroke-width="2" marker-end="url(#a5)"/>
+          <rect x="60" y="150" width="500" height="46" rx="4" fill="#fbf3e3" stroke="#b8862f"/><text x="310" y="170">3. Respect the Current Process,</text><text x="310" y="186">Roles, Responsibilities &amp; Titles</text>
+          <line x1="310" y1="196" x2="310" y2="216" stroke="#8c6522" stroke-width="2" marker-end="url(#a5)"/>
+          <rect x="60" y="220" width="500" height="46" rx="4" fill="#f3e2df" stroke="#a8453a"/><text x="310" y="240">4. Encourage Acts of Leadership</text><text x="310" y="256">at All Levels</text>
+        </g>
+      </svg>
+      <div class="cap">Fig. 6.1 — The four Kanban principles</div>
+    </div>
+
+    <div class="subgrid">
+      <div class="subcard"><h5>1. Start With What You Do Now</h5><p>Kanban begins from the CAMS team's <u>existing</u> process rather than demanding a rebuild. "Let's understand this process first," not "this process is wrong."</p></div>
+      <div class="subcard"><h5>2. Incremental, Evolutionary Change</h5><p>Change happens gradually: <em>Problem &rarr; Understand &rarr; Small Experiment &rarr; Measure &rarr; Learn &rarr; Improve</em> — not a wholesale process replacement.</p></div>
+      <div class="subcard"><h5>3. Respect Current Roles &amp; Titles</h5><p>Existing roles (Product Owner, Developer, Tester, Project Manager) are respected; adopting Kanban does not require immediate restructuring.</p></div>
+      <div class="subcard"><h5>4. Encourage Leadership at All Levels</h5><p>Any CAMS team member — developer, tester, analyst, or manager — can initiate improvement.</p></div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 7 — PRACTICES ============ -->
+  <section class="block" id="s7">
+    <div class="eyebrow">Foundations</div>
+    <h2><span class="num">07</span> Kanban Practices</h2>
+    <p class="lede">The PPT presents four major practices, together with Little's Law as a supporting quantitative tool. A complete treatment of the Kanban method also recognizes two further practices — feedback loops and collaborative/experimental improvement — detailed separately in §18.</p>
+
+    <div class="card-grid">
+      <div class="card"><span class="card-num">1</span><h5>Visualize the Workflow</h5><p>See §8 for full detail</p></div>
+      <div class="card"><span class="card-num">2</span><h5>Limit Work in Progress</h5><p>See §10 for full detail</p></div>
+      <div class="card"><span class="card-num">3</span><h5>Measure &amp; Manage Flow</h5><p>See §12–14 for full detail</p></div>
+      <div class="card"><span class="card-num">4</span><h5>Make Process Policies Explicit</h5><p>See §15–16 for full detail</p></div>
+      <div class="card"><span class="card-num">5</span><h5>Implement Feedback Loops</h5><p>See §18</p></div>
+      <div class="card"><span class="card-num">6</span><h5>Improve Collaboratively, Evolve Experimentally</h5><p>See §18</p></div>
+    </div>
+
+    <div class="box exam">
+      <div class="box-title">Exam Point</div>
+      <p>The four practices explicitly emphasized in the source material are: <span class="kt">Visualize the Workflow, Limit Work in Progress, Measure and Manage Flow, and Make Process Policies Explicit</span> — supported quantitatively by <span class="kt">Little's Law.</span></p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 8 — WORKFLOW VISUALIZATION ============ -->
+  <section class="block" id="s8">
+    <div class="eyebrow">Board &amp; Workflow</div>
+    <h2><span class="num">08</span> Workflow Visualization</h2>
+
+    <div class="box def">
+      <div class="box-title">Key Phrase (Exam Point)</div>
+      <p><span class="kt">Visualize the actual workflow — not the ideal workflow.</span></p>
+    </div>
+    <ul>
+      <li>The first step in improving a process is understanding how the team <u>currently</u> works.</li>
+      <li>Visualization means recording what the team actually does, <strong>without embellishing it.</strong></li>
+    </ul>
+
+    <div class="box cams">
+      <div class="box-title">Illustration — Official vs. Actual CAMS Workflow</div>
+      <p><strong>Official process:</strong> <em>Analysis &rarr; Development &rarr; Testing &rarr; Release.</em></p>
+      <p><strong>Actual process:</strong> <em>Analysis &rarr; Development &rarr; Code Review &rarr; Rework &rarr; Development &rarr; Testing &rarr; Bug Fixing &rarr; Testing &rarr; Release.</em></p>
+      <p>The Kanban board should reflect the <u>actual</u> process — because visualizing an imaginary process makes it impossible to identify real bottlenecks.</p>
+    </div>
+
+    <h3><span class="num">8.1</span> Why Visualization Is Powerful</h3>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>Consider 20 CAMS work items distributed as: <strong>Backlog 5, Development 3, Testing 10, Release 2.</strong> Immediately, the board reveals that <span class="kt">Testing is accumulating work.</span> Without visualization, management might simply say "the project is progressing." The Kanban board instead says: <em>"Work is progressing, but Testing is becoming a bottleneck"</em> — far more useful for process improvement.</p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 9 — KANBAN BOARD ============ -->
+  <section class="block" id="s9">
+    <div class="eyebrow">Board &amp; Workflow</div>
+    <h2><span class="num">09</span> Kanban Board</h2>
+
+    <div class="box def">
+      <div class="box-title">Definition</div>
+      <p>A Kanban board is a tool for visualizing workflow, typically using <u>columns</u> and <u>cards/sticky notes.</u></p>
+    </div>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 210" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="Segoe UI,sans-serif" font-size="12" fill="#1b2430">
+          <rect x="10" y="10" width="150" height="30" fill="#1b2430"/><text x="85" y="30" text-anchor="middle" fill="#f4efe0" font-weight="700">BACKLOG</text>
+          <rect x="164" y="10" width="150" height="30" fill="#1b2430"/><text x="239" y="30" text-anchor="middle" fill="#f4efe0" font-weight="700">DEVELOPMENT</text>
+          <rect x="318" y="10" width="150" height="30" fill="#1b2430"/><text x="393" y="30" text-anchor="middle" fill="#f4efe0" font-weight="700">TESTING</text>
+          <rect x="472" y="10" width="150" height="30" fill="#1b2430"/><text x="547" y="30" text-anchor="middle" fill="#f4efe0" font-weight="700">DONE</text>
+
+          <rect x="10" y="44" width="150" height="140" fill="#fffdf7" stroke="#ddd0ac"/>
+          <rect x="164" y="44" width="150" height="140" fill="#fffdf7" stroke="#ddd0ac"/>
+          <rect x="318" y="44" width="150" height="140" fill="#fffdf7" stroke="#ddd0ac"/>
+          <rect x="472" y="44" width="150" height="140" fill="#fffdf7" stroke="#ddd0ac"/>
+
+          <rect x="22" y="56" width="126" height="26" fill="#e0ede9" stroke="#2c6b64"/><text x="85" y="73" text-anchor="middle">Login</text>
+          <rect x="22" y="86" width="126" height="26" fill="#e0ede9" stroke="#2c6b64"/><text x="85" y="103" text-anchor="middle">Attendance Report</text>
+          <rect x="22" y="116" width="126" height="26" fill="#e0ede9" stroke="#2c6b64"/><text x="85" y="133" text-anchor="middle">Notification</text>
+
+          <rect x="176" y="56" width="126" height="26" fill="#fbf3e3" stroke="#b8862f"/><text x="239" y="73" text-anchor="middle">Mark Attendance</text>
+          <rect x="176" y="86" width="126" height="26" fill="#fbf3e3" stroke="#b8862f"/><text x="239" y="103" text-anchor="middle">Dashboard</text>
+
+          <rect x="330" y="56" width="126" height="26" fill="#f3e2df" stroke="#a8453a"/><text x="393" y="73" text-anchor="middle">% Calculation</text>
+
+          <rect x="484" y="56" width="126" height="26" fill="#2c6b64"/><text x="547" y="73" text-anchor="middle" fill="#fff">Profile</text>
+        </g>
+      </svg>
+      <div class="cap">Fig. 9.1 — A basic Kanban board for CAMS. Each card is a work item moving Backlog &rarr; Development &rarr; Testing &rarr; Done.</div>
+    </div>
+
+    <h3><span class="num">9.1</span> Kanban Card</h3>
+    <div class="box def">
+      <div class="box-title">Definition (Exam Point)</div>
+      <p>A Kanban card is a <span class="kt">visual representation of a work item.</span></p>
+    </div>
+    <p>For example, a card labelled <strong>[Implement Attendance Marking]</strong> moves: <em>Backlog &rarr; Development &rarr; Testing &rarr; Done.</em></p>
+
+    <h3><span class="num">9.2</span> Kanban Board vs. Scrum Task Board — <u>Three Key Differences</u></h3>
+    <table>
+      <caption>Kanban Board vs. Scrum Task Board (Exam Point)</caption>
+      <thead><tr><th>Aspect</th><th>Scrum Task Board</th><th>Kanban Board</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Granularity</strong></td><td>Shows detailed <u>tasks</u> (e.g., "Create HTML page," "Write validation," "Test login")</td><td>Shows <u>stories/work items</u> only (e.g., "[Implement Login]")</td></tr>
+        <tr><td><strong>Columns</strong></td><td>Standard columns tied to sprint stages</td><td><u>Vary from team to team</u>, reflecting the team's actual process (e.g., <em>Input &rarr; Analysis &rarr; Development &rarr; Build &rarr; Test &rarr; Release</em>)</td></tr>
+        <tr><td><strong>WIP Limits</strong></td><td>Not a core board feature (capacity is set at sprint planning)</td><td>Columns can carry explicit <u>Work-in-Progress limits</u> (e.g., "Development WIP LIMIT = 3")</td></tr>
+      </tbody>
+    </table>
+
+    <div class="box ref">
+      <div class="box-title">Reference Example (David Anderson's Book)</div>
+      <p>A documented real-world Kanban workflow used these columns: <strong>Input Queue &rarr; Analysis (In Progress) &rarr; Analysis (Done) &rarr; Development Ready &rarr; Development (In Progress) &rarr; Development (Done) &rarr; Build Ready &rarr; Test &rarr; Release Ready.</strong> This demonstrates that Kanban can model a <u>detailed real-world workflow</u>, and lets the team identify exactly where an item is waiting.</p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 10 — WIP & WIP LIMITS ============ -->
+  <section class="block" id="s10">
+    <div class="eyebrow">Board &amp; Workflow</div>
+    <h2><span class="num">10</span> WIP &amp; WIP Limits</h2>
+
+    <div class="box def">
+      <div class="box-title">Definition (Exam Point)</div>
+      <p><span class="kt">WIP = Work In Progress</span> — work currently inside the workflow. <span class="kt">Limiting WIP</span> means setting a limit on the number of work items that can be in a particular workflow stage.</p>
+    </div>
+
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>Suppose CAMS <strong>Development WIP Limit = 3</strong>, and Development currently holds <strong>[Login], [Attendance Marking], [Reports]</strong> — already three items. A new feature cannot simply be pushed into Development. Instead, the team asks: <em>"Can we finish one of the existing items?"</em> This encourages <span class="kt">finishing work instead of starting more work.</span></p>
+    </div>
+
+    <h3><span class="num">10.1</span> Why Too Much WIP Is Dangerous</h3>
+    <ul>
+      <li>Accepting more work than the team can accomplish can result in: <strong>unfinished work, poor-quality development, and an unsustainable working pace.</strong></li>
+    </ul>
+    <div class="box cams">
+      <div class="box-title">Illustration — The Illusion of Productivity</div>
+      <p>Five CAMS developers start eight features simultaneously (A through H). Everyone is busy — but nothing gets completed. This is the <span class="kt">illusion of productivity.</span></p>
+      <p><strong>Better approach:</strong> WIP LIMIT = 3. Only three features are actively worked on. Once Feature A finishes, the team pulls Feature D into development. This supports smoother flow.</p>
+    </div>
+
+    <div class="box ref">
+      <div class="box-title">Reference Example — Manager Review Column</div>
+      <p>The source PPT specifically shows a WIP limit of <strong>10 in the "Manager Review" column.</strong> If 8 items are present, a new item can enter; but once 10 items are present, the column is <u>full</u>, and the upstream team should not continue pushing additional work into it — instead, the review bottleneck itself must be resolved.</p>
+    </div>
+
+    <div class="diagram">
+      <svg viewBox="0 0 460 160" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="Segoe UI,sans-serif" font-size="12.5" fill="#1b2430">
+          <rect x="10" y="10" width="220" height="140" fill="#fffdf7" stroke="#2c6b64" stroke-width="2"/>
+          <rect x="10" y="10" width="220" height="30" fill="#1b2430"/><text x="120" y="30" text-anchor="middle" fill="#f4efe0" font-weight="700">DEVELOPMENT (WIP=3)</text>
+          <rect x="22" y="48" width="196" height="24" fill="#e0ede9" stroke="#2c6b64"/><text x="120" y="65" text-anchor="middle">R1 — Login</text>
+          <rect x="22" y="76" width="196" height="24" fill="#e0ede9" stroke="#2c6b64"/><text x="120" y="93" text-anchor="middle">R2 — Marking</text>
+          <rect x="22" y="104" width="196" height="24" fill="#e0ede9" stroke="#2c6b64"/><text x="120" y="121" text-anchor="middle">R3 — Reports</text>
+          <text x="120" y="145" text-anchor="middle" fill="#a8453a" font-weight="700" font-size="11">FULL — no new item may enter</text>
+
+          <rect x="260" y="48" width="180" height="24" fill="#f3e2df" stroke="#a8453a" stroke-dasharray="4,3"/><text x="350" y="65" text-anchor="middle" fill="#a8453a" font-weight="700">R4 — WAITS</text>
+        </g>
+      </svg>
+      <div class="cap">Fig. 10.1 — A full WIP-limited column blocks new work from entering</div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 11 — PUSH VS PULL ============ -->
+  <section class="block" id="s11">
+    <div class="eyebrow">Board &amp; Workflow</div>
+    <h2><span class="num">11</span> Push vs. Pull System</h2>
+
+    <p>WIP limits naturally support a <span class="kt">pull-based system.</span></p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="a7" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#a8453a"/></marker>
+        <marker id="a8" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#2c6b64"/></marker></defs>
+        <g font-family="Segoe UI,sans-serif" font-size="12.5" fill="#1b2430" text-anchor="middle">
+          <text x="140" y="20" font-weight="700" fill="#a8453a">PUSH SYSTEM</text>
+          <rect x="60" y="30" width="160" height="34" fill="#f3e2df" stroke="#a8453a"/><text x="140" y="52" font-weight="700">Developer</text>
+          <line x1="140" y1="64" x2="140" y2="92" stroke="#a8453a" stroke-width="2" marker-end="url(#a7)"/>
+          <text x="200" y="82" font-size="11" fill="#a8453a" font-weight="700">Pushes work</text>
+          <rect x="60" y="96" width="160" height="34" fill="#f3e2df" stroke="#a8453a"/><text x="140" y="118" font-weight="700">Tester (overloaded)</text>
+          <text x="140" y="150" font-size="11" fill="#a8453a" font-style="italic">Even when testers are overloaded,</text>
+          <text x="140" y="164" font-size="11" fill="#a8453a" font-style="italic">work keeps arriving.</text>
+
+          <line x1="290" y1="16" x2="290" y2="190" stroke="#e9e0c8" stroke-width="2"/>
+
+          <text x="460" y="20" font-weight="700" fill="#2c6b64">PULL SYSTEM</text>
+          <rect x="380" y="30" width="160" height="34" fill="#e0ede9" stroke="#2c6b64"/><text x="460" y="52" font-weight="700">Tester Becomes Available</text>
+          <line x1="460" y1="64" x2="460" y2="92" stroke="#2c6b64" stroke-width="2" marker-end="url(#a8)"/>
+          <rect x="380" y="96" width="160" height="34" fill="#e0ede9" stroke="#2c6b64"/><text x="460" y="118" font-weight="700">Tester Pulls Next Item</text>
+          <text x="460" y="150" font-size="11" fill="#2c6b64" font-style="italic">Work moves only when</text>
+          <text x="460" y="164" font-size="11" fill="#2c6b64" font-style="italic">capacity exists.</text>
+        </g>
+      </svg>
+      <div class="cap">Fig. 11.1 — Push versus Pull systems</div>
+    </div>
+
+    <div class="box cams">
+      <div class="box-title">Illustration — CAMS</div>
+      <p>Workflow: <em>Analysis &rarr; Development &rarr; Testing.</em> Development WIP limit = 3, currently holding <strong>R1 | R2 | R3.</strong> New work R4 arrives — <strong>it cannot enter</strong> because current WIP (3) equals the WIP limit (3). When R1 moves to Testing, Development becomes <strong>R2 | R3 | empty</strong>, and R4 can now be <u>pulled</u> in: <strong>R2 | R3 | R4.</strong></p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 12 — FLOW & BOTTLENECKS ============ -->
+  <section class="block" id="s12">
+    <div class="eyebrow">Flow &amp; Measurement</div>
+    <h2><span class="num">12</span> Flow &amp; Bottlenecks</h2>
+
+    <div class="box def">
+      <div class="box-title">Definition (Exam Point)</div>
+      <p><span class="kt">Flow</span> is the <u>rate at which work items move through the system.</u> The team measures workflow and adjusts WIP limits to improve flow.</p>
+    </div>
+    <div class="flow-inline">"How smoothly and quickly is work moving from start to finish?" — NOT "How many tasks have developers started?"</div>
+    <p>The focus is the <span class="kt">movement of completed value</span>, not the count of started activity (recall Activity &ne; Flow, §1).</p>
+
+    <h3><span class="num">12.1</span> Bottleneck</h3>
+    <div class="box def">
+      <div class="box-title">Definition</div>
+      <p>A stage whose capacity is lower than the stages feeding it, causing work to accumulate before it.</p>
+    </div>
+    <div class="box cams">
+      <div class="box-title">Illustration — CAMS Capacity Table</div>
+      <p>Workflow: <em>Analysis &rarr; Development &rarr; Testing &rarr; Release.</em></p>
+    </div>
+    <table>
+      <caption>CAMS Stage Capacities</caption>
+      <thead><tr><th>Stage</th><th>Capacity</th></tr></thead>
+      <tbody>
+        <tr><td>Analysis</td><td class="num-cell">8/day</td></tr>
+        <tr><td>Development</td><td class="num-cell">7/day</td></tr>
+        <tr><td><strong>Testing</strong></td><td class="num-cell"><strong>3/day</strong></td></tr>
+        <tr><td>Release</td><td class="num-cell">5/day</td></tr>
+      </tbody>
+    </table>
+    <p>Testing has the <u>lowest capacity</u>; therefore, <span class="kt">Testing is likely to become the bottleneck</span>, and work accumulates before it.</p>
+
+    <div class="diagram">
+      <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="a9" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#3c4757"/></marker></defs>
+        <g font-family="Segoe UI,sans-serif" font-size="12.5" fill="#1b2430" text-anchor="middle">
+          <rect x="20" y="30" width="160" height="40" fill="#e0ede9" stroke="#2c6b64"/><text x="100" y="55" font-weight="700">Development</text>
+          <text x="100" y="16" font-size="11" font-weight="700">7/day</text>
+          <line x1="180" y1="50" x2="234" y2="50" stroke="#3c4757" stroke-width="2" marker-end="url(#a9)"/>
+          <rect x="238" y="30" width="160" height="40" fill="#f8d9d4" stroke="#a8453a" stroke-width="2"/><text x="318" y="55" font-weight="700">Testing</text>
+          <text x="318" y="16" font-size="11" font-weight="700" fill="#a8453a">3/day</text>
+          <line x1="398" y1="50" x2="452" y2="50" stroke="#3c4757" stroke-width="2" marker-end="url(#a9)"/>
+          <rect x="456" y="30" width="160" height="40" fill="#e0ede9" stroke="#2c6b64"/><text x="536" y="55" font-weight="700">Release</text>
+          <text x="536" y="16" font-size="11" font-weight="700">5/day</text>
+          <line x1="318" y1="74" x2="318" y2="98" stroke="#a8453a" stroke-width="2" marker-end="url(#a9)"/>
+          <text x="318" y="116" font-weight="700" fill="#a8453a">BOTTLENECK</text>
+          <text x="318" y="150" font-size="12" fill="#3c4757">Work accumulates: [1][2][3][4][5][6][7] before Testing</text>
+        </g>
+      </svg>
+      <div class="cap">Fig. 12.1 — Testing is the CAMS bottleneck; the Kanban board makes this accumulation visible</div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 13 — THROUGHPUT & LEAD TIME ============ -->
+  <section class="block" id="s13">
+    <div class="eyebrow">Flow &amp; Measurement</div>
+    <h2><span class="num">13</span> Throughput &amp; Lead Time</h2>
+
+    <div class="term-grid">
+      <div class="term"><dt>Throughput</dt><dd>The number of work items completed per unit of time.</dd></div>
+      <div class="term"><dt>Lead Time</dt><dd>The average time a work item takes to move from entry to completion.</dd></div>
+    </div>
+
+    <h3><span class="num">13.1</span> Numerical Example — Throughput</h3>
+    <div class="box cams">
+      <div class="box-title">Illustration — CAMS Weekly Completions</div>
+      <table>
+        <thead><tr><th>Day</th><th>Items Completed</th></tr></thead>
+        <tbody>
+          <tr><td>Monday</td><td class="num-cell">2</td></tr>
+          <tr><td>Tuesday</td><td class="num-cell">3</td></tr>
+          <tr><td>Wednesday</td><td class="num-cell">2</td></tr>
+          <tr><td>Thursday</td><td class="num-cell">3</td></tr>
+          <tr><td>Friday</td><td class="num-cell">2</td></tr>
+          <tr><td><strong>Total</strong></td><td class="num-cell"><strong>12</strong></td></tr>
+        </tbody>
+      </table>
+      <p><strong>Formula:</strong> <span class="formula">Average Throughput = Total Completed &divide; Days</span><br><strong>Substitute:</strong> 12 &divide; 5<br><strong>Answer:</strong> <span class="formula">2.4 items/day</span></p>
+    </div>
+    <p>This gives the CAMS team an understanding of its <u>delivery flow.</u> Throughput and Lead Time are connected quantitatively by <span class="kt">Little's Law</span> (§17).</p>
+  </section>
+
+  <!-- ============ SECTION 14 — CFD ============ -->
+  <section class="block" id="s14">
+    <div class="eyebrow">Flow &amp; Measurement</div>
+    <h2><span class="num">14</span> Cumulative Flow Diagram (CFD)</h2>
+
+    <div class="box def">
+      <div class="box-title">Definition (Exam Point)</div>
+      <p>The <span class="kt">Cumulative Flow Diagram (CFD)</span> is an effective tool for measuring flow. It tracks <u>how work accumulates across workflow stages over time.</u></p>
+    </div>
+
+    <div class="box ref">
+      <div class="box-title">Analogy — Water Tank</div>
+      <p>If water enters a tank faster than it leaves, the <u>water level rises.</u> Similarly, if work enters a stage faster than it leaves, <span class="kt">WIP rises.</span> The CFD visualizes this accumulation over time.</p>
+    </div>
+
+    <div class="diagram">
+      <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="Segoe UI,sans-serif" font-size="11.5" fill="#1b2430">
+          <line x1="60" y1="20" x2="60" y2="260" stroke="#3c4757" stroke-width="1.5"/>
+          <line x1="60" y1="260" x2="660" y2="260" stroke="#3c4757" stroke-width="1.5"/>
+          <text x="18" y="140" text-anchor="middle" transform="rotate(-90 18,140)" font-weight="700">Number of Work Items</text>
+          <text x="360" y="290" text-anchor="middle" font-weight="700">Time</text>
+
+          <path d="M60,260 L660,60 L660,260 Z" fill="#c9e0d9" stroke="#2c6b64" stroke-width="1.4"/>
+          <path d="M60,260 L660,120 L660,260 Z" fill="#f2d9a6" stroke="#b8862f" stroke-width="1.4"/>
+          <path d="M60,260 L660,190 L660,260 Z" fill="#f8d9d4" stroke="#a8453a" stroke-width="1.4"/>
+
+          <text x="590" y="80" fill="#2c6b64" font-weight="700">Done</text>
+          <text x="590" y="140" fill="#8c6522" font-weight="700">Testing</text>
+          <text x="590" y="210" fill="#a8453a" font-weight="700">Development</text>
+
+          <line x1="480" y1="140" x2="480" y2="177" stroke="#a8453a" stroke-width="2"/>
+          <text x="480" y="192" text-anchor="middle" font-size="10.5" fill="#a8453a" font-weight="700">Widening band =</text>
+          <text x="480" y="204" text-anchor="middle" font-size="10.5" fill="#a8453a" font-weight="700">accumulation (WIP)</text>
+        </g>
+      </svg>
+      <div class="cap">Fig. 14.1 — Conceptual CFD for CAMS: cumulative work items across Development, Testing, and Done bands over time</div>
+    </div>
+
+    <h3><span class="num">14.1</span> Why Use a CFD?</h3>
+    <p>It helps identify:</p>
+    <ul>
+      <li><strong>WIP accumulation</strong></li>
+      <li><strong>Bottlenecks</strong></li>
+      <li><strong>Changes in flow</strong></li>
+      <li><strong>Stability of the workflow</strong></li>
+    </ul>
+    <div class="box interp">
+      <div class="box-title">Interpretation (Exam Point)</div>
+      <p>If the <strong>Testing</strong> band in Fig. 14.1 keeps widening over time, this indicates <span class="kt">increasing accumulation in Testing</span> — the CAMS bottleneck identified in §12 becomes visible directly on the diagram.</p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 15 — EXPLICIT PROCESS POLICIES ============ -->
+  <section class="block" id="s15">
+    <div class="eyebrow">Flow &amp; Measurement</div>
+    <h2><span class="num">15</span> Explicit Process Policies</h2>
+
+    <ul>
+      <li>Kanban teams do <u>not</u> need huge documents or wikis to establish policies.</li>
+      <li>Policies can be as simple as <strong>WIP limits</strong> or <strong>definitions of done/exit criteria.</strong></li>
+    </ul>
+    <div class="box def">
+      <div class="box-title">What Does "Explicit" Mean? (Exam Point)</div>
+      <p>Everyone should know: <span class="kt">"What conditions must be satisfied before work moves to the next stage?"</span></p>
+    </div>
+
+    <h3><span class="num">15.1</span> Why Collaborative Policies Matter</h3>
+    <p>Policies are particularly effective when established <u>collaboratively</u> and evolved <u>experimentally</u> by the whole team — this means policies are not necessarily permanent.</p>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>Suppose CAMS <strong>Testing WIP = 5.</strong> After observing the system, the team discovers that 5 creates excessive context switching. They experiment with <strong>Testing WIP = 3</strong>, then measure whether flow improves.</p>
+    </div>
+    <div class="flow-inline">Observe &rarr; Experiment &rarr; Measure &rarr; Improve</div>
+  </section>
+
+  <!-- ============ SECTION 16 — DEFINITION OF DONE ============ -->
+  <section class="block" id="s16">
+    <div class="eyebrow">Flow &amp; Measurement</div>
+    <h2><span class="num">16</span> Definition of Done</h2>
+
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>Suppose CAMS has: <em>Testing &rarr; Done.</em> What does "Done" mean? The team defines:</p>
+      <ul>
+        <li>&#10003; All test cases executed</li>
+        <li>&#10003; No critical defects</li>
+        <li>&#10003; Required documentation completed</li>
+        <li>&#10003; Customer (department) acceptance obtained</li>
+      </ul>
+      <p>Now everyone understands the same rule.</p>
+    </div>
+
+    <div class="box warn">
+      <div class="box-title">Without Explicit Policies (Exam Point)</div>
+      <p>Without an agreed Definition of Done, a developer may say <em>"I think it's done,"</em> while a tester says <em>"No, it's not ready"</em> — creating confusion and rework.</p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 17 — LITTLE'S LAW ============ -->
+  <section class="block" id="s17">
+    <div class="eyebrow">Flow &amp; Measurement</div>
+    <h2><span class="num">17</span> Little's Law</h2>
+    <p class="lede">This is the <span class="kt">quantitative section</span> of the Kanban unit.</p>
+
+    <div class="formula-box box">
+      <div class="box-title">Formula (Exam Point)</div>
+      <p class="formula">L = W &times; &lambda;</p>
+      <p class="formula">W = L &divide; &lambda;</p>
+      <table style="margin-top:12px;">
+        <thead><tr><th>Symbol</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><strong>&lambda;</strong></td><td>Arrival rate</td></tr>
+          <tr><td><strong>L</strong></td><td>Inventory / average WIP</td></tr>
+          <tr><td><strong>W</strong></td><td>Average lead time</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="diagram">
+      <svg viewBox="0 0 420 260" xmlns="http://www.w3.org/2000/svg">
+        <g font-family="Segoe UI,sans-serif" font-size="14" font-weight="700" fill="#1b2430" text-anchor="middle">
+          <polygon points="210,20 380,220 40,220" fill="none" stroke="#b8862f" stroke-width="2"/>
+          <circle cx="210" cy="70" r="42" fill="#e0ede9" stroke="#2c6b64" stroke-width="1.5"/><text x="210" y="76">L</text>
+          <circle cx="120" cy="196" r="42" fill="#fbf3e3" stroke="#b8862f" stroke-width="1.5"/><text x="120" y="202">W</text>
+          <circle cx="300" cy="196" r="42" fill="#f3e2df" stroke="#a8453a" stroke-width="1.5"/><text x="300" y="202">&lambda;</text>
+          <text x="210" y="248" font-family="Consolas,monospace" font-size="12">L = W &times; &lambda; &#8203;&#8203;&#8203; W = L / &lambda;</text>
+        </g>
+      </svg>
+      <div class="cap">Fig. 17.1 — Little's Law: Inventory (L), Lead Time (W), and Arrival Rate (&lambda;)</div>
+    </div>
+
+    <h3><span class="num">17.1</span> Numerical Example 1 — Hospital Analogy</h3>
+    <div class="box ref">
+      <div class="box-title">Illustration</div>
+      <p>Patients arrive at <strong>10 patients/hour</strong>, and the average number of patients in the system is <strong>5 patients.</strong></p>
+      <p><strong>Formula:</strong> <span class="formula">W = L &divide; &lambda;</span><br><strong>Substitute:</strong> W = 5 &divide; 10<br><strong>Answer:</strong> <span class="formula">W = 0.5 hour (30 minutes)</span></p>
+    </div>
+
+    <h3><span class="num">17.2</span> Numerical Example 2 — PPT's Office Patient Example</h3>
+    <div class="box ref">
+      <div class="box-title">Illustration</div>
+      <p>An office schedules <strong>11 patients to arrive every hour</strong> (&lambda; = 11/hour), with an average inventory of <strong>7 patients</strong> (L = 7) over the course of the day.</p>
+      <p><strong>Formula:</strong> <span class="formula">W = L &divide; &lambda;</span><br><strong>Substitute:</strong> W = 7 &divide; 11 = 0.63 hours<br><strong>Answer:</strong> <span class="formula">W &asymp; 37&ndash;38 minutes</span></p>
+    </div>
+
+    <h3><span class="num">17.3</span> Numerical Example 3 — Little's Law in CAMS</h3>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>The CAMS team has <strong>average WIP = 20 items</strong> and <strong>throughput = 5 items/week.</strong></p>
+      <p><strong>Formula:</strong> <span class="formula">W = L &divide; &lambda;</span><br><strong>Substitute:</strong> W = 20 &divide; 5<br><strong>Answer:</strong> <span class="formula">W = 4 weeks</span></p>
+      <p>Now suppose the CAMS team reduces WIP to <strong>10 items</strong>, with throughput remaining <strong>5 items/week:</strong></p>
+      <p>W = 10 &divide; 5 = <span class="formula">W = 2 weeks</span></p>
+    </div>
+    <div class="box key">
+      <div class="box-title">Powerful Insight (Exam Point)</div>
+      <p><span class="kt">Reducing WIP can reduce lead time when throughput remains stable.</span> Conceptually: <em>More WIP &rarr; Longer Lead Time &rarr; More Waiting</em>, provided arrival/throughput conditions are stable — one reason Kanban emphasizes <u>limiting WIP.</u></p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 18 — CONTINUOUS IMPROVEMENT ============ -->
+  <section class="block" id="s18">
+    <div class="eyebrow">Synthesis</div>
+    <h2><span class="num">18</span> Continuous Improvement</h2>
+
+    <p>The PPT's central story, connecting every practice into one continuing cycle:</p>
+    <div class="diagram">
+      <svg viewBox="0 0 460 480" xmlns="http://www.w3.org/2000/svg">
+        <defs><marker id="a13" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#8c6522"/></marker></defs>
+        <g font-family="Segoe UI,sans-serif" font-size="12.5" fill="#1b2430" font-weight="700" text-anchor="middle">
+          <rect x="140" y="10" width="180" height="34" rx="4" fill="#1b2430"/><text x="230" y="32" fill="#f4efe0">KANBAN</text>
+          <line x1="230" y1="44" x2="230" y2="64" stroke="#8c6522" stroke-width="2" marker-end="url(#a13)"/>
+          <rect x="110" y="68" width="240" height="34" rx="4" fill="#e0ede9" stroke="#2c6b64"/><text x="230" y="90">Visualize Workflow</text>
+          <line x1="230" y1="102" x2="230" y2="122" stroke="#8c6522" stroke-width="2" marker-end="url(#a13)"/>
+          <rect x="110" y="126" width="240" height="34" rx="4" fill="#e0ede9" stroke="#2c6b64"/><text x="230" y="148">Identify Problems</text>
+          <line x1="230" y1="160" x2="230" y2="180" stroke="#8c6522" stroke-width="2" marker-end="url(#a13)"/>
+          <rect x="110" y="184" width="240" height="34" rx="4" fill="#fbf3e3" stroke="#b8862f"/><text x="230" y="206">Limit WIP</text>
+          <line x1="230" y1="218" x2="230" y2="238" stroke="#8c6522" stroke-width="2" marker-end="url(#a13)"/>
+          <rect x="110" y="242" width="240" height="34" rx="4" fill="#fbf3e3" stroke="#b8862f"/><text x="230" y="264">Improve Flow</text>
+          <line x1="230" y1="276" x2="230" y2="296" stroke="#8c6522" stroke-width="2" marker-end="url(#a13)"/>
+          <rect x="110" y="300" width="240" height="34" rx="4" fill="#f3e2df" stroke="#a8453a"/><text x="230" y="322">Measure the Flow</text>
+          <line x1="230" y1="334" x2="230" y2="354" stroke="#8c6522" stroke-width="2" marker-end="url(#a13)"/>
+          <rect x="110" y="358" width="240" height="34" rx="4" fill="#f3e2df" stroke="#a8453a"/><text x="230" y="380">Make Policies Explicit</text>
+          <line x1="230" y1="392" x2="230" y2="412" stroke="#8c6522" stroke-width="2" marker-end="url(#a13)"/>
+          <rect x="110" y="416" width="240" height="34" rx="4" fill="#eeecf6" stroke="#5a4a86"/><text x="230" y="438">Experiment &amp; Improve</text>
+          <path d="M320,433 C 420,433 420,60 320,44" fill="none" stroke="#8c6522" stroke-width="2" marker-end="url(#a13)"/>
+          <text x="400" y="240" font-size="11" fill="#8c6522" transform="rotate(90 400,240)">Continuous Improvement</text>
+        </g>
+      </svg>
+      <div class="cap">Fig. 18.1 — Complete Kanban flow: from visualization to continuous improvement</div>
+    </div>
+
+    <div class="flow-inline">"See the work &rarr; Limit the work &rarr; Measure the flow &rarr; Improve the process."</div>
+
+    <h3><span class="num">18.1</span> Feedback Loops &amp; Collaborative, Experimental Evolution</h3>
+    <ul>
+      <li><strong>Feedback Loops:</strong> Action &rarr; Observe &rarr; Feedback &rarr; Change &rarr; New Action, repeating continuously.</li>
+      <li><strong>Improve Collaboratively, Evolve Experimentally:</strong> changes are proposed by the whole team and tested as <u>hypotheses</u>, not assumed to work: <em>Observe &rarr; Experiment &rarr; Measure &rarr; Improve</em> (§15.1).</li>
+    </ul>
+  </section>
+
+  <!-- ============ SECTION 19 — CASE STUDY ============ -->
+  <section class="block" id="s19">
+    <div class="eyebrow">Synthesis</div>
+    <h2><span class="num">19</span> Complete Case Study — College Attendance Management System</h2>
+    <p class="lede">Students are developing the <strong>College Attendance Management System (CAMS)</strong>, applying every Kanban concept covered above in sequence.</p>
+
+    <div class="flow-inline">Backlog &rarr; Analysis &rarr; Development &rarr; Testing &rarr; Deployment &rarr; Done</div>
+
+    <h3><span class="num">19.1</span> Step 1 — Visualize</h3>
+    <table>
+      <caption>CAMS Kanban Board Snapshot</caption>
+      <thead><tr><th>Backlog</th><th>Analysis</th><th>Development</th><th>Testing</th><th>Done</th></tr></thead>
+      <tbody>
+        <tr><td>Login</td><td>Attendance Module</td><td>Percentage Calc.</td><td>&mdash;</td><td>Profile</td></tr>
+        <tr><td>Fee Payment</td><td>&mdash;</td><td>Notification</td><td>&mdash;</td><td>&mdash;</td></tr>
+        <tr><td>Reports</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td><td>&mdash;</td></tr>
+      </tbody>
+    </table>
+    <p>Immediately, the team can see the current state of every item.</p>
+
+    <h3><span class="num">19.2</span> Step 2 — Add WIP Limits</h3>
+    <div class="flow-inline">Analysis WIP = 2 &nbsp;|&nbsp; Development WIP = 3 &nbsp;|&nbsp; Testing WIP = 2</div>
+    <p>Now the team cannot endlessly start new work.</p>
+
+    <h3><span class="num">19.3</span> Step 3 — Detect Bottleneck</h3>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>Development &rarr; 3 items (full); Testing &rarr; 2 items (full). Developers should not simply start another feature — instead, they help move existing items toward completion.</p>
+    </div>
+
+    <h3><span class="num">19.4</span> Step 4 — Measure Flow (Little's Law)</h3>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>The CAMS team completes <strong>10 items/week</strong>, with average WIP of <strong>20 items.</strong></p>
+      <p><strong>Formula:</strong> <span class="formula">W = L &divide; &lambda;</span><br><strong>Substitute:</strong> W = 20 &divide; 10<br><strong>Answer:</strong> <span class="formula">Average lead time &asymp; 2 weeks</span></p>
+    </div>
+
+    <h3><span class="num">19.5</span> Step 5 — Improve (Experiment)</h3>
+    <div class="box cams">
+      <div class="box-title">Illustration</div>
+      <p>The team experiments: <strong>WIP: 20 &rarr; 15.</strong> If throughput remains approximately 10 items/week:</p>
+      <p>W = 15 &divide; 10 = <span class="formula">1.5 weeks</span></p>
+      <p>The team then evaluates whether the change actually improves delivery — this is <span class="kt">data-driven continuous improvement.</span></p>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 20 — EXAM & REVISION ============ -->
+  <section class="block" id="s20">
+    <div class="eyebrow">Reference</div>
+    <h2><span class="num">20</span> Exam &amp; Revision</h2>
+
+    <h3><span class="num">20.1</span> Seven Key Points to Remember</h3>
+    <table>
+      <caption>The Seven Pillars of Kanban</caption>
+      <thead><tr><th>#</th><th>Concept</th><th>Core Idea</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Kanban</td><td>A method for process improvement emphasizing visualization and continuous improvement</td></tr>
+        <tr><td>2</td><td>Kanban Board</td><td>Visualizes the actual workflow</td></tr>
+        <tr><td>3</td><td>WIP</td><td>Work In Progress — work currently inside the workflow</td></tr>
+        <tr><td>4</td><td>WIP Limit</td><td>Restricts the amount of work allowed in a workflow stage</td></tr>
+        <tr><td>5</td><td>Flow</td><td>The rate at which work items move through the system</td></tr>
+        <tr><td>6</td><td>Explicit Policies</td><td>Clearly defined rules for moving work between stages</td></tr>
+        <tr><td>7</td><td>Little's Law</td><td>L = W&lambda;, or W = L/&lambda;</td></tr>
+      </tbody>
+    </table>
+
+    <h3><span class="num">20.2</span> Kanban vs. Scrum — Comparison</h3>
+    <table>
+      <caption>Kanban vs. Scrum (Exam Point)</caption>
+      <thead><tr><th>Aspect</th><th>Scrum</th><th>Kanban</th></tr></thead>
+      <tbody>
+        <tr><td>Cadence</td><td>Fixed-length sprints (time-boxed)</td><td>Continuous flow; no mandatory iterations</td></tr>
+        <tr><td>Board Items</td><td>Tasks shown in detail</td><td>Stories/work items only</td></tr>
+        <tr><td>Columns</td><td>Standard, sprint-aligned</td><td>Vary by team, reflect actual process</td></tr>
+        <tr><td>Work Control</td><td>Sprint commitment (capacity planned in advance)</td><td>WIP limits (capacity controlled continuously)</td></tr>
+        <tr><td>Roles</td><td>Defined roles: Scrum Master, Product Owner, Team</td><td>No mandated roles; respects existing titles</td></tr>
+        <tr><td>Change</td><td>Changes generally deferred to next sprint</td><td>Change can occur any time work has not started</td></tr>
+        <tr><td>Delivery</td><td>At the end of each sprint</td><td>Continuous, as each item completes</td></tr>
+      </tbody>
+    </table>
+
+    <h3><span class="num">20.3</span> Two-Mark Questions with Answers</h3>
+    <div class="qa"><div class="q"><span class="marks">2 MARKS</span>Define Kanban.</div><div class="a">Kanban is a method for process improvement used by Agile teams; it visualizes the workflow, limits work in progress, and improves flow continuously, starting from the team's existing process.</div></div>
+    <div class="qa"><div class="q"><span class="marks">2 MARKS</span>What is a Kanban board?</div><div class="a">A tool used to visualize the workflow, typically consisting of columns representing workflow stages and cards representing work items.</div></div>
+    <div class="qa"><div class="q"><span class="marks">2 MARKS</span>What is WIP?</div><div class="a">Work In Progress — work items that have entered the workflow but have not yet been completed.</div></div>
+    <div class="qa"><div class="q"><span class="marks">2 MARKS</span>What is a WIP limit?</div><div class="a">A restriction on the number of work items permitted in a given workflow stage at one time, used to prevent overload and encourage finishing work.</div></div>
+    <div class="qa"><div class="q"><span class="marks">2 MARKS</span>Define workflow.</div><div class="a">The sequence of stages through which a work item passes from request to completion, e.g., Analysis &rarr; Development &rarr; Testing &rarr; Release.</div></div>
+    <div class="qa"><div class="q"><span class="marks">2 MARKS</span>What is a bottleneck?</div><div class="a">A workflow stage whose capacity is lower than the stages feeding it, causing work to accumulate before it and slowing overall delivery.</div></div>
+    <div class="qa"><div class="q"><span class="marks">2 MARKS</span>What is a Cumulative Flow Diagram?</div><div class="a">A tool that tracks how work accumulates across workflow stages over time, used to identify WIP, bottlenecks, and flow stability.</div></div>
+    <div class="qa"><div class="q"><span class="marks">2 MARKS</span>State Little's Law.</div><div class="a">L = W &times; &lambda; (equivalently W = L &divide; &lambda;), where L is average inventory/WIP, W is average lead time, and &lambda; is arrival rate — valid for a stable workflow.</div></div>
+    <div class="qa"><div class="q"><span class="marks">2 MARKS</span>What is meant by explicit process policies?</div><div class="a">Clearly stated, visible rules — such as WIP limits, exit criteria, and definitions of done — describing the conditions under which work may move to the next stage.</div></div>
+    <div class="qa"><div class="q"><span class="marks">2 MARKS</span>Mention any four Kanban values.</div><div class="a">Any four of: Transparency, Balance, Collaboration, Customer Focus, Workflow, Leadership, Understanding, Agreement, Respect.</div></div>
+
+    <h3><span class="num">20.4</span> Five/Ten-Mark Questions with Model Answers</h3>
+
+    <div class="qa">
+      <div class="q"><span class="marks">10 MARKS</span>Explain the Kanban values with suitable examples.</div>
+      <div class="a">Present the nine values (Transparency, Balance, Collaboration, Customer Focus, Workflow, Leadership, Understanding, Agreement, Respect), state each definition, and illustrate each with a CAMS example (§5) — e.g., Transparency: making a blocked "Login Module" card visible with its blocker reason; Respect: investigating "what is preventing this item from flowing" instead of blaming a developer. Conclude that Respect underlies the other eight values.</div>
+    </div>
+    <div class="qa">
+      <div class="q"><span class="marks">10 MARKS</span>Explain the major Kanban practices.</div>
+      <div class="a">Describe Visualize the Workflow (board reflects the actual, not ideal, process — §8), Limit Work in Progress (caps items per stage to avoid the "illusion of productivity" — §10), Measure and Manage Flow (throughput, lead time, CFD — §12–14), and Make Process Policies Explicit (WIP limits, exit criteria, DoD — §15–16), supported by Little's Law as a quantitative tool (§17). Each should include a CAMS illustration.</div>
+    </div>
+    <div class="qa">
+      <div class="q"><span class="marks">10 MARKS</span>Explain how a Kanban board helps visualize workflow.</div>
+      <div class="a">A Kanban board displays columns for each real workflow stage and cards for each work item, making the current location of every item immediately visible (§8–9). Using the CAMS example (20 items: Backlog 5, Development 3, Testing 10, Release 2), show how the board reveals that Testing is accumulating work — information a simple status report would miss. Conclude with the "warts and all" principle: the board must reflect the actual process, not an idealized one.</div>
+    </div>
+    <div class="qa">
+      <div class="q"><span class="marks">5 MARKS</span>Explain WIP limits and their importance.</div>
+      <div class="a">Define WIP and WIP limits (§10). Explain the danger of unlimited WIP using the "illusion of productivity" example (5 developers, 8 features started, nothing completed). Show the corrected approach with WIP Limit = 3, and the Manager Review WIP=10 reference example. State the key point: the goal is to improve the movement of work through the system, not to maximize started work.</div>
+    </div>
+    <div class="qa">
+      <div class="q"><span class="marks">10 MARKS</span>Explain how Kanban measures and manages flow.</div>
+      <div class="a">Define flow as the rate at which work items move through the system (§12). Explain throughput and lead time with the CAMS numerical example (12 items in 5 days = 2.4 items/day). Introduce bottleneck identification using the CAMS capacity table (Testing = 3/day, the lowest). Introduce the CFD as the primary visual tool for measuring flow, with the water-tank analogy and the widening-band interpretation (§14). Conclude with the link to Little's Law for quantifying lead time.</div>
+    </div>
+    <div class="qa">
+      <div class="q"><span class="marks">10 MARKS</span>Explain Little's Law with a suitable example.</div>
+      <div class="a">State the formula L = W&times;&lambda; (equivalently W = L&divide;&lambda;) and define each symbol (§17). Work through the CAMS numerical example (WIP=20, throughput=5/week &rarr; W=4 weeks), then show that reducing WIP to 10 (with throughput held at 5/week) reduces lead time to 2 weeks. Include the PPT's office-patient example (&lambda;=11/hour, L=7 &rarr; W&asymp;37 minutes) as a cross-domain illustration, and state the conclusion: reducing WIP reduces lead time when throughput is stable.</div>
+    </div>
+    <div class="qa">
+      <div class="q"><span class="marks">5 MARKS</span>Compare Kanban and Scrum task boards.</div>
+      <div class="a">Present the three-point comparison from §9.2: (1) granularity — Kanban shows stories, Scrum task boards show detailed tasks; (2) column structure — Kanban columns vary by team and reflect the actual process, Scrum columns are standard and sprint-aligned; (3) WIP limits — Kanban columns can carry explicit WIP limits, which is not a standard Scrum task-board feature. Extend with the fuller comparison table in §20.2 covering cadence, roles, change handling, and delivery cudence.</div>
+    </div>
+
+    <h3><span class="num">20.5</span> One-Line Memory Trick</h3>
+    <div class="box key">
+      <div class="box-title">Core Conceptual Thread</div>
+      <p>&ldquo;<span class="kt gold" style="color:var(--gold);">See the work &rarr; Limit the work &rarr; Measure the flow &rarr; Improve the process.</span>&rdquo;</p>
+      <p style="margin-top:10px;">Or: <em>VISUALIZE &rarr; LIMIT WIP &rarr; MEASURE FLOW &rarr; MAKE POLICIES EXPLICIT &rarr; CONTINUOUS IMPROVEMENT.</em></p>
+    </div>
+
+    <div class="box key">
+      <div class="box-title">Closing Statement</div>
+      <p>Kanban is a mindset for seeing work, limiting work in progress, and improving flow continuously — starting from the current process, changing incrementally, respecting existing roles, and encouraging leadership at every level. Its board, WIP limits, CFD, and Little's Law exist to make this improvement cycle visible and measurable, as demonstrated throughout by the College Attendance Management System.</p>
+    </div>
+  </section>
+
+</main>
+
+<a href="#top" class="backtotop" aria-label="Back to top">&uarr;</a>
+
+<footer>
+  <strong>Kanban — Complete Study &amp; Reference Guide.</strong> Primary source: uploaded Kanban lecture document and slide deck. Running example: College Attendance Management System (CAMS). Self-contained — no internet connection, external fonts, images, or CDNs required to view.
+</footer>
+
+</body>
+</html>

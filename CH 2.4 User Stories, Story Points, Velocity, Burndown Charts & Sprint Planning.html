@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit II — User Stories, Story Points, Velocity, Burndown Charts &amp; Sprint Planning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1B3A4B;
+    --navy-deep:#122733;
+    --teal:#2F7A6E;
+    --amber:#C8842E;
+    --rose:#B4553F;
+    --bg:#F5F3EE;
+    --paper:#FFFFFF;
+    --ink:#1E2224;
+    --muted:#5B6670;
+    --line:#DCD6C8;
+    --card-line:#E3DED2;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    font-size:16px;
+  }
+  h1,h2,h3,h4{
+    font-family:'Source Serif 4', serif;
+    color:var(--navy-deep);
+    margin:0 0 0.4em 0;
+    font-weight:600;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  /* ===== Header ===== */
+  header.hero{
+    background:linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color:#F2EFE6;
+    padding:52px 8vw 40px 8vw;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute;
+    right:-60px; top:-60px;
+    width:280px;height:280px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(200,132,46,0.25) 0%, rgba(200,132,46,0) 70%);
+  }
+  .eyebrow{
+    font-size:0.85rem;
+    letter-spacing:0.02em;
+    color:#C8842E;
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  header.hero h1{
+    color:#FBF9F4;
+    font-size:2.1rem;
+    max-width:820px;
+    line-height:1.25;
+  }
+  header.hero p.subtitle{
+    max-width:680px;
+    color:#CBD5D6;
+    font-size:1.02rem;
+    margin-top:14px;
+  }
+  .meta-row{
+    display:flex;
+    gap:28px;
+    margin-top:26px;
+    flex-wrap:wrap;
+    font-size:0.88rem;
+    color:#B9C4C4;
+  }
+  .meta-row span strong{color:#F2EFE6;font-weight:600;}
+
+  /* ===== Nav ===== */
+  nav.toc{
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+    position:sticky;
+    top:0;
+    z-index:20;
+    padding:12px 8vw;
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    scrollbar-width:thin;
+  }
+  nav.toc a{
+    white-space:nowrap;
+    text-decoration:none;
+    color:var(--navy);
+    background:#F0EEE6;
+    border:1px solid var(--card-line);
+    padding:6px 14px;
+    border-radius:20px;
+    font-size:0.82rem;
+    font-weight:500;
+    transition:background .15s ease, color .15s ease;
+  }
+  nav.toc a:hover{background:var(--navy);color:#fff;}
+
+  /* ===== Main layout ===== */
+  main{
+    max-width:920px;
+    margin:0 auto;
+    padding:44px 6vw 90px 6vw;
+  }
+  section.unit{
+    margin-bottom:56px;
+    scroll-margin-top:66px;
+  }
+  .section-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:0.78rem;
+    font-weight:600;
+    color:var(--teal);
+    letter-spacing:0.02em;
+    margin-bottom:6px;
+  }
+  .section-tag .num{
+    background:var(--teal);
+    color:#fff;
+    width:20px;height:20px;
+    border-radius:50%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0.72rem;
+  }
+  section.unit h2{
+    font-size:1.5rem;
+    border-bottom:2px solid var(--line);
+    padding-bottom:10px;
+    margin-bottom:18px;
+  }
+  section.unit h3{
+    font-size:1.12rem;
+    margin-top:26px;
+    color:var(--navy);
+  }
+  p{margin:0.6em 0;}
+  ul, ol{padding-left:1.3em;margin:0.6em 0;}
+  li{margin-bottom:5px;}
+
+  /* ===== Callouts ===== */
+  .callout{
+    border-left:4px solid var(--teal);
+    background:#F0F5F3;
+    padding:14px 18px;
+    border-radius:4px;
+    margin:16px 0;
+  }
+  .callout.definition{border-left-color:var(--navy);background:#EEF1F3;}
+  .callout.example{border-left-color:var(--amber);background:#FBF3E7;}
+  .callout.exam{border-left-color:var(--rose);background:#F8ECE9;}
+  .callout .label{
+    font-weight:700;
+    font-size:0.72rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    margin-bottom:6px;
+    display:block;
+  }
+  .callout.definition .label{color:var(--navy);}
+  .callout.example .label{color:var(--amber);}
+  .callout.exam .label{color:var(--rose);}
+  .callout.eg .label{color:var(--teal);}
+
+  /* ===== Formula box ===== */
+  .formula{
+    background:var(--navy-deep);
+    color:#F2EFE6;
+    padding:18px 22px;
+    border-radius:8px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:1.02rem;
+    text-align:center;
+    margin:16px 0;
+  }
+  .formula .result{color:#EBBE7A;font-weight:600;}
+
+  /* ===== Tables ===== */
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin:14px 0;
+    font-size:0.92rem;
+  }
+  th,td{
+    border:1px solid var(--card-line);
+    padding:8px 12px;
+    text-align:left;
+  }
+  th{
+    background:#EEF1EC;
+    color:var(--navy-deep);
+    font-weight:600;
+  }
+  tr:nth-child(even) td{background:#FAF9F5;}
+
+  /* ===== Diagram card ===== */
+  .diagram-card{
+    background:var(--paper);
+    border:1px solid var(--card-line);
+    border-radius:10px;
+    padding:20px;
+    margin:18px 0;
+    text-align:center;
+  }
+  .diagram-card figcaption{
+    font-size:0.82rem;
+    color:var(--muted);
+    margin-top:8px;
+  }
+  svg{max-width:100%;height:auto;}
+
+  /* ===== Checklist ===== */
+  .checklist{list-style:none;padding-left:0;}
+  .checklist li{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:6px 0;
+  }
+  .checklist li::before{
+    content:"✓";
+    color:var(--teal);
+    font-weight:700;
+    flex-shrink:0;
+    background:#E4F0EC;
+    width:20px;height:20px;
+    border-radius:5px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:0.75rem;
+  }
+
+  /* ===== Flow steps ===== */
+  .flow{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    margin:16px 0;
+  }
+  .flow .step{
+    background:var(--paper);
+    border:1px solid var(--card-line);
+    border-radius:8px;
+    padding:8px 14px;
+    font-size:0.85rem;
+    font-weight:500;
+    color:var(--navy-deep);
+  }
+  .flow .arrow{color:var(--muted);font-size:1.1rem;}
+
+  /* ===== Card grid ===== */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:640px){.grid-2{grid-template-columns:1fr;}}
+
+  .footer{
+    text-align:center;
+    padding:26px;
+    color:var(--muted);
+    font-size:0.8rem;
+    border-top:1px solid var(--line);
+  }
+
+  code{
+    background:#EFEBE0;
+    padding:1px 6px;
+    border-radius:4px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.88em;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="eyebrow">PREPARED BY MS.A.KIRUTHIKA , AP/CSE</div>
+  <h1>User Stories, Story Points, Velocity, Burndown Charts &amp; Sprint Planning</h1>
+  <div class="meta-row">
+
+  </div>
+</header>
+
+<nav class="toc">
+  <a href="#us">User Stories</a>
+  <a href="#3c">3 C's</a>
+  <a href="#format">Story Format</a>
+  <a href="#backlog">Backlog Flow</a>
+  <a href="#cos">Conditions of Satisfaction</a>
+  <a href="#good">Good User Story</a>
+  <a href="#sp">Story Points</a>
+  <a href="#velocity">Velocity</a>
+  <a href="#burndown">Burndown Chart</a>
+  <a href="#risk">Risk Analysis</a>
+  <a href="#sprint">Sprint Planning</a>
+  <a href="#taskboard">Task Board</a>
+</nav>
+
+<main>
+
+  <!-- 1. USER STORIES -->
+  <section class="unit" id="us">
+    <span class="section-tag"><span class="num">1</span>FOUNDATIONS</span>
+    <h2>User Stories</h2>
+
+    <div class="callout definition">
+      <span class="label">Definition</span>
+      A user story is the <strong>smallest unit of work</strong> in an agile framework — a short requirement written from the perspective of an end user, mostly in non-technical language, that clearly defines the functionality the end user expects.
+    </div>
+
+    <p>Instead of one large requirement such as <em>"build an online shopping application,"</em> the work is broken into small, independently understandable pieces — one story per capability (register, login, search products, add to cart, pay, view order history). This keeps each unit small enough to discuss, estimate, and deliver within a sprint.</p>
+
+    <h3>Why teams use user stories</h3>
+    <ul>
+      <li>They give the team an easy way to manage the <strong>backlog</strong>.</li>
+      <li>Because they're written from the user's perspective, the Product Owner can review them with users and stakeholders to judge which stories are valuable.</li>
+      <li>Their small size makes it easy to add new stories or reorder the backlog at any time.</li>
+      <li>At the start of a sprint, the Product Owner and team pull stories out of the backlog and commit to delivering them in that sprint.</li>
+    </ul>
+
+    <div class="callout example">
+      <span class="label">Example</span>
+      Instead of: <em>"Create a MySQL table for storing attendance"</em> (a technical statement) — a user story reframes it as: <strong>"As a student, I want to view my attendance percentage, so that I can monitor my attendance."</strong>
+    </div>
+  </section>
+
+  <!-- 2. 3 C'S -->
+  <section class="unit" id="3c">
+    <span class="section-tag"><span class="num">2</span>FOUNDATIONS</span>
+    <h2>The 3 C's of a User Story</h2>
+    <p>A user story is more than the sentence written on it — it is completed through three components:</p>
+
+    <figure class="diagram-card">
+      <svg viewBox="0 0 720 260" xmlns="http://www.w3.org/2000/svg">
+        <!-- Card -->
+        <rect x="20" y="20" width="150" height="80" rx="8" fill="#1B3A4B"/>
+        <text x="95" y="65" text-anchor="middle" fill="#FBF9F4" font-family="Source Serif 4, serif" font-size="20" font-weight="600">Card</text>
+        <path d="M170 60 H230" stroke="#5B6670" stroke-width="2" marker-end="url(#arrow)"/>
+        <rect x="230" y="20" width="470" height="80" rx="8" fill="#FFFFFF" stroke="#E3DED2"/>
+        <text x="250" y="45" fill="#1E2224" font-family="Inter" font-size="13" font-weight="600">Written on note cards</text>
+        <text x="250" y="70" fill="#5B6670" font-family="Inter" font-size="13">Can be annotated with estimates, value, notes, etc.</text>
+
+        <!-- Conversation -->
+        <rect x="20" y="120" width="150" height="80" rx="8" fill="#2F7A6E"/>
+        <text x="95" y="165" text-anchor="middle" fill="#FBF9F4" font-family="Source Serif 4, serif" font-size="17" font-weight="600">Conversation</text>
+        <path d="M170 160 H230" stroke="#5B6670" stroke-width="2" marker-end="url(#arrow)"/>
+        <rect x="230" y="120" width="470" height="80" rx="8" fill="#FFFFFF" stroke="#E3DED2"/>
+        <text x="250" y="165" fill="#1E2224" font-family="Inter" font-size="13" font-weight="600">Details of the story emerge through conversation</text>
+
+        <!-- Confirmation -->
+        <rect x="20" y="220" width="150" height="30" rx="8" fill="#C8842E"/>
+        <text x="95" y="240" text-anchor="middle" fill="#FBF9F4" font-family="Source Serif 4, serif" font-size="13" font-weight="600">Confirmation</text>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#5B6670"/>
+          </marker>
+        </defs>
+      </svg>
+      <figcaption>Card → Conversation → Confirmation. Confirmation is where acceptance tests are defined to confirm the story is complete.</figcaption>
+    </figure>
+
+    <table>
+      <tr><th>Component</th><th>What it means</th></tr>
+      <tr><td><strong>Card</strong></td><td>The story is written on a card (physical or digital); it can be annotated with estimates, value, and notes.</td></tr>
+      <tr><td><strong>Conversation</strong></td><td>The full details of the story come out through discussion between the team and Product Owner — not from the card alone.</td></tr>
+      <tr><td><strong>Confirmation</strong></td><td>Acceptance tests are defined to confirm the story is complete — this leads directly into Conditions of Satisfaction.</td></tr>
+    </table>
+  </section>
+
+  <!-- 3. FORMAT -->
+  <section class="unit" id="format">
+    <span class="section-tag"><span class="num">3</span>FOUNDATIONS</span>
+    <h2>User Story Format</h2>
+    <p>A user story is always written from the end user's perspective, using a fixed three-part template:</p>
+
+    <figure class="diagram-card">
+      <svg viewBox="0 0 640 210" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="200" height="190" rx="10" fill="#EEF1F3" stroke="#DCD6C8"/>
+        <text x="110" y="40" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" font-weight="600" fill="#1B3A4B">AS A</text>
+        <text x="110" y="60" text-anchor="middle" font-family="Inter" font-size="12" fill="#5B6670">(End User)</text>
+        <text x="110" y="100" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" font-weight="600" fill="#2F7A6E">I WANT</text>
+        <text x="110" y="120" text-anchor="middle" font-family="Inter" font-size="12" fill="#5B6670">(Goal)</text>
+        <text x="110" y="160" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="15" font-weight="600" fill="#C8842E">SO THAT</text>
+        <text x="110" y="180" text-anchor="middle" font-family="Inter" font-size="12" fill="#5B6670">(Benefit)</text>
+
+        <rect x="240" y="10" width="390" height="55" rx="8" fill="#FFFFFF" stroke="#E3DED2"/>
+        <text x="255" y="30" font-family="Inter" font-size="12" font-weight="700" fill="#1B3A4B">End User</text>
+        <text x="255" y="48" font-family="Inter" font-size="12" fill="#5B6670">User type / role</text>
+
+        <rect x="240" y="77" width="390" height="55" rx="8" fill="#FFFFFF" stroke="#E3DED2"/>
+        <text x="255" y="97" font-family="Inter" font-size="12" font-weight="700" fill="#2F7A6E">Goal</text>
+        <text x="255" y="115" font-family="Inter" font-size="12" fill="#5B6670">The functionality the end user expects</text>
+
+        <rect x="240" y="144" width="390" height="56" rx="8" fill="#FFFFFF" stroke="#E3DED2"/>
+        <text x="255" y="164" font-family="Inter" font-size="12" font-weight="700" fill="#C8842E">Benefit</text>
+        <text x="255" y="182" font-family="Inter" font-size="12" fill="#5B6670">The value the user gains from the feature</text>
+      </svg>
+      <figcaption>User story is always written from the end user's perspective.</figcaption>
+    </figure>
+
+    <div class="callout example">
+      <span class="label">Worked example — Student Login</span>
+      <strong>Summary:</strong> Student Login page<br>
+      <strong>User Story:</strong> As a Student, I want to have login functionality, so that I can successfully use the Student Module.<br>
+      <strong>Scope:</strong> Build a login page; student validation.<br>
+      <strong>Pre-condition:</strong> Student should have registered in school to use login.<br>
+      <strong>Non-functional requirements:</strong> Should work in all browsers; login should complete within 3 seconds.
+    </div>
+
+    <h3>Every story should answer Who? What? Why?</h3>
+    <div class="callout eg">
+      <span class="label">Nominate-a-video example (index card)</span>
+      <strong>As a</strong> returning user with a large friends list, <strong>I want to</strong> nominate one friend's video for an achievement <strong>so that</strong> all of our mutual friends can vote to give him a star.
+      <p style="margin-top:8px;"><strong>Who?</strong> Returning user with a large friends list &nbsp;|&nbsp; <strong>What?</strong> Nominate a friend's video &nbsp;|&nbsp; <strong>Why?</strong> So friends can vote to award a star.</p>
+    </div>
+  </section>
+
+  <!-- 4. BACKLOG FLOW -->
+  <section class="unit" id="backlog">
+    <span class="section-tag"><span class="num">4</span>FOUNDATIONS</span>
+    <h2>User Stories and the Product Backlog</h2>
+    <p>All stories live in the <strong>product backlog</strong>. At the start of a sprint they move through a short pipeline:</p>
+    <div class="flow">
+      <div class="step">Product Backlog</div><span class="arrow">→</span>
+      <div class="step">Product Owner &amp; team pull stories for the sprint</div><span class="arrow">→</span>
+      <div class="step">Team discusses stories for clarity</div><span class="arrow">→</span>
+      <div class="step">Stories broken into tasks</div><span class="arrow">→</span>
+      <div class="step">Tasks estimated</div><span class="arrow">→</span>
+      <div class="step">Tasks placed in "To Do"</div>
+    </div>
+  </section>
+
+  <!-- 5. CONDITIONS OF SATISFACTION -->
+  <section class="unit" id="cos">
+    <span class="section-tag"><span class="num">5</span>DEFINITION OF DONE</span>
+    <h2>Conditions of Satisfaction</h2>
+
+    <div class="callout definition">
+      <span class="label">Definition</span>
+      Conditions of Satisfaction are an effective tool that help developers know what the software should look like when complete, and gauge how close they are to being done. They are defined for each user story — some teams call this <strong>acceptance criteria</strong> — and can fit on the back of the same 3×5 index card as the story.
+    </div>
+
+    <ul>
+      <li>They help developers avoid declaring victory too early, by giving a concrete definition of <strong>"Done."</strong></li>
+      <li>A user story is "Done" only when its conditions are satisfied, and this is demonstrated in the sprint review.</li>
+    </ul>
+
+    <h3>Worked example — Student Login (Given / When / Then)</h3>
+    <p>Acceptance criteria are the conditions a product must meet to be accepted by the user:</p>
+    <table>
+      <tr><th>Scenario 1: Student can log in successfully</th><th>Scenario 2: Student cannot log in</th></tr>
+      <tr>
+        <td><strong>Given</strong> I am on the login page<br><strong>When</strong> I provide a valid username and password and click Sign In<br><strong>Then</strong> I will log in successfully</td>
+        <td><strong>Given</strong> I am on the login page<br><strong>When</strong> I provide an invalid username and password and click Sign In<br><strong>Then</strong> I get the error "Please provide valid credentials"</td>
+      </tr>
+    </table>
+    <p><strong>Given</strong> = starting condition &nbsp;·&nbsp; <strong>When</strong> = the action taken &nbsp;·&nbsp; <strong>Then</strong> = the expected result. A single story can have multiple acceptance scenarios.</p>
+
+    <h3>Worked example — Nominate a video for an achievement</h3>
+    <div class="callout eg">
+      <span class="label">Conditions of Satisfaction</span>
+      <ul style="margin:6px 0 0 0;">
+        <li>A user can nominate a video for an achievement.</li>
+        <li>A user's friend is notified when their video gets an achievement.</li>
+        <li>A user can see all of the videos their friends have nominated.</li>
+        <li>A video with an achievement is displayed with a star next to it.</li>
+      </ul>
+    </div>
+
+    <div class="callout exam">
+      <span class="label">Exam focus</span>
+      Frequently asked directly as: "Determine the Conditions of Satisfaction for &lt;a given user story&gt;." Answer by listing concrete, testable statements — each describing one observable fact that must be true for the story to count as done.
+    </div>
+  </section>
+
+  <!-- 6. GOOD USER STORY -->
+  <section class="unit" id="good">
+    <span class="section-tag"><span class="num">6</span>QUALITY CHECK</span>
+    <h2>Characteristics of a Good User Story</h2>
+    <p>A good user story should fulfill this checklist:</p>
+    <ul class="checklist">
+      <li>Keep them short</li>
+      <li>Keep them simple</li>
+      <li>Write from the perspective of the end user</li>
+      <li>Make sure the value / reason for the story is clear</li>
+      <li>The story should have user acceptance criteria to test the functionality</li>
+      <li>It should be testable</li>
+      <li>The story should be linked to its related Epic (a collection of user stories)</li>
+    </ul>
+    <div class="callout exam">
+      <span class="label">Exam focus</span>
+       List any relevant points from the checklist above with a one-line justification each.
+    </div>
+  </section>
+
+  <!-- 7. STORY POINTS -->
+  <section class="unit" id="sp">
+    <span class="section-tag"><span class="num">7</span>ESTIMATION</span>
+    <h2>Story Points</h2>
+    <div class="callout definition">
+      <span class="label">Definition</span>
+      Story points are units of measure for expressing an estimate of the <strong>overall effort</strong> required to fully implement a product backlog item or any other piece of work.
+    </div>
+
+    <h3>How points are assigned</h3>
+    <ul>
+      <li>Story points are <strong>relative</strong> — the team compares a current story to a similar one it has completed before, and assigns it the same number of points.</li>
+      <li>Teams use different numeric scales: 1–5, 1–10, the Fibonacci series (1, 2, 3, 5, 8, 13…), or exponential numbers.</li>
+      <li>Points are not hours — a story with 8 points isn't "8 hours of work"; it simply means the team judges it to require roughly proportionally more effort than a 5-point story.</li>
+    </ul>
+
+    <h3>Estimation process (sprint planning)</h3>
+    <div class="flow">
+      <div class="step">Start with the most valuable backlog stories</div><span class="arrow">→</span>
+      <div class="step">Pick the smallest story as a baseline</div><span class="arrow">→</span>
+      <div class="step">Find a similarly sized past story, assign the same points</div><span class="arrow">→</span>
+      <div class="step">Team discusses accuracy of the estimate</div><span class="arrow">→</span>
+      <div class="step">Repeat until enough points fill the sprint</div>
+    </div>
+    <p>Additional problems, work, or technical changes <strong>increase</strong> the estimate; reusing existing code <strong>decreases</strong> it.</p>
+
+    <h3>Why story points work</h3>
+    <ul>
+      <li>They are simple, and not "magic" — the team stays in control of them.</li>
+      <li>They get the team talking about estimates, without developers feeling threatened by them.</li>
+      <li>They help the team discover exactly what a story means, and everyone becomes genuinely committed to it.</li>
+    </ul>
+  </section>
+
+  <!-- 8. VELOCITY -->
+  <section class="unit" id="velocity">
+    <span class="section-tag"><span class="num">8</span>ESTIMATION</span>
+    <h2>Velocity</h2>
+    <div class="callout definition">
+      <span class="label">Definition</span>
+      Velocity is a measure of how much work is completed by the developers within a specific sprint. Teams tend to work at a fairly constant velocity, so past velocity is used to plan the next sprint.
+    </div>
+
+    <div class="formula">
+      Actual Velocity = Total Story Points Completed ÷ Number of Sprints
+    </div>
+
+    <div class="callout example">
+      <span class="label">Worked example</span>
+      A team completes a total of <strong>80 story points</strong> over <strong>4 sprints</strong>.<br>
+      Velocity = 80 ÷ 4 = <span class="mono result-inline"><strong>20 points/sprint</strong></span>
+    </div>
+
+    <div class="callout example">
+      <span class="label">Worked example — multiple sprints</span>
+      Sprint 1 = 50 points, Sprint 2 = 25 points, Sprint 3 = 35 points.<br>
+      Total = 50 + 25 + 35 = 110 points over 3 sprints.<br>
+      Velocity = 110 ÷ 3 ≈ <strong>36.67 points/sprint</strong>
+    </div>
+  </section>
+
+  <!-- 9. BURNDOWN -->
+  <section class="unit" id="burndown">
+    <span class="section-tag"><span class="num">9</span>SPRINT TRACKING</span>
+    <h2>Burndown Chart</h2>
+    <div class="callout definition">
+      <span class="label">Definition</span>
+      A burndown chart is a visual representation of the remaining amount of work for a specific sprint at the Scrum team level — showing, at a glance, how the sprint is progressing compared with the team's past velocity.
+    </div>
+    <p>It is a near-essential Scrum tool because it helps with:</p>
+    <ul>
+      <li>Monitoring project scope creep</li>
+      <li>Keeping the team running on schedule</li>
+      <li>Comparing planned work against the team's actual progression</li>
+    </ul>
+
+    <h3>Constructing the chart</h3>
+    <ul>
+      <li><strong>X-axis:</strong> dates, starting on the first day of the sprint and ending on the last day.</li>
+      <li><strong>Y-axis:</strong> story points, ranging from 0 up to 20% more than the total points in the sprint backlog.</li>
+      <li>Plot the first point at day 0 = total points in the sprint.</li>
+      <li>Draw a straight <strong>guideline</strong> from that first point to zero points at the end of the sprint.</li>
+      <li>As each story finishes and moves to "Done," plot the points remaining on the current day — the chart can equally be built with hours or days instead of story points.</li>
+    </ul>
+
+    <figure class="diagram-card">
+      <svg viewBox="0 0 620 340" xmlns="http://www.w3.org/2000/svg">
+        <!-- axes -->
+        <line x1="60" y1="20" x2="60" y2="290" stroke="#1E2224" stroke-width="2"/>
+        <line x1="60" y1="290" x2="590" y2="290" stroke="#1E2224" stroke-width="2"/>
+        <text x="30" y="18" font-family="Inter" font-size="11" fill="#5B6670">Pts</text>
+        <text x="590" y="310" font-family="Inter" font-size="11" fill="#5B6670" text-anchor="end">Days</text>
+        <!-- y labels -->
+        <text x="50" y="34" text-anchor="end" font-family="Inter" font-size="11" fill="#5B6670">40</text>
+        <text x="50" y="107" text-anchor="end" font-family="Inter" font-size="11" fill="#5B6670">30</text>
+        <text x="50" y="180" text-anchor="end" font-family="Inter" font-size="11" fill="#5B6670">20</text>
+        <text x="50" y="253" text-anchor="end" font-family="Inter" font-size="11" fill="#5B6670">10</text>
+        <text x="50" y="294" text-anchor="end" font-family="Inter" font-size="11" fill="#5B6670">0</text>
+        <!-- x labels -->
+        <text x="90" y="308" text-anchor="middle" font-family="Inter" font-size="11" fill="#5B6670">0</text>
+        <text x="196" y="308" text-anchor="middle" font-family="Inter" font-size="11" fill="#5B6670">1</text>
+        <text x="302" y="308" text-anchor="middle" font-family="Inter" font-size="11" fill="#5B6670">2</text>
+        <text x="408" y="308" text-anchor="middle" font-family="Inter" font-size="11" fill="#5B6670">3</text>
+        <text x="514" y="308" text-anchor="middle" font-family="Inter" font-size="11" fill="#5B6670">4</text>
+        <text x="580" y="308" text-anchor="middle" font-family="Inter" font-size="11" fill="#5B6670">5</text>
+
+        <!-- guideline (ideal) dashed -->
+        <line x1="90" y1="34" x2="580" y2="290" stroke="#5B6670" stroke-width="2" stroke-dasharray="6,5"/>
+
+        <!-- actual line: 40 -> 34 -> 28 -> then scope added jump up -> 20+8=28-ish path -> 10 -> 0 -->
+        <polyline points="90,34 196,63.6 302,92.4 408,92.4 408,63.6 514,201.4 580,290"
+          fill="none" stroke="#B4553F" stroke-width="3"/>
+        <circle cx="90" cy="34" r="4" fill="#B4553F"/>
+        <circle cx="196" cy="63.6" r="4" fill="#B4553F"/>
+        <circle cx="302" cy="92.4" r="4" fill="#B4553F"/>
+        <circle cx="408" cy="92.4" r="4" fill="#B4553F"/>
+        <circle cx="408" cy="63.6" r="4" fill="#B4553F"/>
+        <circle cx="514" cy="201.4" r="4" fill="#B4553F"/>
+        <circle cx="580" cy="290" r="4" fill="#B4553F"/>
+
+        <!-- annotation for scope creep -->
+        <line x1="408" y1="92.4" x2="408" y2="63.6" stroke="#C8842E" stroke-width="2" stroke-dasharray="3,3"/>
+        <text x="418" y="75" font-family="Inter" font-size="11" fill="#C8842E" font-weight="600">+8 pts added</text>
+
+        <!-- legend -->
+        <line x1="380" y1="330" x2="410" y2="330" stroke="#5B6670" stroke-width="2" stroke-dasharray="6,5"/>
+        <text x="415" y="334" font-family="Inter" font-size="11" fill="#5B6670">Guideline (ideal)</text>
+        <line x1="530" y1="330" x2="560" y2="330" stroke="#B4553F" stroke-width="3"/>
+        <text x="565" y="334" font-family="Inter" font-size="11" fill="#5B6670">Actual</text>
+      </svg>
+      <figcaption>Burndown chart: the guideline runs from total points to zero. The actual line burns down as stories finish, and can jump upward when the Product Owner adds new stories mid-sprint (scope creep).</figcaption>
+    </figure>
+
+    <h3>Reading the chart</h3>
+    <ul>
+      <li>As soon as the first story is finished and moved to "Done," plot the points remaining at the current day; keep plotting as more stories complete and points burn off.</li>
+      <li><strong>Scope creep:</strong> if the Product Owner adds stories mid-sprint, or the team discovers extra work in a Daily Scrum, remaining points can go <em>up</em> instead of down.</li>
+      <li><strong>Gap between actual and guideline:</strong> a growing gap means there's a good chance the team won't finish all planned stories by the end of the sprint.</li>
+    </ul>
+
+    <div class="callout exam">
+      <span class="label">Exam focus — worked numerical</span>
+      A 2-week sprint starts with 50 story points. By the end of week 1, 15 points are completed. On day 4, 20 new points are added.<br>
+      Remaining after week 1: 50 − 15 = 35 points.<br>
+      After the addition: 35 + 20 = <strong>55 points remaining</strong> — plot this as an upward jump on the burndown chart, then continue reading whether the actual line converges back toward the guideline by the sprint's end.
+    </div>
+  </section>
+
+  <!-- 10. RISK -->
+  <section class="unit" id="risk">
+    <span class="section-tag"><span class="num">10</span>SPRINT TRACKING</span>
+    <h2>Interpreting the Burndown: No Risk, Low Risk, High Risk</h2>
+    <p>Comparing the actual burndown line against the ideal guideline classifies the sprint's health:</p>
+
+    <figure class="diagram-card">
+      <svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg">
+        <!-- No risk -->
+        <g transform="translate(0,0)">
+          <rect x="10" y="10" width="210" height="18" rx="4" fill="#2F7A6E"/>
+          <text x="115" y="23" text-anchor="middle" font-family="Inter" font-size="11" fill="#fff" font-weight="600">NO RISK</text>
+          <line x1="30" y1="45" x2="30" y2="190" stroke="#1E2224" stroke-width="1.5"/>
+          <line x1="30" y1="190" x2="200" y2="190" stroke="#1E2224" stroke-width="1.5"/>
+          <line x1="30" y1="50" x2="200" y2="185" stroke="#5B6670" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <polyline points="30,50 60,70 90,110 120,130 150,155 180,178 200,185" fill="none" stroke="#2F7A6E" stroke-width="2.5"/>
+          <text x="115" y="208" text-anchor="middle" font-family="Inter" font-size="10" fill="#5B6670">Actual tracks the guideline</text>
+        </g>
+        <!-- Low risk -->
+        <g transform="translate(245,0)">
+          <rect x="10" y="10" width="210" height="18" rx="4" fill="#C8842E"/>
+          <text x="115" y="23" text-anchor="middle" font-family="Inter" font-size="11" fill="#fff" font-weight="600">LOW RISK</text>
+          <line x1="30" y1="45" x2="30" y2="190" stroke="#1E2224" stroke-width="1.5"/>
+          <line x1="30" y1="190" x2="200" y2="190" stroke="#1E2224" stroke-width="1.5"/>
+          <line x1="30" y1="50" x2="200" y2="185" stroke="#5B6670" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <polyline points="30,50 60,68 90,95 120,95 150,140 180,170 200,183" fill="none" stroke="#C8842E" stroke-width="2.5"/>
+          <text x="115" y="208" text-anchor="middle" font-family="Inter" font-size="10" fill="#5B6670">Minor, manageable deviation</text>
+        </g>
+        <!-- High risk -->
+        <g transform="translate(480,0)">
+          <rect x="10" y="10" width="210" height="18" rx="4" fill="#B4553F"/>
+          <text x="115" y="23" text-anchor="middle" font-family="Inter" font-size="11" fill="#fff" font-weight="600">HIGH RISK</text>
+          <line x1="30" y1="45" x2="30" y2="190" stroke="#1E2224" stroke-width="1.5"/>
+          <line x1="30" y1="190" x2="200" y2="190" stroke="#1E2224" stroke-width="1.5"/>
+          <line x1="30" y1="50" x2="200" y2="185" stroke="#5B6670" stroke-width="1.5" stroke-dasharray="5,4"/>
+          <polyline points="30,50 60,68 90,95 120,80 150,90 180,80 200,78" fill="none" stroke="#B4553F" stroke-width="2.5"/>
+          <text x="115" y="208" text-anchor="middle" font-family="Inter" font-size="10" fill="#5B6670">Large gap from the guideline</text>
+        </g>
+      </svg>
+      <figcaption>Dashed line = ideal guideline. Solid line = actual burndown. The wider the gap above the guideline, the greater the risk of not finishing the sprint's committed stories.</figcaption>
+    </figure>
+
+    <table>
+      <tr><th>Situation</th><th>What the actual line shows</th><th>Interpretation</th></tr>
+      <tr><td><strong>No risk</strong></td><td>Actual line closely follows the guideline</td><td>Team is progressing as expected</td></tr>
+      <tr><td><strong>Low risk</strong></td><td>Some deviation, but recoverable</td><td>Team may still complete the sprint</td></tr>
+      <tr><td><strong>High risk</strong></td><td>Significant, sustained deviation above the guideline</td><td>Strong chance not all stories will be completed within the sprint</td></tr>
+    </table>
+  </section>
+
+  <!-- 11. SPRINT PLANNING -->
+  <section class="unit" id="sprint">
+    <span class="section-tag"><span class="num">11</span>EXECUTION</span>
+    <h2>Planning and Running a Sprint</h2>
+    <p>The second half of sprint planning is about breaking committed stories into individual development tasks:</p>
+    <ul>
+      <li>The Scrum Master starts with the first story and leads a discussion on exactly what needs to be built.</li>
+      <li>The team lists individual tasks, each expected to take no more than a day.</li>
+      <li>Each task is written on its own card — some teams color-code story cards separately from task cards — and grouped with its parent story.</li>
+    </ul>
+
+    <div class="callout eg">
+      <span class="label">Example — "Nominate a video for an achievement"</span>
+      Broken into tasks: modify the database schema to add an achievement table and stored procedures · create front-end web pages for editing and displaying achievements · add API service calls for adding, updating, removing, and finding achievements.
+    </div>
+  </section>
+
+  <!-- 12. TASK BOARD -->
+  <section class="unit" id="taskboard">
+    <span class="section-tag"><span class="num">12</span>EXECUTION</span>
+    <h2>The Task Board</h2>
+    <p>Stories and their tasks are grouped and placed in the <strong>"To Do"</strong> column of the task board, then move across the board as work progresses:</p>
+
+    <figure class="diagram-card">
+      <svg viewBox="0 0 640 180" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="10" width="190" height="150" rx="8" fill="#FFFFFF" stroke="#DCD6C8"/>
+        <text x="105" y="35" text-anchor="middle" font-family="Source Serif 4, serif" font-size="15" font-weight="600" fill="#1B3A4B">To Do</text>
+        <rect x="25" y="50" width="160" height="26" rx="4" fill="#EEF1EC"/>
+        <rect x="25" y="84" width="160" height="26" rx="4" fill="#EEF1EC"/>
+        <rect x="25" y="118" width="160" height="26" rx="4" fill="#EEF1EC"/>
+
+        <path d="M205 90 H235" stroke="#5B6670" stroke-width="2" marker-end="url(#arrow2)"/>
+
+        <rect x="235" y="10" width="190" height="150" rx="8" fill="#FFFFFF" stroke="#DCD6C8"/>
+        <text x="330" y="35" text-anchor="middle" font-family="Source Serif 4, serif" font-size="15" font-weight="600" fill="#C8842E">In Progress</text>
+        <rect x="250" y="50" width="160" height="26" rx="4" fill="#FBF3E7"/>
+        <rect x="250" y="84" width="160" height="26" rx="4" fill="#FBF3E7"/>
+
+        <path d="M430 90 H460" stroke="#5B6670" stroke-width="2" marker-end="url(#arrow2)"/>
+
+        <rect x="460" y="10" width="170" height="150" rx="8" fill="#FFFFFF" stroke="#DCD6C8"/>
+        <text x="545" y="35" text-anchor="middle" font-family="Source Serif 4, serif" font-size="15" font-weight="600" fill="#2F7A6E">Done</text>
+        <rect x="475" y="50" width="140" height="26" rx="4" fill="#E4F0EC"/>
+
+        <defs>
+          <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#5B6670"/>
+          </marker>
+        </defs>
+      </svg>
+      <figcaption>Task board flow: cards move left to right as work is picked up and completed.</figcaption>
+    </figure>
+
+    <ul>
+      <li>When a member finishes a task, they move it to <strong>Done</strong>, then pull the next task from <strong>To Do</strong>, write their name on it, and move it to <strong>In Progress</strong> (moving the parent story too, if it's still in To Do).</li>
+      <li>When the final task for a story is done, the member verifies all Conditions of Satisfaction are met before moving the <strong>story</strong> card to Done.</li>
+      <li>If a condition isn't met, the story moves back to <strong>In Progress</strong> and new tasks are added to <strong>To Do</strong> to finish the remaining work.</li>
+    </ul>
+
+    <h3>End of sprint</h3>
+    <ul>
+      <li>The sprint ends when its timebox expires — cards may still remain in To Do or In Progress.</li>
+      <li>Incomplete stories return to the product backlog to be re-prioritized in the next sprint planning session; the team may reduce their point value based on remaining tasks.</li>
+      <li>A story earns credit only once its card <strong>and</strong> all its task cards are in Done.</li>
+    </ul>
+
+    <div class="callout">
+      <span class="label">Generally Accepted Scrum Practices (GASPs)</span>
+      Practices adopted by many teams that aren't core Scrum rules — e.g., holding the Daily Scrum as a standup meeting where everyone remains standing until it ends.
+    </div>
+  </section>
+
+</main>
+
+<div class="footer">Unit II — Agile Methodologies ,Prepared By Ms.A.KIRUTHIKA , AP/CSE</div>
+
+</body>
+</html>
